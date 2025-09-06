@@ -143,6 +143,8 @@ add_action('wp_enqueue_scripts', function() {
 function get_library() {
     $blocks_dir = get_template_directory() . '/templates/blocks';
 
+    echo 'bonjouuuuuuur';
+
         foreach (glob($blocks_dir . '/*', GLOB_ONLYDIR) as $block_folder) {
             $block_name = basename($block_folder); // ex: "text"
 

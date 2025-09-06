@@ -1,0 +1,38 @@
+// Variables & outils
+@use 'variables';
+@use 'mixins';
+@use 'reset';
+
+// Partials
+@use 'partials/header';
+@use 'partials/footer';
+
+// Composantsj'a
+@use 'components/buttons';
+@use 'components/forms';
+
+// Pages
+@use 'pages/home';
+@use 'pages/about';
+
+
+body {
+  font-family: variables.$font-family-base;
+  background-color: variables.$color-primary;
+  color: rgb(165, 38, 38);
+  margin: 0;
+}
+
+.highlight {
+  background-color: aliceblue;
+  transition: background-color 0.3s ease; /* la transition vers la couleur normale */
+}
+
+/* couleur normale à la fin */
+.row {
+  background-color: transparent;
+}
+
+.arrows-container .upArrow {
+  font-size: 5rem !important;
+}

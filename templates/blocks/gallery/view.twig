@@ -1,0 +1,23 @@
+<section class="gal-block container">
+    <div class="gal-text-container text-entrance">
+        {% if fields.title %}
+            <h1>{{ fields.title }}</h1>
+        {% endif %}
+
+        {% if fields.content %}
+            <p>{{ fields.content }}</p>
+        {% endif %}
+    </div>
+    
+    {# {{ dump(fields.image) }} #}
+    <div class="gal-container">
+        {# {% set images = fields.image|split(',') %} #}
+        {% for img in fields.image %}
+            <div class="gal-image">
+                <img src="{{ img }}" alt="">
+            </div>
+        {% endfor %}
+    </div>
+
+</section>
+

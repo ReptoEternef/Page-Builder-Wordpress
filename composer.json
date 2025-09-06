@@ -1,0 +1,6 @@
+{
+    "name": "licciak/timber-theme-composer",
+    "require": {
+        "timber/timber": "^2.3"
+    }
+}

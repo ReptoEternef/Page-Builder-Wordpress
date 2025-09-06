@@ -1,0 +1,17 @@
+// Exemple de mixin simple pour arrondir les bords
+@mixin rounded($radius: 6px) {
+  border-radius: $radius;
+}
+
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@mixin absolute-pos() {
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  top: 0px;
+}

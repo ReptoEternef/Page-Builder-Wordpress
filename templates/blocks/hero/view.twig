@@ -1,0 +1,9 @@
+<div class="block-hero-container full-width">
+  <div class="block-hero" style="background-image: url('{{ fields.image }}');">
+    <h2>{{ fields.Titre }}</h2>
+    <p>{{ fields.slogan }}</p>
+    {% if fields.background %}
+      <div class="background"></div>
+    {% endif %}
+  </div>
+</div>

@@ -1,0 +1,41 @@
+.gal-container {
+    column-count: 3;          /* nombre de colonnes par défaut */
+    column-gap: 20px;         /* espace horizontal entre colonnes */
+    width: 100%;
+}
+
+.gal-container .gal-image {
+    break-inside: avoid;      /* évite que les images se coupent */
+    margin-bottom: 20px;
+    border-radius: 12px;
+    overflow: hidden;
+    display: block;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.gal-container .gal-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+/* Effet hover */
+.gal-container .gal-image:hover {
+    transform: scale(1.02);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+/* Responsive */
+@media (max-width: 1000px) {
+    .gal-container {
+        column-count: 2;
+    }
+}
+@media (max-width: 768px) {
+    .gal-container {
+        column-count: 1;
+    }
+}

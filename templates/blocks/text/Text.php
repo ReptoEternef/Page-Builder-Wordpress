@@ -5,23 +5,40 @@ use Timber\Timber;
 require_once get_template_directory() . '/templates/blocks/Block.php';
 
 class Text extends Block {
+    public $html;
     public $block_type = 'text';
+    public $display_name = 'Texte';
+    public $layouts = ['default'];
 
     public function __construct()
     {
-        parent::__construct('text', ['title','content']);
+        parent::__construct('text', ['custom_css', 'title','content']);
     }
 
-    public function renderAdmin()
+    public function renderAdmin($values = [])
     {
+        $data = [
+            'custom_css' => $values['custom_css'] ?? '',
+            'title'      => $values['title'] ?? '',
+            'content'    => $values['content'] ?? '',
+        ];
+        
         include __DIR__ . '/admin.php';
     }
 
-    public function renderFrontend($values)
+    public function renderFrontend($values = [])
     {
         Timber::render('blocks/text/view.twig', [
+            'custom_css' => $values['custom_css'] ?? '',
+            'title' => $values['title'] ?? '',
             'content' => $values['content'] ?? '',
         ]);
+    }
+
+    public function getHTML() {
+        ob_start();
+        include __DIR__ . '/admin.php';
+        return ob_get_clean();
     }
 
     public function enqueueAssets()

@@ -4,24 +4,38 @@ use Timber\Timber;
 
 require_once get_template_directory() . '/templates/blocks/Block.php';
 
-class GalleryBlock extends Block {
+class Gallery extends Block {
+    public $html;
     public $block_type = 'gallery';
+    public $display_name = 'Galerie';
 
     public function __construct()
     {
         parent::__construct('gallery', ['title','image']);
     }
 
-    public function renderAdmin()
+    public function renderAdmin($values = [])
     {
+        $data = [
+            'custom_css' => $values['custom_css'] ?? '',
+            'title'      => $values['title'] ?? '',
+            'image'    => $values['image'] ?? '',
+        ];
+        
         include __DIR__ . '/admin.php';
     }
 
-    public function renderFrontend($values)
+    public function renderFrontend($values = [])
     {
         /* Timber::render('blocks/text/view.twig', [
             'content' => $values['content'] ?? '',
         ]); */
+    }
+
+    public function getHTML() {
+        ob_start();
+        include __DIR__ . '/admin.php';
+        return ob_get_clean();
     }
 
     public function getType() {

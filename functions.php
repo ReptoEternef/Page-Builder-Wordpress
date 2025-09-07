@@ -96,7 +96,7 @@ add_action('admin_enqueue_scripts', function($hook) {
 // ================================
 
 // (Only from blocks on page #optimazor2000)
-add_action('wp_enqueue_scripts', function() {
+/* add_action('wp_enqueue_scripts', function() {
     if (!is_singular()) return; // seulement sur les pages/posts
 
     global $post;
@@ -131,7 +131,7 @@ add_action('wp_enqueue_scripts', function() {
         }
     }
 });
-
+ */
 
 
 
@@ -139,44 +139,55 @@ add_action('wp_enqueue_scripts', function() {
 // ================================
 //            FUNCTIONS
 // ================================
-
+// Get a list of all blocks and make class instances
 function get_library() {
     $blocks_dir = get_template_directory() . '/templates/blocks';
+    $availableBlocks = [];
 
         foreach (glob($blocks_dir . '/*', GLOB_ONLYDIR) as $block_folder) {
             $block_name = basename($block_folder); // ex: "text"
 
             // Get full path
-            $class_file = $block_folder . '/' . ucfirst($block_name);
+            $class_path = $block_folder . '/' . ucfirst($block_name) . '.php';
             // Get class name only
             $class_name = ucfirst($block_name);
             
-            var_dump($class_name);
-            //var_dump($class_file);
-            
+            //var_dump($class_name);
+            //var_dump($class_path);
 
-            if (file_exists($class_file)) {
-                require_once $class_file;
+            if (file_exists($class_path)) {
+                require_once $class_path;
                 
                 if (class_exists($class_name)) {
                     $availableBlocks[$block_name] = new $class_name();
                 }
-
-                $availableBlocks = [
-                    'text' => new Text(),
-                ];
-
-
             }
         }
+        
+    return $availableBlocks;
+}
+
+// Dropdown to select a block to add
+function dropdown_block_selector($blocks_library) {
+    ?>
+    <!-- <label for="block-selector">Liste des blocs :</label> -->
+    <select name="blocks" id="block-type-selector">
+        <?php
+        foreach ($blocks_library as $block) {
+            var_dump($block->display_name);
+            ?>
+            <option value="<?= esc_attr($block->block_type) ?>"><?= esc_html($block->display_name) ?></option>
+            <?php
+        }
+        ?>
+    </select>
+    <?php
 }
 
 
 
-
-
 // ================================
-// Page Builder (Metabox + sauvegarde)
+// Page Builder
 // ================================
 
 // Get rid of Gutemberg
@@ -198,13 +209,66 @@ add_action('add_meta_boxes', function() {
 
 
 
-function render_admin_UI() {
-    get_library();
+function render_admin_UI($post) {
+    // Get library of all available blocks
+    $blocks_library = get_library();
+
+    // Dropdown to select a block to add
+    dropdown_block_selector($blocks_library);
+    ?> <button type="button" id="add_block_btn">Ajouter un bloc</button> <?php
+    
+    //var_dump($blocks_library);
+    /* $blocks_library['text']->renderAdmin();
+    $blocks_library['hero']->renderAdmin(); */
+
+    
+    // BLOCKS INIT
+    $page_blocks = get_post_meta($post->ID, '_page_blocks', true);
+    $page_blocks = $page_blocks ? json_decode($page_blocks, true) : [];
+
+    foreach ($page_blocks as $block) {
+        $type = $block['type'];
+        $blocks_library[$type]->renderAdmin($block);
+    }
+
+    // BLOCKS LIBRARY FOR JS
+    $library_array = (array) $blocks_library;
+    //var_dump($library_array);
+    foreach ($library_array as $block) {
+        $block_array = (array) $block;
+        $type = $block_array['type'];
+        $blocks_library[$type]->html = $blocks_library[$type]->getHTML();
+    }
+
+    wp_localize_script('page-blocks-js', 'php', [
+        'ajaxurl' => admin_url('admin-ajax.php'),
+        'pageBlocks' => $page_blocks,
+        'blocksLibrary' => $blocks_library
+    ]);
 }
 
 
 
+// ================================
+//            SAUVEGARDE
+// ================================
 
+
+add_action('save_post', function($post_id) {
+/*     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+    if (!current_user_can('edit_post', $post_id)) return;
+    if (!isset($_POST['page_blocks_nonce']) || !wp_verify_nonce($_POST['page_blocks_nonce'], 'save_page_blocks')) return;
+    if (!isset($_POST['_page_blocks'])) return;
+
+    $blocks_json = wp_unslash($_POST['_page_blocks']);
+    $blocks_array = json_decode($blocks_json, true);
+    if (!is_array($blocks_array)) return; */
+
+    //update_post_meta($post_id, 'blocks_data', wp_json_encode($blocks_array));
+
+    $test_json = [["type"=>"hero","layout"=>"default","content"=>"teste"]];
+    update_post_meta($post_id, '_page_blocks', wp_json_encode($test_json));
+});
 
 
 // ================================

@@ -5,22 +5,35 @@ use Timber\Timber;
 require_once get_template_directory() . '/templates/blocks/Block.php';
 
 class Hero extends Block {
-    public function __construct($type = 'hero', $fields = ['title', 'slogan', 'image'])
+    public $html;
+    public $block_type = 'hero';
+    public $display_name = 'Hero';
+    public $layouts = ['default'];
+
+    public function __construct()
     {
-        parent::__construct($type, $fields);
+        parent::__construct('hero', ['custom_css', 'title','slogan', 'image']);
     }
 
-
-    public function renderAdmin()
+    public function renderAdmin($values = [])
     {
         include __DIR__ . '/admin.php';
     }
 
-    public function renderFrontend($values)
+    public function renderFrontend($values = [])
     {
-        /* Timber::render('blocks/hero/view.twig', [
-            'title' => $block['title'] ?? '',
-        ]); */
+        Timber::render('blocks/hero/view.twig', [
+            'custom_css' => $values['custom_css'] ?? '',
+            'title' => $values['title'] ?? '',
+            'slogan' => $values['slogan'] ?? '',
+            'image' => $values['image'] ?? '',
+        ]);
+    }
+
+    public function getHTML() {
+        ob_start();
+        include __DIR__ . '/admin.php';
+        return ob_get_clean();
     }
 
     public function enqueueAssets()

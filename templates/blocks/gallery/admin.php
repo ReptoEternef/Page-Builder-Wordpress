@@ -1,5 +1,5 @@
 <div class="flex-column wrap">
-        <strong>Galerie</strong>
+        <strong><?= $this->display_name ?></strong>
 
         <div class="block-field" data-multiple="true">
             <label for="image">Image</label>

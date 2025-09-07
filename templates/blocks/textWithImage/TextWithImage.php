@@ -5,23 +5,31 @@ use Timber\Timber;
 require_once get_template_directory() . '/templates/blocks/Block.php';
 
 class TextWithImage extends Block {
-    public $block_type = 'textWithImageBlock';
+    public $html;
+    public $block_type = 'textWithImage';
+    public $display_name = 'Texte + image';
 
     public function __construct()
     {
-        parent::__construct('textWithImageBlock', ['title','content','image']);
+        parent::__construct('textWithImage', ['title','content','image']);
     }
 
-    public function renderAdmin()
+    public function renderAdmin($values = [])
     {
         include __DIR__ . '/admin.php';
     }
 
-    public function renderFrontend($values)
+    public function renderFrontend($values = [])
     {
         /* Timber::render('blocks/text/view.twig', [
             'content' => $values['content'] ?? '',
         ]); */
+    }
+
+    public function getHTML() {
+        ob_start();
+        include __DIR__ . '/admin.php';
+        return ob_get_clean();
     }
 
     public function enqueueAssets()

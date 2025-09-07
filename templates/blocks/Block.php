@@ -4,9 +4,10 @@ abstract class Block {
     public string $type;    // 'hero', 'text', 'carrousel'...
     public array $fields;   // fields for each type
 
-    public function __construct($type, $fields = []) {
+    public function __construct($type, $fields = [], $values = []) {
         $this->type = $type;
         $this->fields = $fields;
+        $this->fields = $values;
     }
 
     // Display block in admin

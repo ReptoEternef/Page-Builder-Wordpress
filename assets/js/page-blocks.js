@@ -223,7 +223,23 @@ document.addEventListener('DOMContentLoaded', () => {
 //         Ajouter un bloc
 // ================================
 addBlockBtn.addEventListener('click', () => {
-    console.log('lets add a block');
+    const selectedType = blockTypeSelector.value;
+    console.log(blockTypeSelector.value);
+    console.log(php.blocksLibrary[selectedType].html);
+
+    const html = php.blocksLibrary[selectedType].html;
+    //addBlockToUI(html);
+
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+
+    console.log(tempDiv);
+
+    const newBlock = tempDiv.firstElementChild || document.createElement('div');
+    newBlock.classList.add('inside');
+
+    const parent = document.getElementById('_page_blocks');
+    parent.appendChild(newBlock);
 });
 
 
@@ -311,3 +327,12 @@ jQuery(document).ready(function($){
 .then(data => 
     console.log(data.data.availableBlocksDebug
 )); */
+
+
+
+
+
+
+
+
+//console.log(php.pageBlocks);

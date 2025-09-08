@@ -210,26 +210,35 @@ add_action('add_meta_boxes', function() {
 
 
 function render_admin_UI($post) {
+    $post = get_post();
+    if ( ! $post || ! $post->ID ) {
+        echo 'Publiez la page avant de pouvoir utiliser le page builder.';
+        return;
+    }
     // Get library of all available blocks
     $blocks_library = get_library();
 
-    // Dropdown to select a block to add
-    dropdown_block_selector($blocks_library);
-    ?> <button type="button" id="add_block_btn">Ajouter un bloc</button> <?php
-    
-    //var_dump($blocks_library);
-    /* $blocks_library['text']->renderAdmin();
-    $blocks_library['hero']->renderAdmin(); */
-
-    
     // BLOCKS INIT
     $page_blocks = get_post_meta($post->ID, '_page_blocks', true);
     $page_blocks = $page_blocks ? json_decode($page_blocks, true) : [];
 
+    // Dropdown to select a block to add
+    ?> 
+    <div class="inside">
+        <?php dropdown_block_selector($blocks_library); ?>
+        <button type="button" id="add_block_btn">Ajouter un bloc</button>
+        <button type="button" id="debug_btn">debug</button>
+        <input type="text" name="_page_blocks" id="blocks_data" value="<?php echo esc_attr(json_encode($page_blocks ?: [])); ?>"></input>
+    </div>
+    <?php // JSON INPUT NOT HIDDEN FOR DEBUG
+
+
+    // Render admin
     foreach ($page_blocks as $block) {
         $type = $block['type'];
-        $blocks_library[$type]->renderAdmin($block);
+        $blocks_library[$type]->renderAdmin($block['values']);
     }
+
 
     // BLOCKS LIBRARY FOR JS
     $library_array = (array) $blocks_library;
@@ -253,22 +262,17 @@ function render_admin_UI($post) {
 //            SAUVEGARDE
 // ================================
 
-
 add_action('save_post', function($post_id) {
-/*     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+    // security
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
     if (!current_user_can('edit_post', $post_id)) return;
-    if (!isset($_POST['page_blocks_nonce']) || !wp_verify_nonce($_POST['page_blocks_nonce'], 'save_page_blocks')) return;
-    if (!isset($_POST['_page_blocks'])) return;
 
-    $blocks_json = wp_unslash($_POST['_page_blocks']);
-    $blocks_array = json_decode($blocks_json, true);
-    if (!is_array($blocks_array)) return; */
-
-    //update_post_meta($post_id, 'blocks_data', wp_json_encode($blocks_array));
-
-    $test_json = [["type"=>"hero","layout"=>"default","content"=>"teste"]];
-    update_post_meta($post_id, '_page_blocks', wp_json_encode($test_json));
+    if (isset($_POST['_page_blocks'])) {
+        $blocks_json = wp_unslash($_POST['_page_blocks']);
+        update_post_meta($post_id, '_page_blocks', $blocks_json);
+    }
 });
+
 
 
 // ================================
@@ -284,7 +288,25 @@ add_action('save_post', function($post_id) {
 // Afficher les blocs en JSON
 // ================================
 
+add_action('add_meta_boxes', function() {
+    add_meta_box(
+        'page_blocks_json',
+        'JSON des blocs',
+        'render_blocks_json_meta_box',
+        'page',
+        'side', // position sur la droite
+        'default'
+    );
+});
 
-
-
-
+function render_blocks_json_meta_box($post) {
+    // Récupère le JSON actuel
+    //$json_blocks = get_post_meta($post->ID, '_page_blocks', true);
+    $page_blocks = get_post_meta($post->ID, '_page_blocks', true);
+    $page_blocks = $page_blocks ? json_decode($page_blocks, true) : [];
+    ?>
+    <label for="blocks-json">JSON actuel :</label>
+    <textarea id="blocks-json" rows="10" style="width:100%;"><?php echo htmlspecialchars(json_encode($page_blocks, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)); ?></textarea>
+    <?php //echo esc_attr(json_encode($page_blocks ?: [])); ?>
+    <?php
+}

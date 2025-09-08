@@ -16,14 +16,20 @@ class TextWithImage extends Block {
 
     public function renderAdmin($values = [])
     {
-        include __DIR__ . '/admin.php';
+        $this->setValues($values ?: $this->values);
+        $data = $this->normalizeData();
+
+        ?>
+        <div class="block-item">
+            <?php include __DIR__ . '/admin.php'; ?>
+        </div>
+        <?php
     }
 
     public function renderFrontend($values = [])
     {
-        /* Timber::render('blocks/text/view.twig', [
-            'content' => $values['content'] ?? '',
-        ]); */
+        $data = $this->normalizeData();
+        Timber::render('blocks/text/view.twig', $data);
     }
 
     public function getHTML() {

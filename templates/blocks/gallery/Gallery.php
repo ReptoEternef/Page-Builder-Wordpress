@@ -16,20 +16,21 @@ class Gallery extends Block {
 
     public function renderAdmin($values = [])
     {
-        $data = [
-            'custom_css' => $values['custom_css'] ?? '',
-            'title'      => $values['title'] ?? '',
-            'image'    => $values['image'] ?? '',
-        ];
+        $this->setValues($values ?: $this->values);
+        $data = $this->normalizeData();
         
-        include __DIR__ . '/admin.php';
+        ?>
+        <div class="block-item">
+            <?php include __DIR__ . '/admin.php'; ?>
+        </div>
+        <?php
+
     }
 
     public function renderFrontend($values = [])
     {
-        /* Timber::render('blocks/text/view.twig', [
-            'content' => $values['content'] ?? '',
-        ]); */
+        $data = $this->normalizeData();
+        Timber::render('blocks/text/view.twig', $data);
     }
 
     public function getHTML() {

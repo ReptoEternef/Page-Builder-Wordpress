@@ -1,9 +1,9 @@
 <div class="flex-column wrap">
-    <div class="flex-row" style="width: 100%;">
-        <strong>Hero</strong>
+    <div class="flex-row" style="<?= $data['custom_css'] ?? '' ?>">
+        <strong><?= $this->display_name ?></strong>
         
-        <input type="text" name="Titre" value="" placeholder="Titre">
-        <input type="text" name="slogan" value="" placeholder="Slogan">    
+        <input type="text" name="title" value="<?= $data['title'] ?? '' ?>" placeholder="Titre">
+        <input type="text" name="slogan" value="<?= $data['slogan'] ?? '' ?>" placeholder="Slogan">    
     </div>
     
     <div class="block-field">

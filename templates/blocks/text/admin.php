@@ -1,4 +1,4 @@
-<div class="flex-column wrap" style="<?= $data['custom_css'] ?>" data-order="">
+<div class="flex-column wrap full-width" data-order="">
     <strong><?= $this->display_name ?></strong>
 
     <?php
@@ -18,8 +18,8 @@
     }
     ?>
 
-    <input type="text" value="<?= $data['custom_css'] ?>" placeholder="Custom CSS">
+    <input type="text" name="custom_css" value="<?= $data['custom_css'] ?? ''?>" placeholder="Custom CSS">
 
-    <input type="text" class="full-width" name="title" value="<?= $data['title'] ?>" placeholder="Titre">
-    <textarea class="full-width" rows="4" name="content" placeholder="content"><?= $data['content'] ?></textarea>
+    <input type="text" class="full-width" name="title" value="<?= $data['title'] ?? '' ?>" placeholder="Titre">
+    <textarea class="full-width" rows="4" name="content" placeholder="content"><?= $data['content'] ?? '' ?></textarea>
 </div>

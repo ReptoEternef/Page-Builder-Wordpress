@@ -17,17 +17,20 @@ class Hero extends Block {
 
     public function renderAdmin($values = [])
     {
-        include __DIR__ . '/admin.php';
+        $this->setValues($values ?: $this->values);
+        $data = $this->normalizeData();
+
+        ?>
+        <div class="block-item">
+            <?php include __DIR__ . '/admin.php'; ?>
+        </div>
+        <?php
     }
 
     public function renderFrontend($values = [])
     {
-        Timber::render('blocks/hero/view.twig', [
-            'custom_css' => $values['custom_css'] ?? '',
-            'title' => $values['title'] ?? '',
-            'slogan' => $values['slogan'] ?? '',
-            'image' => $values['image'] ?? '',
-        ]);
+        $data = $this->normalizeData();
+        Timber::render('blocks/text/view.twig', $data);
     }
 
     public function getHTML() {

@@ -1,4 +1,5 @@
 const addBlockBtn = document.getElementById('add_block_btn');
+const debugBtn = document.getElementById('debug_btn');
 const blocksContainer = document.getElementById('page_blocks');
 const blockTypeSelector = document.getElementById('block-type-selector');
 let blocksArray = [];
@@ -10,14 +11,14 @@ let allBlocksHTML = {};
 // ================================
 
 function deleteBlock(e) {
-    const btn = e.target;
-    const row = btn.parentElement;
+    const row = e.target.closest('.block-item'); // ou la classe parent de ton bloc
+    const allBlocks = [...document.querySelectorAll('.block-item')];
+    const currentIndex = allBlocks.indexOf(row);
+    console.log('curr index : ' + currentIndex);
+
     row.remove();
-
-    // Mettre à jour blocksArray après suppression
-    blocksArray = Array.from(document.querySelectorAll('#page_blocks .block-item'));
-
-    syncBlocksToInput();
+    blocksArray.splice(currentIndex, 1);
+    forceSync();
 }
 
 function flashRow(row) {
@@ -25,64 +26,7 @@ function flashRow(row) {
     setTimeout(() => row.classList.remove('highlight'), 300);
 }
 
-function addBlockToUI(block, type, index) {
-    // Créer le bloc si block.html existe, sinon un div vide (ex: pour nouveau type)
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = block || '';
-
-    const newBlock = tempDiv.firstElementChild || document.createElement('div');
-    newBlock.classList.add('inputs-container');
-    
-    // --- Créer l’entrée dans block_json pour le nouveau bloc ---
-    if (!genBlocks.block_json[index]) {
-        const fields = {};
-        // on récupère tous les inputs existants pour initialiser les champs
-        newBlock.querySelectorAll('input[name], textarea[name], select[name]').forEach(el => {
-            fields[el.name] = el.value || '';
-        });
-        genBlocks.block_json[index] = {
-            type: type,
-            order: index,
-            fields: fields
-        };
-    }
-    // --- Injection dynamique des valeurs ---
-    const data = genBlocks.block_json[index]?.fields || {};
-    
-    for (let fieldName in data) {
-        const value = data[fieldName] || '';
-        
-        // on cherche l'input ou textarea correspondant
-        const input = newBlock.querySelector(`[name="${fieldName}"]`);
-        if(input) {
-            input.value = value;
-        }
-        
-        // si c'est un champ image, on met à jour aussi la preview
-        const imgPreview = newBlock.querySelector(`img[name="${fieldName}"]`);
-        if(imgPreview) {
-            imgPreview.src = value;
-            imgPreview.style.display = value ? 'block' : 'none';
-        }
-    }
-    
-    
-    // ---------------------------------------
-    
-    const singleBlockContainer = document.createElement('div');
-
-    singleBlockContainer.classList.add('block-item');
-    singleBlockContainer.dataset.order = index;
-    singleBlockContainer.dataset.type = type || 'hero'; // par défaut hero
-
-    singleBlockContainer.classList.add('single-block-container');
-    singleBlockContainer.classList.add('inside');
-
-    singleBlockContainer.appendChild(newBlock);
-    blocksContainer.appendChild(singleBlockContainer);
-
-    blocksArray[index] = singleBlockContainer;
-
+function addUIElements(singleBlockContainer, index) {
     // Flèches pour déplacer
     const arrowsContainer = document.createElement('div');
     arrowsContainer.classList.add('arrows-container');
@@ -116,13 +60,11 @@ function addBlockToUI(block, type, index) {
     icon.setAttribute("data-width", "20");
     icon.setAttribute("data-height", "20");
 
-
-    
     deleteBtnContainer.appendChild(icon);
     singleBlockContainer.appendChild(deleteBtnContainer);
-    deleteBtnContainer.addEventListener('click', deleteBlock);
 
-    syncBlocksToInput();
+    //console.log(singleBlockContainer);
+    deleteBtnContainer.addEventListener('click', deleteBlock);
 }
 
 function moveBlock(e) {
@@ -132,26 +74,27 @@ function moveBlock(e) {
     const upperRow = blocksArray[rowId - 1];
     const lowerRow = blocksArray[rowId + 1];
 
-    console.log(blocksArray);
-
-    flashRow(currRow);
-
+    //console.log(blocksArray);
+    
+    flashRow(currRow.DOM);
+    
     if (arrow.classList.contains('upArrow') && upperRow) {
-        swapElements(currRow, upperRow);
+        swapElements(currRow.DOM, upperRow.DOM);
         swapArray(blocksArray, rowId, rowId - 1);
     } else if (arrow.classList.contains('downArrow') && lowerRow) {
-        swapElements(lowerRow, currRow);
+        swapElements(lowerRow.DOM, currRow.DOM);
         swapArray(blocksArray, rowId + 1, rowId);
     }
-
+    
+    console.log(blocksArray);
     // Mettre à jour dataset.order et IDs des flèches
     blocksArray.forEach((block, i) => {
-        block.dataset.order = i;
-        const arrows = block.querySelectorAll('.arrows-container span');
+        block.display_order = i;
+        const arrows = block.DOM.querySelectorAll('.arrows-container span');
         arrows.forEach(a => a.id = i);
     });
 
-    syncBlocksToInput();
+    forceSync();
 }
 
 function swapElements(el1, el2) {
@@ -167,88 +110,188 @@ function swapArray(array, i, j) {
     [array[i], array[j]] = [array[j], array[i]];
 }
 
+// Insert block in main array
+function pushBlocksArray(addedBlock, blockDOM) {
+    //console.log(addedBlock);
+    addedBlock.display_order = blocksArray.length;
+    blocksArray.push(addedBlock);
+    // Add DOM to block object
+    blocksArray[addedBlock.display_order].DOM = blockDOM;
+}
 
 
 
-
+console.log(blocksArray);
 
 
 // ================================
 //  Synchroniser avec input hidden
 // ================================
-function syncBlocksToInput() {
-    const hiddenInput = document.getElementById('blocks_data');
 
-    const data = blocksArray.map(block => {
-        const fields = {};
+// input a DOM element
+function syncBlocksArray(blockDOM, Obj) {
+    blockDOM.addEventListener('input', (e) => {
+        //console.log(blocksArray[index].values);
+        const inputEl = e.target; // l'élément qui a changé
+        const field = inputEl.name; // récupère le nom du champ
+        const value = inputEl.value;
+        index = Obj.display_order;
+        console.log('Obj : ' + Obj.display_order);
+        console.log('index : ' + index);
 
-        // Pour chaque input, textarea ou select du bloc
-        block.querySelectorAll('input[name], textarea[name], select[name]').forEach(el => {
-            const name = el.name;
+        // ---- RESYNC INDEX (if bloc is added, then another bloc deleted, then it desyncs index)
+        if (blocksArray[index] === undefined) {
+            blocksArray.forEach(block => {
+                block.display_order = syncDisplayOrder(block);
+                index = block.display_order;
+                console.log(block.type + ' : ' + block.display_order);
+            });
+        }
+        console.log(blocksArray);
+        console.log('display order : ' + blocksArray[index].display_order);
+        // ---------------------------------------------------------------
+        
+        // on met à jour la valeur dans le bloc correspondant
+        if (blocksArray[index].values) {
+            //console.log('saved');
+            //console.log(blocksArray[index].values[field]);
+            blocksArray[index].values[field] = value;
+        }
+        
+        //console.log(blocksArray);
 
-            // Si c’est un champ galerie (data-multiple="true"), convertir la string en tableau
-            if(el.dataset.multiple === 'true') {
-                // Séparer par virgule et filtrer les valeurs vides
-                fields[name] = el.value
-                    ? el.value.split(',').map(v => v.trim()).filter(v => v)
-                    : [];
-            } else {
-                fields[name] = el.value;
+        const data = blocksArray.map(block => {
+            //console.log(block);
+            return {
+                type: block.type,
+                display_order: block.display_order,
+                values: block.values
             }
-        });
+        })
+  
+        dataToJSON(data);
+    });
+}
+function forceSync() {
+    
+    const data = blocksArray.map(block => {
 
         return {
-            type: block.dataset.type,
-            order: parseInt(block.dataset.order, 10),
-            fields: fields
-        };
-    });
+            type: block.type,
+            display_order: syncDisplayOrder(block),
+            values: block.values
+        }
+    })
 
-    // Stocker le JSON final dans l’input hidden pour que WordPress le sauvegarde
-    hiddenInput.value = JSON.stringify(data);
+    dataToJSON(data);
+}
+function dataToJSON(data) {
+    //console.log('data');
     //console.log(data);
+    const hiddenInput = document.getElementById('blocks_data');
+    hiddenInput.value = JSON.stringify(data);
+    console.log('JSON');
+    //console.log(hiddenInput.value);
+    /* console.log(
+        JSON.stringify(data, null, 2)
+    ); */
+}
+function syncDisplayOrder(blockObj) {
+    return blocksArray.indexOf(blockObj);
+}
+
+
+prettierPage();
+function prettierPage() {
+    const mainContainer = document.querySelector('#_page_blocks .inside');
+    const domBlocks = document.querySelectorAll('.block-item');
+
+    console.log(mainContainer);
+    mainContainer.style.setProperty('padding', '0', 'important');
+    
+    domBlocks.forEach(el => {
+        el.classList.add('inside');
+        console.log(el);
+        el.children[0].classList.add('inner-block');
+    });
 }
 
 
 
 
 
-
-
-document.addEventListener('DOMContentLoaded', () => {
+/* document.addEventListener('DOMContentLoaded', () => {
     const hiddenInput = document.getElementById('blocks_data');
-});
+}); */
 
 // ================================
 //         Ajouter un bloc
 // ================================
 addBlockBtn.addEventListener('click', () => {
+    // Get basic infos
     const selectedType = blockTypeSelector.value;
-    console.log(blockTypeSelector.value);
-    console.log(php.blocksLibrary[selectedType].html);
-
-    const html = php.blocksLibrary[selectedType].html;
-    //addBlockToUI(html);
-
+    const index = blocksArray.length;
+    
+    // Create instance of added block in array
+    const addedBlock = { ...php.blocksLibrary[selectedType] };
+    //console.log(blocksArray);
+    
+    const html = addedBlock.html;
+    
+    // Reset inputs values
+    addedBlock.values = {};
+    addedBlock.fields.forEach(field => {
+        addedBlock.values[field] = '';
+        //console.log(addedBlock.values);
+        //console.log(addedBlock.values[field]);
+    });
+    
+    //addBlockToUI(html, selectedType, index);
+    // Temp add block function
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html;
-
-    console.log(tempDiv);
-
+    
+    
     const newBlock = tempDiv.firstElementChild || document.createElement('div');
     newBlock.classList.add('inside');
-
-    const parent = document.getElementById('_page_blocks');
-    parent.appendChild(newBlock);
+    newBlock.classList.add('inner-block');
+    
+    
+    //console.log(newBlock);
+    const singleBlockContainer = document.createElement('div');
+    singleBlockContainer.classList.add('block-item');
+    singleBlockContainer.appendChild(newBlock);
+    
+    const blocksPageContainer = document.querySelector('#_page_blocks .inside');
+    blocksPageContainer.appendChild(singleBlockContainer);
+    
+    pushBlocksArray(addedBlock, singleBlockContainer);
+    
+    addUIElements(singleBlockContainer, index);
+    
+    // SYNC CHANGES
+    forceSync();
+    syncBlocksArray(singleBlockContainer, blocksArray[index]);
 });
 
 
 // ================================
-//   Générer les blocs au départ
+//              INIT
 // ================================
-
-
-
+document.addEventListener('DOMContentLoaded', () => {
+    const domBlocks = document.querySelectorAll('.block-item');
+    
+    //console.log('INIT');
+    //console.log(php.pageBlocks);
+    php.pageBlocks.forEach((blockInPage, index) => {
+        pushBlocksArray(blockInPage, domBlocks[index]);
+        syncBlocksArray(domBlocks[index], index);
+        
+        //console.log(blocksArray[index].values);
+        
+        addUIElements(domBlocks[index], index);
+    });
+});
 
 
 
@@ -300,7 +343,10 @@ jQuery(document).ready(function($){
             }
 
             // --- Mettre à jour le hidden input global pour sauvegarde ---
-            syncBlocksToInput();
+            //syncBlocksToInput();
+            const blockDiv = trigger.closest('.block-item');
+            //console.log(blockDiv[0]);
+            //syncBlocksArray(blockDiv,)
         });
 
         mediaFrame.open();
@@ -328,7 +374,9 @@ jQuery(document).ready(function($){
     console.log(data.data.availableBlocksDebug
 )); */
 
-
+debugBtn.addEventListener('click', () => {
+    console.log(php.pageBlocks);
+})
 
 
 

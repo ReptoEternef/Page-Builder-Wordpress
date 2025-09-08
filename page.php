@@ -8,6 +8,7 @@ $post_id = get_the_ID();
 $json_blocks = get_post_meta($post_id, '_page_blocks', true);
 $blocks = $json_blocks ? json_decode($json_blocks, true) : [];
 
+
 // Préparer les blocks pour Twig
 $rendered_blocks = [];
 foreach ($blocks as $block) {
@@ -18,6 +19,7 @@ foreach ($blocks as $block) {
 }
 
 $context['rendered_blocks'] = $rendered_blocks;
+//var_dump($context);
 
 // Rendu du builder
 Timber::render('page-builder.twig', $context);

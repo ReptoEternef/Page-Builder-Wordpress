@@ -4,7 +4,7 @@
     <?php
     if (count($this->layouts) > 1) {
         ?>
-        <label for="layout">Layout :</label>
+        <!-- <label for="layout">Layout :</label> -->
         <select name="layout" id="">
             <?php
             if ($this->layouts) {

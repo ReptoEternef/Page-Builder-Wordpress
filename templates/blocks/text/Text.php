@@ -8,11 +8,11 @@ class Text extends Block {
     public $html;
     public $block_type = 'text';
     public $display_name = 'Texte';
-    public $layouts = ['default'];
+    public $layouts = ['default', 'mise en page'];
 
     public function __construct()
     {
-        parent::__construct('text', ['custom_css', 'title','content']);
+        parent::__construct('text', ['custom_css', 'title','content', 'layout']);
     }
 
     public function renderAdmin($values = [])

@@ -11,14 +11,28 @@ let allBlocksHTML = {};
 // ================================
 
 function deleteBlock(e) {
-    const row = e.target.closest('.block-item'); // ou la classe parent de ton bloc
+    /* const row = e.target.closest('.block-item'); // ou la classe parent de ton bloc
     const allBlocks = [...document.querySelectorAll('.block-item')];
-    const currentIndex = allBlocks.indexOf(row);
-    console.log('curr index : ' + currentIndex);
+    const currentIndex = allBlocks.indexOf(row); */
+    //console.log('curr index : ' + currentIndex);
+    const parent = findOutBlockIndex(e.target ,'.block-item');
+    const row = parent[0];
+    const currentIndex = parent[1];
+    console.log(row);
 
     row.remove();
     blocksArray.splice(currentIndex, 1);
     forceSync();
+}
+
+function findOutBlockIndex(element, closestClass) {
+    const closest = element.closest(closestClass);
+    //console.log(closest[0]);
+    const allBlocks = [...document.querySelectorAll('.block-item')];
+    //console.log(allBlocks[0]);
+    const currentIndex = allBlocks.indexOf(closest);
+
+    return [closest, currentIndex];
 }
 
 function flashRow(row) {
@@ -86,7 +100,7 @@ function moveBlock(e) {
         swapArray(blocksArray, rowId + 1, rowId);
     }
     
-    console.log(blocksArray);
+    //console.log(blocksArray);
     // Mettre à jour dataset.order et IDs des flèches
     blocksArray.forEach((block, i) => {
         block.display_order = i;
@@ -119,9 +133,18 @@ function pushBlocksArray(addedBlock, blockDOM) {
     blocksArray[addedBlock.display_order].DOM = blockDOM;
 }
 
+function setDropDowns(blockObj) {
+    const blockDOM = blockObj.DOM;
+    const selectedLayout = blockObj.values.layout;
+    const select = blockDOM.querySelector('select');
 
+    if (!select) return;
+    for (const option of select.options) {
+        // on compare la valeur de l'option avec le layout choisi
+        option.selected = (option.value === selectedLayout);
+    }
+}
 
-console.log(blocksArray);
 
 
 // ================================
@@ -136,26 +159,26 @@ function syncBlocksArray(blockDOM, Obj) {
         const field = inputEl.name; // récupère le nom du champ
         const value = inputEl.value;
         index = Obj.display_order;
-        console.log('Obj : ' + Obj.display_order);
-        console.log('index : ' + index);
+        //console.log('Obj : ' + Obj.display_order);
+        //console.log('index : ' + index);
 
         // ---- RESYNC INDEX (if bloc is added, then another bloc deleted, then it desyncs index)
         if (blocksArray[index] === undefined) {
             blocksArray.forEach(block => {
                 block.display_order = syncDisplayOrder(block);
                 index = block.display_order;
-                console.log(block.type + ' : ' + block.display_order);
+                //console.log(block.type + ' : ' + block.display_order);
             });
         }
-        console.log(blocksArray);
-        console.log('display order : ' + blocksArray[index].display_order);
+        //console.log(value);
+        //console.log('display order : ' + blocksArray[index].display_order);
         // ---------------------------------------------------------------
         
         // on met à jour la valeur dans le bloc correspondant
         if (blocksArray[index].values) {
             //console.log('saved');
-            //console.log(blocksArray[index].values[field]);
             blocksArray[index].values[field] = value;
+            //console.log(blocksArray[index].values);
         }
         
         //console.log(blocksArray);
@@ -186,15 +209,15 @@ function forceSync() {
     dataToJSON(data);
 }
 function dataToJSON(data) {
-    //console.log('data');
-    //console.log(data);
+    console.log('data');
+    console.log(data);
     const hiddenInput = document.getElementById('blocks_data');
     hiddenInput.value = JSON.stringify(data);
-    console.log('JSON');
-    //console.log(hiddenInput.value);
-    /* console.log(
+    /* console.log('JSON');
+    console.log(
         JSON.stringify(data, null, 2)
-    ); */
+        ); */
+    //console.log(hiddenInput.value);
 }
 function syncDisplayOrder(blockObj) {
     return blocksArray.indexOf(blockObj);
@@ -206,12 +229,12 @@ function prettierPage() {
     const mainContainer = document.querySelector('#_page_blocks .inside');
     const domBlocks = document.querySelectorAll('.block-item');
 
-    console.log(mainContainer);
+    //console.log(mainContainer);
     mainContainer.style.setProperty('padding', '0', 'important');
     
     domBlocks.forEach(el => {
         el.classList.add('inside');
-        console.log(el);
+        //console.log(el);
         el.children[0].classList.add('inner-block');
     });
 }
@@ -234,17 +257,19 @@ addBlockBtn.addEventListener('click', () => {
     
     // Create instance of added block in array
     const addedBlock = { ...php.blocksLibrary[selectedType] };
-    //console.log(blocksArray);
+    //console.log(php.blocksLibrary);
     
     const html = addedBlock.html;
     
     // Reset inputs values
     addedBlock.values = {};
     addedBlock.fields.forEach(field => {
-        addedBlock.values[field] = '';
+
+        addedBlock.values[field] = (field === 'layout') ? 'default' : '';
         //console.log(addedBlock.values);
         //console.log(addedBlock.values[field]);
     });
+    //console.log(addedBlock);
     
     //addBlockToUI(html, selectedType, index);
     // Temp add block function
@@ -253,13 +278,13 @@ addBlockBtn.addEventListener('click', () => {
     
     
     const newBlock = tempDiv.firstElementChild || document.createElement('div');
-    newBlock.classList.add('inside');
     newBlock.classList.add('inner-block');
     
     
     //console.log(newBlock);
     const singleBlockContainer = document.createElement('div');
     singleBlockContainer.classList.add('block-item');
+    singleBlockContainer.classList.add('inside');
     singleBlockContainer.appendChild(newBlock);
     
     const blocksPageContainer = document.querySelector('#_page_blocks .inside');
@@ -285,7 +310,8 @@ document.addEventListener('DOMContentLoaded', () => {
     //console.log(php.pageBlocks);
     php.pageBlocks.forEach((blockInPage, index) => {
         pushBlocksArray(blockInPage, domBlocks[index]);
-        syncBlocksArray(domBlocks[index], index);
+        syncBlocksArray(domBlocks[index], blockInPage);
+        setDropDowns(blockInPage);
         
         //console.log(blocksArray[index].values);
         
@@ -299,23 +325,15 @@ document.addEventListener('DOMContentLoaded', () => {
 //   Import d'images wordpress
 // ================================
 jQuery(document).ready(function($){
-    let mediaFrame;
-
     $('body').on('click', '.select-media, .hero-image', function(e){
         e.preventDefault();
 
         const trigger = $(this);
         const blockField = trigger.closest('.block-field');
-        const input = blockField.find('input[type="text"]');
         const previewContainer = blockField.find('.preview-container');
         const isGallery = blockField.data('multiple') || false;
 
-        if (mediaFrame) {
-            mediaFrame.open();
-            return;
-        }
-
-        mediaFrame = wp.media({
+        const mediaFrame = wp.media({
             title: 'Choisir une image' + (isGallery ? 's' : ''),
             button: { text: 'Utiliser cette image' + (isGallery ? 's' : '') },
             multiple: isGallery
@@ -325,16 +343,7 @@ jQuery(document).ready(function($){
             const selection = mediaFrame.state().get('selection').toArray();
             const urls = selection.map(att => att.toJSON().url);
 
-            // --- Mettre à jour l'input visible ---
-            if(isGallery){
-                input.val(urls.join(',')); // juste une string séparée par des virgules
-            } else {
-                input.val(urls[0] || '');
-            }
-
-            // --- Affichage des previews ---
             if(previewContainer.length){
-                console.log(previewContainer);
                 previewContainer.empty();
                 urls.forEach(url => {
                     $('<img>').attr('src', url).css({ width: '80px', margin: '5px' }).appendTo(previewContainer);
@@ -342,16 +351,46 @@ jQuery(document).ready(function($){
                 previewContainer.show();
             }
 
-            // --- Mettre à jour le hidden input global pour sauvegarde ---
-            //syncBlocksToInput();
-            const blockDiv = trigger.closest('.block-item');
-            //console.log(blockDiv[0]);
-            //syncBlocksArray(blockDiv,)
+            const parentBlock = findOutBlockIndex(blockField[0], '.block-item');
+            const currentIndex = parentBlock[1];
+            
+            if (blockField[0].dataset.name in blocksArray[currentIndex].values) {
+                const value = (urls.length < 2) ? urls[0] : urls;
+                const field = blockField[0].dataset.name;
+                blocksArray[currentIndex].values[field] = value;
+            }
+
+            forceSync();
         });
 
         mediaFrame.open();
     });
 });
+// Display preview images at INIT
+jQuery(document).ready(function($){
+    $('.block-field').each(function(){
+        const blockField = $(this);
+        const previewContainer = blockField.find('.preview-container');
+        const blockIndex = findOutBlockIndex(blockField.closest('.block-item')[0], '.block-item')[1];
+        const fieldName = blockField.data('name');
+
+        if (blockIndex !== -1 && fieldName in blocksArray[blockIndex].values) {
+            const value = blocksArray[blockIndex].values[fieldName];
+            if (!value) return;
+
+            const urls = Array.isArray(value) ? value : [value];
+
+            if(previewContainer.length){
+                previewContainer.empty();
+                urls.forEach(url => {
+                    $('<img>').attr('src', url).css({ width: '80px', margin: '5px' }).appendTo(previewContainer);
+                });
+                previewContainer.show();
+            }
+        }
+    });
+});
+
 
 
 
@@ -375,7 +414,8 @@ jQuery(document).ready(function($){
 )); */
 
 debugBtn.addEventListener('click', () => {
-    console.log(php.pageBlocks);
+    console.log('DEBUG');
+    console.log(blocksArray);
 })
 
 

@@ -1,9 +1,9 @@
-<section class="text-block container">
-    {% if fields.title %}
-        <h1>{{ fields.title }}</h1>
+<section class="text-block container" style="{{ values.custom_css }}">
+    {% if values.title %}
+        <h1>{{ values.title }}</h1>
     {% endif %}
 
-    {% if fields.content %}
-        <p>{{ fields.content }}</p>
+    {% if values.content %}
+        <p>{{ values.content }}</p>
     {% endif %}
 </section>

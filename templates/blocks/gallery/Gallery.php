@@ -11,7 +11,7 @@ class Gallery extends Block {
 
     public function __construct()
     {
-        parent::__construct('gallery', ['title','image']);
+        parent::__construct('gallery', ['custom_css', 'title','gallery', 'layout']);
     }
 
     public function renderAdmin($values = [])

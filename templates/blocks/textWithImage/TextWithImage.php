@@ -11,7 +11,7 @@ class TextWithImage extends Block {
 
     public function __construct()
     {
-        parent::__construct('textWithImage', ['title','content','image']);
+        parent::__construct('textWithImage', ['title','content','image', 'layout']);
     }
 
     public function renderAdmin($values = [])

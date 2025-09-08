@@ -96,12 +96,12 @@ add_action('admin_enqueue_scripts', function($hook) {
 // ================================
 
 // (Only from blocks on page #optimazor2000)
-/* add_action('wp_enqueue_scripts', function() {
+add_action('wp_enqueue_scripts', function() {
     if (!is_singular()) return; // seulement sur les pages/posts
 
     global $post;
     if (!$post) return;
-    $blocks_data = get_post_meta($post->ID, 'blocks_data', true);
+    $blocks_data = get_post_meta($post->ID, '_page_blocks', true);
     $blocks = $blocks_data ? json_decode($blocks_data, true) : [];
 
     if (!$blocks) return;
@@ -131,7 +131,7 @@ add_action('admin_enqueue_scripts', function($hook) {
         }
     }
 });
- */
+
 
 
 
@@ -233,16 +233,16 @@ function render_admin_UI($post) {
     <?php // JSON INPUT NOT HIDDEN FOR DEBUG
 
 
-    // Render admin
-    foreach ($page_blocks as $block) {
-        $type = $block['type'];
-        $blocks_library[$type]->renderAdmin($block['values']);
-    }
+// Render admin
+foreach ($page_blocks as $block) {
+    $type = $block['type'];
+    $blocks_library[$type]->renderAdmin($block['values']);
+}
 
 
-    // BLOCKS LIBRARY FOR JS
-    $library_array = (array) $blocks_library;
-    //var_dump($library_array);
+// BLOCKS LIBRARY FOR JS
+//var_dump($library_array);
+$library_array = (array) $blocks_library;
     foreach ($library_array as $block) {
         $block_array = (array) $block;
         $type = $block_array['type'];

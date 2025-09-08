@@ -1,28 +1,27 @@
-let img = document.querySelector('.twi-image img');
+document.addEventListener('DOMContentLoaded', () => {
+    const twi_imgs = document.querySelectorAll('.twi-image img');
 
-img.addEventListener('click', (e) => {
-    imgDOM = e.target;
-    console.log(imgDOM.src);
+    twi_imgs.forEach(img => {
+        img.addEventListener('click', (e) => {
+            showImagePopup(e.target.src);
+        });
+    });
 
-    showImagePopup(imgDOM.src);
-})
+    function showImagePopup(src) {
+        // Vérifier si un overlay existe déjà
+        if (document.querySelector('.img-popup-overlay')) return;
 
+        const overlay = document.createElement('div');
+        overlay.classList.add('img-popup-overlay');
 
+        const imgPopup = document.createElement('img');
+        imgPopup.src = src;
 
-function showImagePopup(src) {
-  // overlay
-  const overlay = document.createElement('div');
-  overlay.classList.add('img-popup-overlay');
+        overlay.appendChild(imgPopup);
+        document.body.appendChild(overlay);
 
-  // image
-  const img = document.createElement('img');
-  img.src = src;
-
-  overlay.appendChild(img);
-  document.body.appendChild(overlay);
-
-  // fermer au clic
-  overlay.addEventListener('click', () => {
-    overlay.remove();
-  });
-}
+        overlay.addEventListener('click', () => {
+            overlay.remove();
+        });
+    }
+});

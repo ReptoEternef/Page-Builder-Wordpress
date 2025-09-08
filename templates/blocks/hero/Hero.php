@@ -8,11 +8,11 @@ class Hero extends Block {
     public $html;
     public $block_type = 'hero';
     public $display_name = 'Hero';
-    public $layouts = ['default'];
+    public $layouts = ['default', 'version2'];
 
     public function __construct()
     {
-        parent::__construct('hero', ['custom_css', 'title','slogan', 'image']);
+        parent::__construct('hero', ['custom_css', 'title','slogan', 'background', 'layout']);
     }
 
     public function renderAdmin($values = [])

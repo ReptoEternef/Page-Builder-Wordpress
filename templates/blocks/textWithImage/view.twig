@@ -1,17 +1,17 @@
 <section class="twi-block container">
     <div class="twi-text-container text-entrance">
-        {% if fields.title %}
-            <h1>{{ fields.title }}</h1>
+        {% if values.title %}
+            <h1>{{ values.title }}</h1>
         {% endif %}
 
-        {% if fields.content %}
-            <p>{{ fields.content }}</p>
+        {% if values.content %}
+            <p>{{ values.content }}</p>
         {% endif %}
     </div>
     
-    {% if fields.image %}
+    {% if values.image %}
     <div class="twi-image">
-        <img src="{{ fields.image }}"></img>
+        <img src="{{ values.image }}"></img>
     </div>
     {% endif %}
 </section>

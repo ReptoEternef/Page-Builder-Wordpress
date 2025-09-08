@@ -1,23 +1,23 @@
-<section class="gal-block container">
+<div class="gal-block container" style="{{ values.custom_css }}">
     <div class="gal-text-container text-entrance">
-        {% if fields.title %}
-            <h1>{{ fields.title }}</h1>
+        {% if values.title %}
+            <h1>{{ values.title }}</h1>
         {% endif %}
 
-        {% if fields.content %}
-            <p>{{ fields.content }}</p>
+        {% if values.content %}
+            <p>{{ values.content }}</p>
         {% endif %}
     </div>
     
-    {# {{ dump(fields.image) }} #}
+    {# {{ dump(values.image) }} #}
     <div class="gal-container">
-        {# {% set images = fields.image|split(',') %} #}
-        {% for img in fields.image %}
+        {# {% set images = values.image|split(',') %} #}
+        {% for img in values.gallery %}
             <div class="gal-image">
                 <img src="{{ img }}" alt="">
             </div>
         {% endfor %}
     </div>
 
-</section>
+</div>
 

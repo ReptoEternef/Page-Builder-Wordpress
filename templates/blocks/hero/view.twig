@@ -1,9 +1,35 @@
-<div class="block-hero-container full-width">
-  <div class="block-hero" style="background-image: url('{{ fields.image }}');">
-    <h2>{{ fields.Titre }}</h2>
-    <p>{{ fields.slogan }}</p>
-    {% if fields.background %}
-      <div class="background"></div>
-    {% endif %}
+{% if values.layout == 'default' %}
+  <div class="block-hero-container full-width">
+    <div class="block-hero" style="background-image: url('{{ values.background }}');">
+      <h2>{{ values.title }}</h2>
+      <p>{{ values.slogan }}</p>
+      {# {% if values.background %}
+        <div class="background"></div>
+      {% endif %} #}
+    </div>
   </div>
-</div>
+{% elseif values.layout == 'version2' %}
+  <div class="block-hero-container">
+    <div class="block-hero" style="align-items:flex-start; background-image: url('{{ values.background }}');">
+      <h2>{{ values.title }}</h2>
+      <p>{{ values.slogan }}</p>
+      {# {% if values.background %}
+        <div class="background"></div>
+      {% endif %} #}
+    </div>
+  </div>  
+{% else %}
+    <span>Erreur : layout</span>
+{% endif %}
+
+{# {% if values is defined %}
+  <div class="debug-block" style="background:#111;color:#0f0;padding:1rem;margin:1rem 0;font-family:monospace;font-size:14px;overflow:auto;">
+    <strong style="color:#ff0;">DEBUG values :</strong><br>
+    <pre>{{ values|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+  </div>
+{% else %}
+  <div class="debug-block" style="background:#111;color:#f55;padding:1rem;margin:1rem 0;font-family:monospace;font-size:14px;">
+    ⚠️ <strong>Pas de variable `values` trouvée ici !</strong>
+    <pre>{{ dump(_context) }}</pre>
+  </div>
+{% endif %} #}

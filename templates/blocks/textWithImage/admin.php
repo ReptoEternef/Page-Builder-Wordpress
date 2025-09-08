@@ -8,11 +8,11 @@
     </div>
     <div class="flex-column">
         
-        <div class="block-field">
+        <div class="block-field" data-name="image">
             <label for="image">Image</label>
-            <input type="text" hidden class="hero-image" name="image" value="" placeholder="Lien de l'image">
-            <button type="button" class="button select-media" data-target=".hero-image">Choisir une image</button>
-            <img class="preview-image" name="image" src="" style="max-width:200px; display:none;">
+            <button type="button" class="button select-media">Choisir une image</button>
+            
+            <div class="preview-container"></div>
         </div>
 
 

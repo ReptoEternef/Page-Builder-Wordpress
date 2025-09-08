@@ -1,0 +1,14 @@
+// Idées
+
+1. avoir un bouton pour recalculer tout le JSON. Actuellement si un field ou un élément change dans un bloc
+le JSON/PHP va générer un bloc un peu foireux à l'init.
+
+2. système de traduction
+
+3. dupliquer un bloc
+
+4. drap and drop pour replacer
+
+5. placer un bloc en drag & drop
+
+6. ajouter des inputs en plus pour savoir si l'image est cliquable etc...

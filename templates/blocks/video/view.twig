@@ -1,6 +1,6 @@
 <div class="video-block container">
 {% if values.video_link is defined and values.video_link %}
-  {% set video_id = '' %}
+  {% set video_id = 'https://maps.google.com/maps?width=100%&amp;height=100%&amp;hl=en&amp;q=' %}
 
   {# Cas 1: lien avec watch?v= #}
   {% if 'watch?v=' in values.video_link %}

@@ -1,0 +1,32 @@
+{% set source = 'https://maps.google.com/maps?width=100%&amp;height=100%&amp;hl=en&amp;q=' %}
+<div class="container">
+  <iframe id="map-canvas" class="map_part" width="600"  height="450"  frameborder="0"
+  scrolling="no" marginheight="0" marginwidth="0"
+  src="
+  &amp;t=&amp;z=14&amp;ie=UTF8&amp;iwloc=B&amp;output=embed">
+  Powered by <a href="https://embedgooglemaps.com">google maps embed</a> and 
+  <a href="https://allabeviljas.se/">sms lån som beviljar alla</a></iframe>
+</div>
+
+
+{# SNIPPETS & TIPS
+
+penser à écrire container ou full-width dans la div principale
+
+{{ values.field_de_la_classe }} 
+{% if values.layout == 'default' %}
+
+#}
+
+
+{# {% if values is defined %}
+  <div class="debug-block" style="background:#111;color:#0f0;padding:1rem;margin:1rem 0;font-family:monospace;font-size:14px;overflow:auto;">
+    <strong style="color:#ff0;">DEBUG values :</strong><br>
+    <pre>{{ values|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+  </div>
+{% else %}
+  <div class="debug-block" style="background:#111;color:#f55;padding:1rem;margin:1rem 0;font-family:monospace;font-size:14px;">
+    ⚠️ <strong>Pas de variable `values` trouvée ici !</strong>
+    <pre>{{ dump(_context) }}</pre>
+  </div>
+{% endif %} #}

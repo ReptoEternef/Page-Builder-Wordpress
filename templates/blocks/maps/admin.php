@@ -6,40 +6,53 @@
 */
 ?>
 
-<div class="flex-column wrap">
-    <strong><?= $this->display_name ?></strong>
-    <div class="flex-row">
+<?php
+/* Preview Google Maps pour l'admin avec largeur/hauteur fixes */
 
-        <?php // ----- LAYOUTS DROPDOWN -------
-        if (count($this->layouts) > 1) {
-            ?>
-            <!-- <label for="layout">Layout :</label> -->
-            <select name="layout" id="">
-                <?php
-                if ($this->layouts) {
-                    foreach ($this->layouts as $layout) {
-                        ?> <option value="<?= esc_attr($layout) ?>" id=""><?= esc_attr($layout) ?></option> <?php
-                    }
-                }
-                ?>
-            </select>
-            <?php
-        } // ----------------------------------
-        ?>
+$address = $data['address'] ?? '';
+$source = "https://maps.google.com/maps?width=100%&height=100%&hl=en&q=" . urlencode($address) . "&t=&z=14&ie=UTF8&iwloc=B&output=embed";
+
+// Valeurs fixes pour le preview
+$mapHeight = '200px';
+$mapWidth  = '200px';
+?>
+
+<div class="flex-row wrap">
+    <div class="flex-column">
+        <strong><?= $this->display_name ?></strong>
         
-        <input type="text" name="title" value="<?= $data['title'] ?? '' ?>" placeholder="Titre">
-        <textarea type="text" name="slogan" placeholder="Slogan"><?= $data['slogan'] ?? '' ?></textarea>
+        <input type="text" name="address" value="<?= $address ?>" placeholder="Adresse">
+        <input type="text" name="width" value="<?= $data['width'] ?? '' ?>" placeholder="Largeur">
+        <input type="text" name="height" value="<?= $data['height'] ?? '' ?>" placeholder="Hauteur">
     </div>
-    
-    <div class="block-field" data-name="background">
-        <label for="image">Background</label>
-        <button type="button" class="button select-media">Choisir une image</button>
 
-        <div class="preview-container"></div>
+    <div class="gmaps-preview">
+        <div class="mapouter container">
+            <div class="gmap_canvas">
+                <iframe class="gmap_iframe" width="100%" height="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"
+                        src="<?= $source ?>"></iframe>
+            </div>
+            <style>
+                .mapouter {
+                    position: relative;
+                    text-align: right;
+                    width: <?= $mapWidth ?>;
+                    height: <?= $mapHeight ?>;
+                }
+                .gmap_canvas {
+                    overflow: hidden;
+                    background: none !important;
+                    width: <?= $mapWidth ?>;
+                    height: <?= $mapHeight ?>;
+                }
+                .gmap_iframe {
+                    width: <?= $mapWidth ?>;
+                    height: <?= $mapHeight ?> !important;
+                }
+            </style>
+        </div>
     </div>
 </div>
-
-
 
 <?php
 

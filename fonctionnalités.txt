@@ -41,8 +41,6 @@ https://linkcleaner.app/
 
 > avec l'idée des blocs dans des blocs, avoir des blocs colonne
 
-> bloc google maps
-
 > téléchargement d'un fichier
 
 > Galerie : mettre différent type de galerie avec les layouts (grid, masonry...)
@@ -52,7 +50,7 @@ https://linkcleaner.app/
 
 > Texte avec "Lire plus"
 
-> séparateur (soit vide pour créer de l'espace, soit séparateur avec une fine ligne)
+> séparateur avec une fine ligne
 
 > bloc informatif, aucun impact sur la page du site
 

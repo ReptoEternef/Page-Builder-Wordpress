@@ -7,7 +7,6 @@ SNIPPETS & TIPS
     > nom du dossier
     > nom du fichier
     
-    > nom de la classe
     > block_type
     > display_name
     > layouts
@@ -19,15 +18,15 @@ use Timber\Timber;
 
 require_once get_template_directory() . '/templates/blocks/Block.php';
 
-class Maps extends Block {
+class Space extends Block {
     public $html;
-    public $block_type = 'maps';
-    public $display_name = 'Google Maps';
+    public $block_type = 'space';
+    public $display_name = 'Espace';
     public $layouts = ['default'];
 
     public function __construct()
     {
-        parent::__construct('maps', ['custom_css', 'layout', 'address', 'width', 'height']);
+        parent::__construct('space', ['custom_css', 'layout', 'height']);
     }
 
     public function renderAdmin($values = [])

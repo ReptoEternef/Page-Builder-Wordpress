@@ -7,6 +7,7 @@ SNIPPETS & TIPS
     > nom du dossier
     > nom du fichier
     
+    > nom de la classe
     > block_type
     > display_name
     > layouts

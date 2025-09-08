@@ -1,4 +1,4 @@
-// Idées fonctionnalités TEST
+// Idées fonctionnalités
 
 > avoir un bouton pour recalculer tout le JSON. Actuellement si un field ou un élément change dans un bloc
 le JSON/PHP va générer un bloc un peu foireux à l'init

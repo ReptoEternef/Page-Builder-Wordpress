@@ -220,7 +220,11 @@ function render_admin_UI($post) {
 
     // BLOCKS INIT
     $page_blocks = get_post_meta($post->ID, '_page_blocks', true);
-    $page_blocks = $page_blocks ? json_decode($page_blocks, true) : [];
+    // On décode le JSON, si ça échoue on retombe sur un tableau vide
+    $page_blocks = is_string($page_blocks) ? json_decode($page_blocks, true) : [];
+    if (!is_array($page_blocks)) {
+        $page_blocks = [];
+    }
 
     // Dropdown to select a block to add
     ?> 
@@ -228,16 +232,20 @@ function render_admin_UI($post) {
         <?php dropdown_block_selector($blocks_library); ?>
         <button type="button" id="add_block_btn">Ajouter un bloc</button>
         <button type="button" id="debug_btn">debug</button>
-        <input type="text" name="_page_blocks" id="blocks_data" value="<?php echo esc_attr(json_encode($page_blocks ?: [])); ?>"></input>
+        <input type="text" hidden name="_page_blocks" id="blocks_data" value="<?php echo esc_attr(json_encode($page_blocks ?: [])); ?>"></input>
     </div>
-    <?php // JSON INPUT NOT HIDDEN FOR DEBUG
+    <?php
 
 
 // Render admin
-foreach ($page_blocks as $block) {
-    $type = $block['type'];
-    $blocks_library[$type]->renderAdmin($block['values']);
-}
+    if (is_array($page_blocks)) {
+        foreach ($page_blocks as $block) {
+            $type = $block['type'] ?? '';
+            if (isset($blocks_library[$type])) {
+                $blocks_library[$type]->renderAdmin($block['values'] ?? []);
+            }
+        }
+    }
 
 
 // BLOCKS LIBRARY FOR JS
@@ -306,7 +314,7 @@ function render_blocks_json_meta_box($post) {
     $page_blocks = $page_blocks ? json_decode($page_blocks, true) : [];
     ?>
     <label for="blocks-json">JSON actuel :</label>
-    <textarea id="blocks-json" rows="10" style="width:100%;"><?php echo htmlspecialchars(json_encode($page_blocks, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)); ?></textarea>
+    <!-- <textarea id="blocks-json" rows="10" style="width:100%;"><?php //echo htmlspecialchars(json_encode($page_blocks, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)); ?></textarea> -->
     <?php //echo esc_attr(json_encode($page_blocks ?: [])); ?>
     <?php
 }

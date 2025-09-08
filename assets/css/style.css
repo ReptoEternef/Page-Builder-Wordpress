@@ -7,7 +7,7 @@
 .container {
     max-width: 1200px;  /* largeur max du contenu */
     margin: 0 auto;     /* centre horizontalement */
-    padding: 0 1.5rem;  /* espace de respiration sur les côtés */
+    padding: 70px 1.5rem;  /* espace de respiration sur les côtés */
 }
 
 .full-width {

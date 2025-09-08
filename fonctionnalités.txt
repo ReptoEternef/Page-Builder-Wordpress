@@ -1,14 +1,63 @@
-// Idées
+// Idées fonctionnalités
 
-1. avoir un bouton pour recalculer tout le JSON. Actuellement si un field ou un élément change dans un bloc
-le JSON/PHP va générer un bloc un peu foireux à l'init.
+> avoir un bouton pour recalculer tout le JSON. Actuellement si un field ou un élément change dans un bloc
+le JSON/PHP va générer un bloc un peu foireux à l'init
 
-2. système de traduction
+> système de traduction
 
-3. dupliquer un bloc
+> dupliquer un bloc
 
-4. drap and drop pour replacer
+> drap and drop pour replacer
 
-5. placer un bloc en drag & drop
+> placer un bloc en drag & drop
 
-6. ajouter des inputs en plus pour savoir si l'image est cliquable etc...
+> ajouter des inputs en plus pour savoir si l'image est cliquable etc...
+
+> avoir le JSON sur la droite qui s'update (et le rendre soit non éditable soit éditable en fonction du role)
+
+> afficher/cacher le bouton supprimer en fonction du role
+
+> catégoriser la sélection des blocs
+
+> pouvoir "connecter" des blocs à des types de post
+
+> Choisir le nombre d'inputs, par exemple pour le carrousel de vidéos
+
+> Youtube : pouvoir importer n'importe quel lien youtube au lieu du iframe (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent)
+https://linkcleaner.app/
+
+> inputs admin qui changent en fonction du layout choisi
+
+> Anchor system
+
+
+// Idées de bloc
+
+> carrousel d'images qui se resize en fonction du format
+
+> carrousel de vidéos
+
+> bloc <div> qui permet de mettre un bloc dans un bloc
+
+> avec l'idée des blocs dans des blocs, avoir des blocs colonne
+
+> bloc google maps
+
+> téléchargement d'un fichier
+
+> Galerie : mettre différent type de galerie avec les layouts (grid, masonry...)
+> ajouter effet genre au hover le nom de l'image s'affiche au centre
+
+> liste/grille de posts avec choix de catégorie, chargement infini ou "charger plus"
+
+> Texte avec "Lire plus"
+
+> séparateur (soit vide pour créer de l'espace, soit séparateur avec une fine ligne)
+
+> bloc informatif, aucun impact sur la page du site
+
+> cards
+
+> barre de menu à mettre dans le site, sticky
+
+

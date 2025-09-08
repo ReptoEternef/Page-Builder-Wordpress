@@ -1,6 +1,8 @@
 const addBlockBtn = document.getElementById('add_block_btn');
 const debugBtn = document.getElementById('debug_btn');
 const blocksContainer = document.getElementById('page_blocks');
+const pageBlocksJSON = document.getElementById('page_blocks_json');
+let JSONtextEl;
 const blockTypeSelector = document.getElementById('block-type-selector');
 let blocksArray = [];
 let allBlocksHTML = {};
@@ -213,6 +215,10 @@ function dataToJSON(data) {
     console.log(data);
     const hiddenInput = document.getElementById('blocks_data');
     hiddenInput.value = JSON.stringify(data);
+
+    console.log(pageBlocksJSON);
+    refreshSideJSON(data);
+    
     /* console.log('JSON');
     console.log(
         JSON.stringify(data, null, 2)
@@ -239,6 +245,21 @@ function prettierPage() {
     });
 }
 
+function createSideJSON() {
+    const parent = pageBlocksJSON.children[1];
+    const tempEl = document.createElement('pre');
+    JSONtextEl = tempEl;
+    console.log(JSONtextEl);
+    parent.appendChild(JSONtextEl);
+    JSONtextEl.id = 'JSON-text-element';
+}
+function refreshSideJSON(innerText) {
+    const parent = pageBlocksJSON.children[1];
+
+    stringifiedJSON = JSON.stringify(innerText, null, 2)
+    JSONtextEl.innerHTML = stringifiedJSON;
+
+}
 
 
 
@@ -305,6 +326,8 @@ addBlockBtn.addEventListener('click', () => {
 // ================================
 document.addEventListener('DOMContentLoaded', () => {
     const domBlocks = document.querySelectorAll('.block-item');
+    createSideJSON();
+    refreshSideJSON(php.pageBlocks);
     
     //console.log('INIT');
     //console.log(php.pageBlocks);

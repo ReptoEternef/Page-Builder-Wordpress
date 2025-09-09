@@ -135,16 +135,19 @@ function pushBlocksArray(addedBlock, blockDOM) {
     blocksArray[addedBlock.display_order].DOM = blockDOM;
 }
 
-function setDropDowns(blockObj) {
+function setdropdownsName(blockObj) {
     const blockDOM = blockObj.DOM;
-    const selectedLayout = blockObj.values.layout;
-    const select = blockDOM.querySelector('select');
-
+    const select = blockDOM.querySelectorAll('select');
     if (!select) return;
-    for (const option of select.options) {
-        // on compare la valeur de l'option avec le layout choisi
-        option.selected = (option.value === selectedLayout);
-    }
+    
+    select.forEach(dropdown => {
+        const field = dropdown.name;
+        const selectedValue = blockObj.values[field];
+
+        for (const option of dropdown.options) {
+            option.selected = (option.value === selectedValue);
+        }
+    });
 }
 
 
@@ -249,7 +252,6 @@ function createSideJSON() {
     const parent = pageBlocksJSON.children[1];
     const tempEl = document.createElement('pre');
     JSONtextEl = tempEl;
-    console.log(JSONtextEl);
     parent.appendChild(JSONtextEl);
     JSONtextEl.id = 'JSON-text-element';
 }
@@ -334,7 +336,7 @@ document.addEventListener('DOMContentLoaded', () => {
     php.pageBlocks.forEach((blockInPage, index) => {
         pushBlocksArray(blockInPage, domBlocks[index]);
         syncBlocksArray(domBlocks[index], blockInPage);
-        setDropDowns(blockInPage);
+        setdropdownsName(blockInPage);
         
         //console.log(blocksArray[index].values);
         

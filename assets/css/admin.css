@@ -1,36 +1,3 @@
-.flex-column {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  align-items: flex-start;
-}
-.flex-row {
-  display: flex;
-  flex-direction: row;
-  gap: 7px;
-}
-.wrap {
-    flex-wrap: wrap;
-}
-.center {
-    align-items: center;
-}
-.prevent-select {
-  -webkit-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-}
-.full-width {
-    width: 100%;
-}
-/* .block-item {
-  transition: transform 0.3s ease;
-} */
-
-
-
-
-
 #page_blocks {
     max-width: 850px;
 }
@@ -140,3 +107,39 @@ input[type="text"] {
 #page_blocks_json {
     overflow: scroll;
 }
+
+
+
+
+
+/* --------------------- SINGLE CLASSES --------------------- */
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  align-items: flex-start;
+}
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  gap: 7px;
+}
+.wrap {
+    flex-wrap: wrap;
+}
+.center {
+    align-items: center;
+}
+.prevent-select {
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.full-width {
+    width: 100%;
+}
+/* .block-item {
+  transition: transform 0.3s ease;
+} */
+

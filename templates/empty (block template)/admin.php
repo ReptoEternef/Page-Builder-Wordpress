@@ -3,6 +3,7 @@
 à remplir :
     > name des input (avec nom du field)
     > les value $data[] (sauf pour textarea)
+    > dropdown : si autre que layout, bien mettre <option value="" disabled selected>-- Choisissez une option --</option>
 */
 ?>
 

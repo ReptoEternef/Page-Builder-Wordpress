@@ -29,8 +29,14 @@ class TextWithImage extends Block {
     public function renderFrontend($values = [])
     {
         $data = $this->normalizeData();
-        Timber::render('blocks/text/view.twig', $data);
+        $data['values'] = $values['values'] ?? $values;
+
+        // Utiliser le type de bloc pour choisir le bon view.twig
+        $template_path = 'blocks/' . $this->block_type . '/view.twig';
+
+        Timber::render($template_path, $data);
     }
+
 
     public function getHTML() {
         ob_start();

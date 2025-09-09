@@ -193,6 +193,7 @@ function dropdown_block_selector($blocks_library) {
 // Get rid of Gutemberg
 add_action('admin_init', function() {
     remove_post_type_support('page', 'editor');
+    remove_post_type_support('page', 'comments');
 });
 
 // Ajouter la metabox
@@ -330,63 +331,34 @@ function render_blocks_json_meta_box($post) {
 // POST TYPE EN DEUSPI
 // ================================
 
+/* add_action('wp_footer', function() {
+    if ( class_exists('Timber') ) {
+        $posts = Timber::get_posts([
+            'post_type' => 'movie',
+            'posts_per_page' => -1,
+        ]);
 
-// ======= Helper pour ajouter une meta box dynamique selon CPT =======
-function add_block_meta_box($cpt, $id, $title, $callback) {
-    add_action('add_meta_boxes', function($post_type) use ($cpt, $id, $title, $callback) {
-        if ($post_type !== $cpt) return; // On ajoute uniquement pour le CPT ciblé
+        foreach ($posts as $post) {
+            var_dump($post);
+            error_log($post->post_title); // titre du post
+        }
 
-        add_meta_box(
-            $id,
-            $title,
-            $callback,
-            $post_type,
-            'normal',
-            'high'
-        );
-    });
-}
-
-// ======= Exemple de callback pour afficher le bloc =======
-function render_post_list_block($post) {
-    wp_nonce_field('post_list_nonce', 'post_list_nonce_field');
-
-    // Exemple : récupérer un champ meta existant
-    $value = get_post_meta($post->ID, '_post_list_value', true);
-    ?>
-    <label for="post_list_value">Valeur :</label>
-    <input type="text" name="post_list_value" id="post_list_value" value="<?php echo esc_attr($value); ?>" style="width:100%;" />
-    <?php
-}
-
-// ======= Sauvegarde du bloc =======
-add_action('save_post', function($post_id) {
-    if (!isset($_POST['post_list_nonce_field'])) return;
-    if (!wp_verify_nonce($_POST['post_list_nonce_field'], 'post_list_nonce')) return;
-    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
-
-    if (isset($_POST['post_list_value'])) {
-        update_post_meta($post_id, '_post_list_value', sanitize_text_field($_POST['post_list_value']));
+    } else {
+        error_log('⚠️ Timber non trouvé !');
     }
 });
 
-// ======= Exemple d’utilisation : ajouter une meta box “Post List” sur CPT movie et book =======
-add_block_meta_box('movie', 'post_list_movie', 'Liste de films', 'render_post_list_block');
-add_block_meta_box('book',  'post_list_book',  'Liste de livres', 'render_post_list_block');
 
+// Afficher toutes les erreurs (utile en dev)
+error_reporting(E_ALL);
 
+// Activer l'affichage des erreurs (en dev)
+ini_set('display_errors', '1');
 
-add_action('init', function() {
-    register_post_type('TEST', [
-        'label' => 'Movies',
-        'public' => true,
-        'show_in_rest' => true,
-        'supports' => ['title'],
-    ]);
-});
+// Activer la journalisation des erreurs
+ini_set('log_errors', '1');
 
+// Spécifier le fichier de log
+ini_set('error_log', __DIR__ . '/error.log'); */
 
-
-
-
-echo 'oui';
+// Exemple : générer une erreur pour tester

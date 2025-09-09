@@ -1,6 +1,7 @@
 <?php
 use Timber\Timber;
 
+// Contexte global
 $context = Timber::context();
 $post_id = get_the_ID();
 
@@ -8,18 +9,38 @@ $post_id = get_the_ID();
 $json_blocks = get_post_meta($post_id, '_page_blocks', true);
 $blocks = $json_blocks ? json_decode($json_blocks, true) : [];
 
+// Récupère tous les blocs disponibles (Text, Movie, etc.)
+$availableBlocks = get_library();
 
-// Préparer les blocks pour Twig
 $rendered_blocks = [];
+
+
 foreach ($blocks as $block) {
-    $layout = $block['type'] ?? 'default'; // clé "type" du JSON
-    $rendered_blocks[] = array_merge($block, [
-        'layout' => $layout,
-    ]);
+    $layout = $block['type'] ?? 'default';
+    
+    if (isset($availableBlocks[$layout])) {
+        $block_instance = $availableBlocks[$layout];
+        
+        ob_start();
+        $block_instance->renderFrontend($block); // injecte les values
+        $html = ob_get_clean();
+        
+        $rendered_blocks[] = [
+            'layout' => $layout,
+            'html'   => $html,
+            'values' => $block,
+        ];
+    } else {
+        $rendered_blocks[] = [
+            'layout' => $layout,
+            'html'   => '<div style="color:red;">⚠️ Template ou classe manquant pour le bloc : ' . $layout . '</div>',
+            'values' => $block,
+        ];
+    }
 }
 
+//var_dump($rendered_blocks[0]['values']);
 $context['rendered_blocks'] = $rendered_blocks;
-//var_dump($context);
 
 // Rendu du builder
 Timber::render('page-builder.twig', $context);

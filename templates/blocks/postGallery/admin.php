@@ -3,14 +3,18 @@
 à remplir :
     > name des input (avec nom du field)
     > les value $data[] (sauf pour textarea)
+    > dropdown : si autre que layout, bien mettre <option value="" disabled selected>-- Choisissez une option --</option>
 */
+
+
+
 ?>
 
-<div class="flex-column wrap">
+<div class="">
     <strong><?= $this->display_name ?></strong>
     <div class="flex-row">
 
-        <?php // ----- LAYOUTS DROPDOWN -------
+        <?php // ----- dd_layouts DROPDOWN -------
         if (count($this->layouts) > 1) {
             ?>
             <!-- <label for="layout">Layout :</label> -->
@@ -28,7 +32,6 @@
         ?>
         
         
-        <input type="text" name="post_type" value="<?= $data['post_type'] ?? '' ?>" placeholder="Titre">
     </div>
     
     <?php
@@ -36,11 +39,30 @@
         'post_type' => 'movie',
         'posts_per_page' => -1,
     ];
-    //$query = new WP_Query($args);
-
     $posts = get_posts($args);
-    if (!empty($posts)) {
-        var_dump(($posts));
+    //echo $data['custom_post_type'];
+
+    $custom_post_types = get_post_types([
+        '_builtin' => false
+    ], 'objects');
+
+    if (!empty($custom_post_types)) {
+        ?>
+        <label for="layout">Post types :</label>            
+        <select name="custom_post_type" id="">
+            <option value="" disabled selected>-- Choisissez une option --</option>
+            <?php
+            foreach ($custom_post_types as $slug => $cpt) {
+                if (str_starts_with($slug, 'acf')) continue;
+
+                ?> <option value="<?= esc_attr($slug) ?>" id=""><?= esc_attr($cpt->label) ?></option> <?php
+            }
+            ?>
+
+        </select>
+        <?php
+    } else {
+        echo 'No custom cpost type created';
     }
 
 

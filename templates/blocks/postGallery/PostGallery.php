@@ -27,7 +27,7 @@ class PostGallery extends Block {
 
     public function __construct()
     {
-        parent::__construct('postGallery', ['custom_css', 'layout', 'post_type']);
+        parent::__construct('postGallery', ['custom_css', 'layout', 'custom_post_type']);
     }
 
     public function renderAdmin($values = [])
@@ -44,9 +44,31 @@ class PostGallery extends Block {
 
     public function renderFrontend($values = [])
     {
-        $data = $this->normalizeData();
+        $data = Timber::context();
+        $data = array_merge($data, $this->normalizeData());
+        $data['values'] = 'TEST';
+
+        // Récupère les posts à ce moment précis, en s'assurant que le CPT existe
+        error_log('OUIIIIIIIIIIIIIIIIIIIIIIIIIIIII');
+        if ( post_type_exists('movie') ) {
+            $data['posts'] = Timber::get_posts([
+                'post_type' => 'movie',
+                'posts_per_page' => -1,
+                'post_status' => 'publish',
+                'orderby' => 'date',
+                'order' => 'DESC',
+            ]);
+        } else {
+            $data['posts'] = [];
+            error_log('⚠️ Movie CPT non trouvé au moment du rendu.');
+        }
+
         Timber::render('blocks/text/view.twig', $data);
     }
+
+
+
+
 
     public function getHTML() {
         ob_start();

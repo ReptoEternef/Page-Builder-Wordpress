@@ -42,31 +42,38 @@ class PostGallery extends Block {
         <?php
     }
 
+    /* $data = Timber::context();
+    $data = array_merge($data, $this->normalizeData());
+    $data['values'] = 'TEST'; */
     public function renderFrontend($values = [])
     {
-        $data = Timber::context();
-        $data = array_merge($data, $this->normalizeData());
-        $data['values'] = 'TEST';
+        $data = $this->normalizeData();
+        $data['values'] = $values['values'] ?? $values;
 
-        // Récupère les posts à ce moment précis, en s'assurant que le CPT existe
-        error_log('OUIIIIIIIIIIIIIIIIIIIIIIIIIIIII');
-        if ( post_type_exists('movie') ) {
-            $data['posts'] = Timber::get_posts([
-                'post_type' => 'movie',
+        
+        if (!empty($data['values']['custom_post_type']) && post_type_exists($data['values']['custom_post_type'])) {
+            $cpt_name = $data['values']['custom_post_type'];
+            $data['cpt'] = Timber::get_posts([
+                'post_type' => $cpt_name,
                 'posts_per_page' => -1,
                 'post_status' => 'publish',
                 'orderby' => 'date',
                 'order' => 'DESC',
             ]);
+
+            $post_type_object = get_post_type_object($cpt_name);
+            $data['cpt_label'] = $post_type_object ? $post_type_object->label : '';
         } else {
-            $data['posts'] = [];
+            $data['cpt'] = [];
+            $data['cpt_label'] = '';
             error_log('⚠️ Movie CPT non trouvé au moment du rendu.');
         }
-
-        Timber::render('blocks/text/view.twig', $data);
+        
+        $template_path = 'blocks/' . $this->block_type . '/view.twig';
+        Timber::render($template_path, $data);
     }
-
-
+    
+    
 
 
 

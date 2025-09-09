@@ -32,9 +32,7 @@ class Text extends Block {
         $data = $this->normalizeData();
         $data['values'] = $values['values'] ?? $values;
 
-        // Utiliser le type de bloc pour choisir le bon view.twig
         $template_path = 'blocks/' . $this->block_type . '/view.twig';
-
         Timber::render($template_path, $data);
     }
 

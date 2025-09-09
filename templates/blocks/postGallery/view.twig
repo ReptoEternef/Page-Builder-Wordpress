@@ -1,10 +1,18 @@
 
 
 <div class="container">
-  {% if values.layout == 'default' %}
-    <div class="">
+  <h2>{{ cpt_label }}</h2>
 
+  {% if values.layout == 'default' and  cpt is not empty %}
+    <div class="pg-default">
+      {% for post in cpt %}
+        <div class="pg-default-post-container" style="background-image: url({{ Image( post.affiche ).src }});">
+          <h3>{{ post.title }}</h3>
+          <p>{{ post.genre }}</p>
+        </div>
+      {% endfor %}
     </div>
+    
   {% elseif values.layout == 'version2' %}
     <div class="">
 
@@ -13,24 +21,6 @@
       <span>Erreur : layout</span>
   {% endif %}
 </div>
-
-<h3>Liste des movies</h3>
-
-{% if posts is not empty %}
-    <ul>
-    {% for movie in posts %}
-        <li>
-            <a href="{{ movie.link }}">{{ movie.title }}</a>
-            {# Exemple de champ ACF #}
-            {% if movie.release_year %}
-                - Année : {{ movie.release_year }}
-            {% endif %}
-        </li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>Aucun post trouvé pour le post type "movie".</p>
-{% endif %}
 
 
 
@@ -49,7 +39,7 @@ penser à écrire container ou full-width dans la div principale
 #}
 
 {# values #}
-{% if values is defined %}
+{# {% if values is defined %}
   <div class="debug-block" style="background:#111;color:#0f0;padding:1rem;margin:1rem 0;font-family:monospace;font-size:14px;overflow:auto;">
     <strong style="color:#ff0;">DEBUG values :</strong><br>
     <pre>{{ values|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
@@ -59,9 +49,9 @@ penser à écrire container ou full-width dans la div principale
     ⚠️ <strong>Pas de variable `values` trouvée ici !</strong>
     <pre>{{ dump(_context) }}</pre>
   </div>
-{% endif %}
+{% endif %} #}
 
 {# variable twig #}
-<div class="debug-block" style="background:#111;color:#0f0;padding:1rem;margin:1rem 0;font-family:monospace;font-size:14px;overflow:auto;">
-  <pre>{{ dump(posts) }}</pre>
-</div>
+{# <div class="debug-block" style="background:#111;color:#0f0;padding:1rem;margin:1rem 0;font-family:monospace;font-size:14px;overflow:auto;">
+  <pre>{{ dump(cpt[0].image) }}</pre>
+</div> #}

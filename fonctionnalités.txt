@@ -30,6 +30,7 @@ https://linkcleaner.app/
 
 > Anchor system
 
+> avoir un espace dans l'admin wordpress qui permet de gérer des options du thème, les couleurs du theme etc...
 
 // Idées de bloc
 

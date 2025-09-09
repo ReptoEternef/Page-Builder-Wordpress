@@ -32,7 +32,9 @@ https://linkcleaner.app/
 
 > avoir un espace dans l'admin wordpress qui permet de gérer des options du thème, les couleurs du theme etc...
 
-// Idées de bloc
+> menu ajout bloc admin en sticky
+
+// Idées de bloc --------------------------------------------------------------------------------------------------
 
 > carrousel d'images qui se resize en fonction du format
 
@@ -59,4 +61,13 @@ https://linkcleaner.app/
 
 > barre de menu à mettre dans le site, sticky
 
+
+
+
+
+// Tests
+
+> régler wrap le bloc admin hero 
+
+> vidéo : mettre 888px par 500px en placeholder
 

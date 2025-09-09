@@ -65,8 +65,8 @@
         echo 'No custom cpost type created';
     }
 
-
 ?>
+</div>
 <?php
 
 /* SNIPPETS & TIPS

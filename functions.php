@@ -238,7 +238,7 @@ function render_admin_UI($post) {
     <?php
 
 
-// Render admin
+    // Render admin
     if (is_array($page_blocks)) {
         foreach ($page_blocks as $block) {
             $type = $block['type'] ?? '';
@@ -249,9 +249,9 @@ function render_admin_UI($post) {
     }
 
 
-// BLOCKS LIBRARY FOR JS
-//var_dump($library_array);
-$library_array = (array) $blocks_library;
+    // BLOCKS LIBRARY FOR JS
+    //var_dump($library_array);
+    $library_array = (array) $blocks_library;
     foreach ($library_array as $block) {
         $block_array = (array) $block;
         $type = $block_array['type'];
@@ -281,13 +281,6 @@ add_action('save_post', function($post_id) {
         update_post_meta($post_id, '_page_blocks', $blocks_json);
     }
 });
-
-
-
-// ================================
-// AJAX pour le Page Builder
-// ================================
-
 
 
 
@@ -321,46 +314,5 @@ function render_blocks_json_meta_box($post) {
 }
 
 
-
-
-
-
-
-
-// ================================
-// POST TYPE EN DEUSPI
-// ================================
-
-/* add_action('wp_footer', function() {
-    if ( class_exists('Timber') ) {
-        $posts = Timber::get_posts([
-            'post_type' => 'movie',
-            'posts_per_page' => -1,
-        ]);
-
-        foreach ($posts as $post) {
-            var_dump($post);
-            error_log($post->post_title); // titre du post
-        }
-
-    } else {
-        error_log('⚠️ Timber non trouvé !');
-    }
-});
-
-
-// Afficher toutes les erreurs (utile en dev)
-error_reporting(E_ALL);
-
-// Activer l'affichage des erreurs (en dev)
-ini_set('display_errors', '1');
-
-// Activer la journalisation des erreurs
-ini_set('log_errors', '1');
-
-// Spécifier le fichier de log
-ini_set('error_log', __DIR__ . '/error.log'); */
-
-// Exemple : générer une erreur pour tester
 
 

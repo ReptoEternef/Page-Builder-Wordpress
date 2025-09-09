@@ -318,3 +318,75 @@ function render_blocks_json_meta_box($post) {
     <?php //echo esc_attr(json_encode($page_blocks ?: [])); ?>
     <?php
 }
+
+
+
+
+
+
+
+
+// ================================
+// POST TYPE EN DEUSPI
+// ================================
+
+
+// ======= Helper pour ajouter une meta box dynamique selon CPT =======
+function add_block_meta_box($cpt, $id, $title, $callback) {
+    add_action('add_meta_boxes', function($post_type) use ($cpt, $id, $title, $callback) {
+        if ($post_type !== $cpt) return; // On ajoute uniquement pour le CPT ciblé
+
+        add_meta_box(
+            $id,
+            $title,
+            $callback,
+            $post_type,
+            'normal',
+            'high'
+        );
+    });
+}
+
+// ======= Exemple de callback pour afficher le bloc =======
+function render_post_list_block($post) {
+    wp_nonce_field('post_list_nonce', 'post_list_nonce_field');
+
+    // Exemple : récupérer un champ meta existant
+    $value = get_post_meta($post->ID, '_post_list_value', true);
+    ?>
+    <label for="post_list_value">Valeur :</label>
+    <input type="text" name="post_list_value" id="post_list_value" value="<?php echo esc_attr($value); ?>" style="width:100%;" />
+    <?php
+}
+
+// ======= Sauvegarde du bloc =======
+add_action('save_post', function($post_id) {
+    if (!isset($_POST['post_list_nonce_field'])) return;
+    if (!wp_verify_nonce($_POST['post_list_nonce_field'], 'post_list_nonce')) return;
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
+
+    if (isset($_POST['post_list_value'])) {
+        update_post_meta($post_id, '_post_list_value', sanitize_text_field($_POST['post_list_value']));
+    }
+});
+
+// ======= Exemple d’utilisation : ajouter une meta box “Post List” sur CPT movie et book =======
+add_block_meta_box('movie', 'post_list_movie', 'Liste de films', 'render_post_list_block');
+add_block_meta_box('book',  'post_list_book',  'Liste de livres', 'render_post_list_block');
+
+
+
+add_action('init', function() {
+    register_post_type('TEST', [
+        'label' => 'Movies',
+        'public' => true,
+        'show_in_rest' => true,
+        'supports' => ['title'],
+    ]);
+});
+
+
+
+
+
+echo 'oui';

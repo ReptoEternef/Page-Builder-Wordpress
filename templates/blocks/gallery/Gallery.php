@@ -8,10 +8,11 @@ class Gallery extends Block {
     public $html;
     public $block_type = 'gallery';
     public $display_name = 'Galerie';
+    public $layouts = ['default', 'grid'];
 
     public function __construct()
     {
-        parent::__construct('gallery', ['custom_css', 'title','gallery', 'layout']);
+        parent::__construct('gallery', ['custom_css', 'title','gallery', 'layout', 'display_desc']);
     }
 
     public function renderAdmin($values = [])
@@ -34,6 +35,32 @@ class Gallery extends Block {
 
         // Utiliser le type de bloc pour choisir le bon view.twig
         $template_path = 'blocks/' . $this->block_type . '/view.twig';
+
+        if (!empty($data['values']['gallery']) && is_array($data['values']['gallery'])) {
+            $gallery = [];
+
+            foreach ($data['values']['gallery'] as $image_url) {
+                $attachment_id = attachment_url_to_postid($image_url);
+
+                if ($attachment_id) {
+                    $attachment = get_post($attachment_id);
+
+                    $gallery[] = [
+                        'url'         => $image_url,
+                        'alt'         => get_post_meta($attachment_id, '_wp_attachment_image_alt', true),
+                        'title'       => $attachment->post_title,
+                        'caption'     => $attachment->post_excerpt,
+                        'description' => $attachment->post_content,
+                    ];
+                } else {
+                    // fallback si jamais l'image n'est pas un media WP (cas rare)
+                    $gallery[] = ['url' => $image_url];
+                }
+            }
+
+            $data['values']['gallery'] = $gallery;
+        }
+
 
         Timber::render($template_path, $data);
     }

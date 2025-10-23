@@ -8,7 +8,7 @@ class Text extends Block {
     public $html;
     public $block_type = 'text';
     public $display_name = 'Texte';
-    public $layouts = ['default', 'mise en page'];
+    public $layouts = ['default', 'bloc'];
 
     public function __construct()
     {
@@ -31,6 +31,8 @@ class Text extends Block {
     {
         $data = $this->normalizeData();
         $data['values'] = $values['values'] ?? $values;
+        $data['block'] = $this->block_type;
+        $data['layouts'] = $this->layouts;
 
         $template_path = 'blocks/' . $this->block_type . '/view.twig';
         Timber::render($template_path, $data);

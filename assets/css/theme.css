@@ -1,0 +1,64 @@
+/* IMPORT FONT */
+@import url('https://fonts.googleapis.com/css2?family=Afacad:ital,wght@0,400..700;1,400..700&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+main {
+    overflow: hidden;
+}
+
+:root {
+    /* COLORS */
+    --light: #ffffff;
+    --dark: #20222d;
+    --accented: #1b7ad6;
+    --color2: #7F9172;
+    --color3: #D2883E;
+    --text: #a1b0d3;
+    --lighter-text: #5b6077;
+    --darker-text: #1a1e31;
+
+}
+
+/* FONTS */
+* {
+    font-family: 'afacad';
+}
+
+p {
+    color: var(--text);
+}
+
+
+/* ----------- ELEMENTS ----------- */
+
+.main-button {
+    display: inline-block;
+    color: var(--light);
+    background-color: var(--accented);
+    text-decoration: none;
+    padding: 6px 12px;
+    border: solid 1px var(--accented);
+    border-radius: 20px;
+
+    transition: 0.3s ease;
+}
+.main-button:hover {
+    background-color: rgba(255, 255, 255, 0);
+    color: var(--light);
+}
+
+.container {
+    max-width: 1200px;  /* largeur max du contenu */
+    margin: 0 auto;     /* centre horizontalement */
+    padding: 70px 1.5rem;  /* espace de respiration sur les côtés */
+}
+
+
+/* ------- READY TO USE CLASSES ------- */
+
+.center {
+    margin: 0 auto;
+}
+
+.background {
+    background-color: var(--light);
+}

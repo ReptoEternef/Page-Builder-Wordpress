@@ -8,13 +8,15 @@
 </head>
 
 <body class="{{ body_class }}">
-  {% include 'partials/header.twig' %}
-  
-  <main>
-    {% block content %}{% endblock %}
-  </main>
-  
-  {% include 'partials/footer.twig' %}
+  <div class="site-wrapper">
+    {% include 'partials/header.twig' %}
+    
+    <main class="site-content">
+      {% block content %}{% endblock %}
+    </main>
+    
+    {% include 'partials/footer.twig' %}
+  </div>
   
   {{ function('wp_footer') }}
 </body>

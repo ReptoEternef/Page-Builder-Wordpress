@@ -50,12 +50,26 @@ add_action('wp_enqueue_scripts', function() {
         [],
         filemtime(get_template_directory() . '/assets/css/style.css')
     );
+    wp_enqueue_style(
+        'theme-style',
+        get_template_directory_uri() . '/assets/css/theme.css',
+        [],
+        filemtime(get_template_directory() . '/assets/css/theme.css')
+    );
 
     wp_enqueue_script(
         'main-js',
         get_template_directory_uri() . '/assets/js/main.js',
         [],
         filemtime(get_template_directory() . '/assets/js/main.js'),
+        true
+    );
+
+    wp_enqueue_script(
+        'iconify',
+        'https://code.iconify.design/3/3.1.1/iconify.min.js',
+        [],
+        null,
         true
     );
 });
@@ -270,17 +284,25 @@ function render_admin_UI($post) {
 // ================================
 //            SAUVEGARDE
 // ================================
-
 add_action('save_post', function($post_id) {
-    // security
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) return;
     if (!current_user_can('edit_post', $post_id)) return;
-
+    
     if (isset($_POST['_page_blocks'])) {
         $blocks_json = wp_unslash($_POST['_page_blocks']);
-        update_post_meta($post_id, '_page_blocks', $blocks_json);
+        $decoded = json_decode($blocks_json, true);
+        
+        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+            // Encode proprement le JSON, en laissant json_encode gérer les guillemets et apostrophes
+            $blocks_json = json_encode($decoded, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        } else {
+            $blocks_json = wp_unslash($blocks_json);
+        }
+        
+        update_post_meta($post_id, '_page_blocks', wp_slash($blocks_json));
     }
 });
+
 
 
 
@@ -316,3 +338,31 @@ function render_blocks_json_meta_box($post) {
 
 
 
+// ==============================
+// 🎨 Personnalisation TinyMCE
+// ==============================
+add_filter('mce_buttons', function ($buttons) {
+    // Les boutons visibles dans la barre principale
+    return [
+        'bold',
+        'italic',
+        'underline',
+        'alignleft',
+        'aligncenter',
+        'alignright',
+        'alignjustify', // ✅ bouton justifié
+        'bullist',
+        'numlist',
+        'link',
+        'unlink',
+        'removeformat',
+    ];
+});
+
+add_filter('tiny_mce_before_init', function($init) {
+    // Ajouter le plugin fullscreen
+    $init['plugins'] .= ' fullscreen'; // concatène si d’autres plugins sont déjà définis
+    // Ajouter le bouton fullscreen
+    $init['toolbar1'] .= ' | fullscreen';
+    return $init;
+});

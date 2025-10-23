@@ -137,18 +137,31 @@ function pushBlocksArray(addedBlock, blockDOM) {
 
 function setdropdownsName(blockObj) {
     const blockDOM = blockObj.DOM;
-    const select = blockDOM.querySelectorAll('select');
-    if (!select) return;
-    
-    select.forEach(dropdown => {
-        const field = dropdown.name;
-        const selectedValue = blockObj.values[field];
 
-        for (const option of dropdown.options) {
-            option.selected = (option.value === selectedValue);
-        }
-    });
+    // --- gérer les selects ---
+    const selects = blockDOM.querySelectorAll('select');
+    if (selects) {
+        selects.forEach(dropdown => {
+            const field = dropdown.name;
+            const selectedValue = blockObj.values[field];
+
+            for (const option of dropdown.options) {
+                option.selected = (option.value === selectedValue);
+            }
+        });
+    }
+
+    // --- gérer les checkboxes ---
+    const checkboxes = blockDOM.querySelectorAll('input[type="checkbox"]');
+    if (checkboxes) {
+        checkboxes.forEach(checkbox => {
+            const field = checkbox.name;
+            const checkedValue = blockObj.values[field];
+            checkbox.checked = !!checkedValue; // true ou false
+        });
+    }
 }
+
 
 
 
@@ -159,47 +172,45 @@ function setdropdownsName(blockObj) {
 // input a DOM element
 function syncBlocksArray(blockDOM, Obj) {
     blockDOM.addEventListener('input', (e) => {
-        //console.log(blocksArray[index].values);
         const inputEl = e.target; // l'élément qui a changé
         const field = inputEl.name; // récupère le nom du champ
-        const value = inputEl.value;
+        let value;
+
+        // ---- gérer les checkboxes ----
+        if (inputEl.type === 'checkbox') {
+            value = inputEl.checked; // true ou false
+        } else {
+            value = inputEl.value;
+        }
+        // -------------------------------
+
         index = Obj.display_order;
-        //console.log('Obj : ' + Obj.display_order);
-        //console.log('index : ' + index);
 
         // ---- RESYNC INDEX (if bloc is added, then another bloc deleted, then it desyncs index)
         if (blocksArray[index] === undefined) {
             blocksArray.forEach(block => {
                 block.display_order = syncDisplayOrder(block);
                 index = block.display_order;
-                //console.log(block.type + ' : ' + block.display_order);
             });
         }
-        //console.log(value);
-        //console.log('display order : ' + blocksArray[index].display_order);
-        // ---------------------------------------------------------------
-        
+
         // on met à jour la valeur dans le bloc correspondant
         if (blocksArray[index].values) {
-            //console.log('saved');
             blocksArray[index].values[field] = value;
-            //console.log(blocksArray[index].values);
         }
-        
-        //console.log(blocksArray);
 
         const data = blocksArray.map(block => {
-            //console.log(block);
             return {
                 type: block.type,
                 display_order: block.display_order,
                 values: block.values
             }
-        })
-  
+        });
+
         dataToJSON(data);
     });
 }
+
 function forceSync() {
     
     const data = blocksArray.map(block => {
@@ -214,12 +225,12 @@ function forceSync() {
     dataToJSON(data);
 }
 function dataToJSON(data) {
-    console.log('data');
-    console.log(data);
+    //console.log('data');
+    //console.log(data);
     const hiddenInput = document.getElementById('blocks_data');
     hiddenInput.value = JSON.stringify(data);
 
-    console.log(pageBlocksJSON);
+    //console.log(pageBlocksJSON);
     refreshSideJSON(data);
     
     /* console.log('JSON');
@@ -421,6 +432,69 @@ jQuery(document).ready(function($){
 
 
 
+/////////////////////////////////
+//
+//  TINY MCE WYSIWYG
+//
+/////////////////////////////////
+
+function attachTinyMCEListeners() {
+    if (typeof tinymce === 'undefined') return;
+
+    // Écoute tous les éditeurs créés
+    tinymce.on('AddEditor', (e) => {
+        const editor = e.editor;
+        const textarea = document.getElementById(editor.id);
+        if (!textarea) return;
+        
+        const fieldName = textarea.getAttribute('name'); // wys1, wys2...
+        const blockEl = textarea.closest('.block-item'); // ton bloc
+        if (!blockEl) return;
+        
+        const blockIndex = findOutBlockIndex(blockEl, '.block-item')[1]; // ou ta logique de display_order
+        
+        editor.on('keyup change input', () => {
+            const content = editor.getContent();
+            
+            if (blocksArray[blockIndex] && blocksArray[blockIndex].values) {
+                blocksArray[blockIndex].values[fieldName] = content;
+            }
+            
+            dataToJSON(blocksArray); // mise à jour du hidden input JSON
+            //console.log(blocksArray[blockIndex]);
+        });
+    });
+}
+
+// Appelle la fonction après le rendu de tous les blocs
+document.addEventListener('DOMContentLoaded', () => {
+    attachTinyMCEListeners();
+
+    // Pour les éditeurs déjà initialisés avant le DOMContentLoaded
+    if (typeof tinymce !== 'undefined') {
+        Object.keys(tinymce.editors).forEach(id => {
+            const editor = tinymce.get(id);
+            if (!editor) return;
+
+            const textarea = document.getElementById(id);
+            if (!textarea) return;
+
+            const fieldName = textarea.getAttribute('name');
+            const blockEl = textarea.closest('.block-item');
+            if (!blockEl) return;
+
+            const blockIndex = parseInt(blockEl.dataset.index, 10);
+
+            editor.on('keyup change input', () => {
+                const content = editor.getContent();
+                if (blocksArray[blockIndex] && blocksArray[blockIndex].values) {
+                    blocksArray[blockIndex].values[fieldName] = content;
+                }
+                dataToJSON(blocksArray);
+            });
+        });
+    }
+});
 
 
 
@@ -438,14 +512,7 @@ jQuery(document).ready(function($){
     console.log(data.data.availableBlocksDebug
 )); */
 
-debugBtn.addEventListener('click', () => {
+/* debugBtn.addEventListener('click', () => {
     console.log('DEBUG');
     console.log(blocksArray);
-})
-
-
-
-
-
-
-//console.log(php.pageBlocks);
+}) */

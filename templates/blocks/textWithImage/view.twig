@@ -1,18 +1,37 @@
-<section class="twi-block container">
-    <div class="twi-text-container text-entrance">
-        {% if values.title %}
-            <h1>{{ values.title }}</h1>
+<div class="container block-{{ block }}">
+  {% if values.layout == layouts[0] %}
+    <div class="twi-block">
+        {% if values.image %}
+            <div class="twi-image">
+                <img src="{{ values.image }}">
+            </div>
         {% endif %}
-
-        {% if values.content %}
-            <p>{{ values.content }}</p>
+        <div class="twi-text-container">
+            {% if values.title %}
+                <h1>{{ values.title }}</h1>
+            {% endif %}
+            {% if values.content %}
+                <p>{{ values.content }}</p>
+            {% endif %}
+        </div>
+    </div>
+  {% elseif values.layout == layouts[1] %}
+    <div class="twi-block reverse">
+        {% if values.image %}
+            <div class="twi-image">
+                <img src="{{ values.image }}">
+            </div>
         {% endif %}
-    </div>
-    
-    {% if values.image %}
-    <div class="twi-image">
-        <img src="{{ values.image }}"></img>
-    </div>
-    {% endif %}
-</section>
-
+        <div class="twi-text-container">
+            {% if values.title %}
+                <h1>{{ values.title }}</h1>
+            {% endif %}
+            {% if values.content %}
+                <p>{{ values.content }}</p>
+            {% endif %}
+        </div>
+    </div>  
+  {% else %}
+      <span>Erreur : layout</span>
+  {% endif %}
+</div>

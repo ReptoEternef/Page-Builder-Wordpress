@@ -39,3 +39,32 @@
         column-count: 1;
     }
 }
+
+
+/* GRID LAYOUT */
+
+.gal-container-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 colonnes égales */
+  gap: 40px;
+}
+
+.gal-image-grid img {
+  width: 100%;
+  height: 200px;
+  object-fit: contain;
+  display: block;
+}
+
+.gal-image-grid p {
+  margin-top: 8px;
+  color: var(--lighter-text);
+  font-size: 14px;
+  text-align: center;
+}
+
+@media (max-width: 800px) {
+    .gal-container-grid {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}

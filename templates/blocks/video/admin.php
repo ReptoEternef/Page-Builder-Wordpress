@@ -14,9 +14,9 @@
     </div>
     <div class="">
         <label for="">Largeur</label>
-        <input type="text" class="video-encoder" name="video_width" value="<?= $data['video_width'] ?? '' ?>" placeholder="Largeur de la vidéo">
+        <input type="text" class="video-encoder" name="video_width" value="<?= $data['video_width'] ?? '' ?>" placeholder="Largeur de la vidéo (ex: 888px)">
         <label for="">Hauteur</label>
-        <input type="text" class="video-encoder" name="video_height" value="<?= $data['video_height'] ?? '' ?>" placeholder="Hauteur de la vidéo">
+        <input type="text" class="video-encoder" name="video_height" value="<?= $data['video_height'] ?? '' ?>" placeholder="Hauteur de la vidéo (ex: 500px)">
     </div>
 </div>
 

@@ -1,23 +1,38 @@
-<div class="gal-block container" style="{{ values.custom_css }}">
-    <div class="gal-text-container text-entrance">
-        {% if values.title %}
-            <h1>{{ values.title }}</h1>
-        {% endif %}
+{% if values.layout == 'default' %}    
+    <div class="gal-block container" style="{{ values.custom_css }}">
+        <div class="gal-text-container text-entrance">
+            {% if values.title %}
+                <h1>{{ values.title }}</h1>
+            {% endif %}
 
-        {% if values.content %}
-            <p>{{ values.content }}</p>
-        {% endif %}
+            {% if values.content %}
+                <p>{{ values.content }}</p>
+            {% endif %}
+        </div>
+        
+        <div class="gal-container">
+            {% for img in values.gallery %}
+                <div class="gal-image">
+                    <img src="{{ img['url'] }}" alt="">
+                    {% if img['description'] is not empty and values.display_desc == 'true' %}
+                        <p>{{ img['description'] }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
     </div>
-    
-    {# {{ dump(values.image) }} #}
-    <div class="gal-container">
-        {# {% set images = values.image|split(',') %} #}
-        {% for img in values.gallery %}
-            <div class="gal-image">
-                <img src="{{ img }}" alt="">
-            </div>
-        {% endfor %}
+{% elseif values.layout == 'grid' %}
+    <div class="gal-block container" style="{{ values.custom_css }}">        
+        <div class="gal-container-grid">
+            {% for img in values.gallery %}
+                <div class="gal-image-grid">
+                    <img src="{{ img['url'] }}" alt="">
+                    {% if img['description'] is not empty and values.display_desc == 'true' %}
+                        <p>{{ img['description'] }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
     </div>
-
-</div>
-
+{% endif %}

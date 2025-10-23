@@ -1,0 +1,35 @@
+<div class="anchor" id="{{ values.anchor_id }}">
+
+</div>
+
+
+{# SNIPPETS & TIPS
+
+penser à écrire container ou full-width dans la div principale
+
+{{ values.field_de_la_classe }} 
+{% if values.layout == 'default' %}
+{% elseif values.layout == 'default' %}
+{% endif %}
+
+<p>Bonjour {{ "Salut " ~ name ~ " !" }}</p>
+
+#}
+
+{# values #}
+{# {% if values is defined %}
+  <div class="debug-block" style="background:#111;color:#0f0;padding:1rem;margin:1rem 0;font-family:monospace;font-size:14px;overflow:auto;">
+    <strong style="color:#ff0;">DEBUG values :</strong><br>
+    <pre>{{ values|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+  </div>
+{% else %}
+  <div class="debug-block" style="background:#111;color:#f55;padding:1rem;margin:1rem 0;font-family:monospace;font-size:14px;">
+    ⚠️ <strong>Pas de variable `values` trouvée ici !</strong>
+    <pre>{{ dump(_context) }}</pre>
+  </div>
+{% endif %} #}
+
+{# variable twig #}
+{# <div class="debug-block" style="background:#111;color:#0f0;padding:1rem;margin:1rem 0;font-family:monospace;font-size:14px;overflow:auto;">
+  <pre>{{ variable }}</pre>
+</div> #}

@@ -1,5 +1,10 @@
 
-.text-block {
+
+
+
+
+/* BLOC LAYOUT */
+.text-bloc {
     max-width: 600px;
     margin: 2rem auto;
     padding: 1rem 1.5rem;
@@ -11,23 +16,25 @@
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.text-block:hover {
+.text-bloc:hover {
     transform: translateY(-3px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
-.text-block h1 {
+.text-bloc h2 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
     font-weight: 700;
     color: #111;
     line-height: 1.2;
+    margin: auto;
 }
 
-.text-block p {
+.text-bloc p {
     font-size: 1.2rem;
     color: #333;
     margin-bottom: 1rem;
+    margin: auto;
 }
  
 /* Responsive */

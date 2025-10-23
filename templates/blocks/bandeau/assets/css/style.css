@@ -1,0 +1,102 @@
+.bandeau-background {
+    position: relative; /* nécessaire pour le ::before */
+    background-size: cover;
+    background-position: 50% 25%;
+    padding: 100px 50px;
+    border-radius: 8px;
+    overflow: hidden; /* pour que le ::before ne dépasse pas */
+}
+
+.bandeau-background::before {
+    content: "";
+    position: absolute;
+    inset: 0; /* top, right, bottom, left à 0 */
+    background: rgba(0, 0, 0, 0.2); /* calque sombre */
+    backdrop-filter: blur(3px); /* flou léger sur l'image de fond */
+    z-index: 0; /* derrière le texte */
+    border-radius: 8px; /* correspond au border-radius du parent */
+}
+
+.bandeau-text {
+    position: relative; /* pour passer au-dessus du ::before */
+    z-index: 1;
+}
+
+.bandeau-text h1,
+.bandeau-text p {
+    text-align: center;
+    margin: auto;
+    color: white;
+    font-weight: normal;
+    max-width: 50%;
+}
+.bandeau-text p {
+    font-size: 1.2rem;
+}
+
+
+
+/* BANDEAU LEFT */
+
+.bandeau-background-left {
+    position: relative; /* nécessaire pour le ::before */
+    background-size: cover;
+    background-position: 50% 25%;
+    padding: 100px 50px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.bandeau-background-left::before {
+    z-index: 1;
+    content: '';
+    background: linear-gradient(90deg,rgba(0, 0, 0, 0.49) 0%, rgba(0, 0, 0, 0.38) 35%, rgba(0, 0, 0, 0) 100%);
+    width: 28%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.bandeau-left-text {
+    max-width: fit-content;
+    position: relative;
+    z-index: 2;
+}
+
+.bandeau-left-text h1,
+.bandeau-left-text p {
+    text-align: start;
+    margin: auto;
+    color: white;
+    font-weight: normal;
+}
+
+
+
+/* --- VERSION MOBILE --- */
+@media (max-width: 768px) {
+    .bandeau-background::before {
+        content: "";
+        position: absolute;
+        inset: 0; /* top, right, bottom, left à 0 */
+        background: rgba(0, 0, 0, 0.45); /* calque sombre */
+        z-index: 1;
+    }
+    .bandeau-background-left::before {
+        background: rgba(0, 0, 0, 0.45);
+        width: 100%;
+    }
+
+    .bandeau-left-text {
+        position: relative;
+        z-index: 2; /* pour que le texte passe au-dessus du calque */
+        text-align: center;
+        max-width: 100%;
+    }
+
+    .bandeau-background {
+        padding: 80px 20px;
+        background-position: center;
+    }
+}

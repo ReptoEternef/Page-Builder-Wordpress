@@ -1,9 +1,17 @@
-<section class="text-block container" style="{{ values.custom_css }}">
-    {% if values.title %}
-        <h1>{{ values.title }}</h1>
-    {% endif %}
+{# TEXT #}
 
-    {% if values.content %}
-        <p>{{ values.content }}</p>
-    {% endif %}
-</section>
+<div class="container block-{{ block }}">
+  {% if values.layout == layouts[0] %}
+    <div class="{{ block }}-{{ layouts[0] }}">
+        {{values.title}}
+        {{values.content}}
+    </div>
+  {% elseif values.layout == layouts[1] %}
+    <div class="{{ block }}-{{ layouts[1] }}">
+        {{values.title}}
+        {{values.content}}
+    </div>  
+  {% else %}
+      <span>Erreur : layout</span>
+  {% endif %}
+</div>

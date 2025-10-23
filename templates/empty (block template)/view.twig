@@ -1,10 +1,12 @@
-<div class="container">
-  {% if values.layout == 'default' %}
-    <div class="">
+{# BLOC NAME #}
+
+<div class="container block-{{ block }}">
+  {% if values.layout == layouts[0] %}
+    <div class="{{ block }}-{{ layouts[0] }}">
 
     </div>
-  {% elseif values.layout == 'version2' %}
-    <div class="">
+  {% elseif values.layout == layouts[1] %}
+    <div class="{{ block }}-{{ layouts[1] }}">
 
     </div>  
   {% else %}

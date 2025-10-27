@@ -1,0 +1,115 @@
+/* -------------------------
+//         BUTTON
+-------------------------- */
+.phone-hamburger {
+    border: none;
+    background: none;
+    overflow: hidden;
+
+    z-index: 1000;
+    position: fixed;
+    top: 0;
+    right: 0;
+}
+
+
+.phone-hamburger .iconify {
+    z-index: 1000;
+    font-size: 30px;
+    padding: 10px 10px 0 0;
+    color: white;
+}
+.phone-hamburger:hover .iconify {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+
+
+/* -------------------------
+//      MAIN WINDOW
+-------------------------- */
+.phone-nav {
+  position: relative;
+  z-index: 1000;
+}
+
+#phone-menu {
+    visibility: hidden;
+    background-color: var(--accented);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: scroll;
+    pointer-events: none;
+
+    transform: translateY(-20px);
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+#phone-menu.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto; /* <-- interactions autorisées quand ouvert */
+}
+
+#phone-menu.closing {
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none; /* <-- aussi fermé pendant l'anim */
+}
+
+.menu-item {
+    list-style: none;
+    color: var(--light);
+}
+
+.menu-item a {
+    color: var(--light);
+    text-decoration: none;
+    font-size: 2rem;
+}
+.menu-item a:hover {
+    color: #ffffffc4;
+}
+
+
+
+/* -------------------------
+//        SUBMENU
+-------------------------- */
+#phone-menu .submenu {
+  list-style: none;
+  max-height: 0;            /* prend zéro place fermé */
+  overflow: hidden;         /* cache le contenu */
+  opacity: 0;               /* rendu invisible */
+  transform: translateY(-10px); 
+  transition: 
+    max-height 0.4s ease, 
+    opacity 0.3s ease, 
+    transform 0.3s ease;
+}
+#phone-menu .submenu.open-submenu {
+  max-height: 500px;        /* une valeur assez grande pour contenir le contenu */
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+/* -------------------------
+   RESPONSIVE
+-------------------------- */
+@media(min-width: 768px) {
+  .phone-nav {
+    display: none;
+  }
+}

@@ -1,0 +1,24 @@
+<nav class="phone-nav">
+  <button class="phone-hamburger" aria-expanded="false" aria-controls="phone-menu">
+    <span class="iconify" data-icon="radix-icons:hamburger-menu"></span>
+    {# <span class="iconify" data-icon="bitcoin-icons:cross-filled"></span> #}
+  </button>
+
+  <ul id="phone-menu">
+    {% for item in menu.items %}
+      <li class="{{ item.classes | join(' ') }}">
+        <a href="{{ item.link }}">{{ item.title }}</a>
+
+        {% if item.children %}
+          <ul class="submenu">
+            {% for child in item.children %}
+              <li class="{{ child.classes | join(' ') }}">
+                <a href="{{ child.link }}">{{ child.title }}</a>
+              </li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+</nav>

@@ -32,8 +32,17 @@ add_action('after_setup_theme', function() {
 // Context Timber & options thème
 // ================================
 add_filter('timber/context', function($context) {
+    // LOGO
     $custom_logo_id = get_theme_mod('custom_logo');
     $context['logo_url'] = wp_get_attachment_image_url($custom_logo_id, 'full');
+    
+    // MENU
+    $context['menu'] = \Timber\Timber::get_menu('primary');
+    
+    // Site infos
+    $context['site_name'] = get_bloginfo('name');
+    $context['site_url']  = get_bloginfo('url');
+    
     return $context;
 });
 
@@ -55,6 +64,12 @@ add_action('wp_enqueue_scripts', function() {
         get_template_directory_uri() . '/assets/css/theme.css',
         [],
         filemtime(get_template_directory() . '/assets/css/theme.css')
+    );
+    wp_enqueue_style(
+        'nav-phone-style',
+        get_template_directory_uri() . '/assets/css/nav-hamburger.css',
+        [],
+        filemtime(get_template_directory() . '/assets/css/nav-hamburger.css')
     );
 
     wp_enqueue_script(

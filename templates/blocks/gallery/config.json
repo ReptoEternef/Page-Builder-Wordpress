@@ -1,0 +1,15 @@
+{
+    "block_type" : "gallery",
+    "display_name" : "Galerie",
+    "layouts" : [
+        "default",
+        "grid"
+    ],
+    "fields" : [
+        "custom_css",
+        "layout",
+        "title",
+        "display_desc",
+        "gallery"
+    ]
+}

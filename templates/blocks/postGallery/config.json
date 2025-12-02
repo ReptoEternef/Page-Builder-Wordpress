@@ -1,0 +1,13 @@
+{
+    "block_type" : "postGallery",
+    "display_name" : "Galerie de posts",
+    "fields" : [
+        "custom_css",
+        "layout",
+        "custom_post_type"
+    ],
+    "layouts" : [
+        "default",
+        "version2"
+    ]
+}

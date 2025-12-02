@@ -1,50 +1,18 @@
 <?php
-
-/* 
-SNIPPETS & TIPS
-
-à remplir :
-    > nom du dossier
-    > nom du fichier
-    
-    > nom de la classe
-    > block_type
-    > display_name
-    > layouts
-
-    > construct('CLASS_NAME')
-*/
-
 use Timber\Timber;
 
 require_once get_template_directory() . '/templates/blocks/Block.php';
 
 class PostGallery extends Block {
-    public $html;
-    public $block_type = 'postGallery';
-    public $display_name = 'Galerie de posts';
-    public $layouts = ['default', 'version2'];
 
     public function __construct()
     {
-        parent::__construct('postGallery', ['custom_css', 'layout', 'custom_post_type']);
+        $json_directory = __DIR__ . DIRECTORY_SEPARATOR . 'config.json';
+        $json_config = json_decode(file_get_contents($json_directory), true);
+
+        parent::__construct($json_config['block_type'], $json_config['display_name'], $json_config['fields'], $json_config['layouts']);
     }
 
-    public function renderAdmin($values = [])
-    {
-        $this->setValues($values ?: $this->values);
-        $data = $this->normalizeData();
-
-        ?>
-        <div class="block-item">
-            <?php include __DIR__ . '/admin.php'; ?>
-        </div>
-        <?php
-    }
-
-    /* $data = Timber::context();
-    $data = array_merge($data, $this->normalizeData());
-    $data['values'] = 'TEST'; */
     public function renderFrontend($values = [])
     {
         $data = $this->normalizeData();
@@ -69,42 +37,13 @@ class PostGallery extends Block {
             error_log('⚠️ Movie CPT non trouvé au moment du rendu.');
         }
         
-        $template_path = 'blocks/' . $this->block_type . '/view.twig';
+        $template_path = 'blocks/' . $this->type . '/view.twig';
         Timber::render($template_path, $data);
     }
-    
-    
-
-
 
     public function getHTML() {
         ob_start();
         include __DIR__ . '/admin.php';
         return ob_get_clean();
-    }
-
-    public function enqueueAssets()
-    {
-        $css = __DIR__ . '/assets/css/style.css';
-        $js = __DIR__ . '/assets/js/script.js';
-
-        if (file_exists($css)) {
-            wp_enqueue_style(
-                'block-hero',
-                get_template_directory_uri() . '/templates/blocks/hero/assets/css/style.css',
-                [],
-                filemtime($css)
-            );
-        }
-
-        if (file_exists($js)) {
-            wp_enqueue_script(
-                'block-hero',
-                get_template_directory_uri() . '/templates/blocks/hero/assets/js/script.js',
-                ['jquery'],
-                filemtime($js),
-                true
-            );
-        }
     }
 }

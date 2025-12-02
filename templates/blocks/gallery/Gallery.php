@@ -5,27 +5,13 @@ use Timber\Timber;
 require_once get_template_directory() . '/templates/blocks/Block.php';
 
 class Gallery extends Block {
-    public $html;
-    public $block_type = 'gallery';
-    public $display_name = 'Galerie';
-    public $layouts = ['default', 'grid'];
 
     public function __construct()
     {
-        parent::__construct('gallery', ['custom_css', 'title','gallery', 'layout', 'display_desc']);
-    }
+        $json_directory = __DIR__ . DIRECTORY_SEPARATOR . 'config.json';
+        $json_config = json_decode(file_get_contents($json_directory), true);
 
-    public function renderAdmin($values = [])
-    {
-        $this->setValues($values ?: $this->values);
-        $data = $this->normalizeData();
-        
-        ?>
-        <div class="block-item">
-            <?php include __DIR__ . '/admin.php'; ?>
-        </div>
-        <?php
-
+        parent::__construct($json_config['block_type'], $json_config['display_name'], $json_config['fields'], $json_config['layouts']);
     }
 
     public function renderFrontend($values = [])
@@ -34,7 +20,7 @@ class Gallery extends Block {
         $data['values'] = $values['values'] ?? $values;
 
         // Utiliser le type de bloc pour choisir le bon view.twig
-        $template_path = 'blocks/' . $this->block_type . '/view.twig';
+        $template_path = 'blocks/' . $this->type . '/view.twig';
 
         if (!empty($data['values']['gallery']) && is_array($data['values']['gallery'])) {
             $gallery = [];
@@ -70,34 +56,5 @@ class Gallery extends Block {
         ob_start();
         include __DIR__ . '/admin.php';
         return ob_get_clean();
-    }
-
-    public function getType() {
-        return $this->block_type;
-    }
-
-    public function enqueueAssets()
-    {
-        $css = __DIR__ . '/assets/css/style.css';
-        $js = __DIR__ . '/assets/js/script.js';
-
-        if (file_exists($css)) {
-            wp_enqueue_style(
-                'block-hero',
-                get_template_directory_uri() . '/templates/blocks/' . $this->block_type . '/assets/css/style.css',
-                [],
-                filemtime($css)
-            );
-        }
-
-        if (file_exists($js)) {
-            wp_enqueue_script(
-                'block-hero',
-                get_template_directory_uri() . '/templates/blocks/' . $this->block_type . '/assets/js/script.js',
-                ['jquery'],
-                filemtime($js),
-                true
-            );
-        }
     }
 }

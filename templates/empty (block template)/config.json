@@ -1,0 +1,13 @@
+{
+    "block_type" : "type",
+    "display_name" : "Nom",
+    "fields" : [
+        "custom_css",
+        "layout",
+        ""
+    ],
+    "layouts" : [
+        "default",
+        ""
+    ]
+}

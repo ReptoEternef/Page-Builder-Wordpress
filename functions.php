@@ -188,9 +188,9 @@ function dropdown_block_selector($blocks_library) {
     <select name="blocks" id="block-type-selector">
         <?php
         foreach ($blocks_library as $block) {
-            var_dump($block->display_name);
+            echo $block->display_name;
             ?>
-            <option value="<?= esc_attr($block->block_type) ?>"><?= esc_html($block->display_name) ?></option>
+            <option value="<?= esc_attr($block->type) ?>"><?= esc_html($block->display_name) ?></option>
             <?php
         }
         ?>

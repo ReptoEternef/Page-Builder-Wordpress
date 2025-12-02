@@ -1,0 +1,15 @@
+{
+    "block_type" : "bandeau",
+    "display_name" : "Bandeau",
+    "fields" : [
+        "custom_css",
+        "layout",
+        "title",
+        "subtitle",
+        "background"
+    ],
+    "layouts" : [
+        "default",
+        "texte à gauche"
+    ]
+}

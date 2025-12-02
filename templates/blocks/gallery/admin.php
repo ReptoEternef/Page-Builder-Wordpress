@@ -1,4 +1,4 @@
-<div class="flex-column wrap">
+<div class="flex-column wrap inner-<?= $this->type ?>">
     <strong><?= $this->display_name ?></strong>
 
     <?php // ----- LAYOUTS DROPDOWN -------

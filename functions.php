@@ -1,7 +1,72 @@
 <?php
-// ================================
-// Timber & Setup theme
-// ================================
+
+// 0. Fonctions utilitaires / helpers
+// 1. Timber & Setup theme
+// 2. Theme options & option page
+// 3. Enqueue scripts/styles
+// 4. Hooks & filters
+// 5. Metabox Wordpress
+
+
+//================================================================================================================================================================
+//                                                          0. Fonctions utilitaires / helpers
+//================================================================================================================================================================
+
+// Get a list of all blocks and make class instances so they can be used in page editor
+function obwp_get_library() {
+    $blocks_dir = get_template_directory() . '/templates/blocks';
+    $availableBlocks = [];
+
+        foreach (glob($blocks_dir . '/*', GLOB_ONLYDIR) as $block_folder) {
+            $block_name = basename($block_folder);  // ex: "text"
+            $class_name = ucfirst($block_name);     // ex: "Text"
+            $class_path = $block_folder . '/' . $class_name . '.php';
+
+            if (file_exists($class_path)) {
+                require_once $class_path;
+                
+                if (class_exists($class_name)) {
+                    $availableBlocks[$block_name] = new $class_name();
+                }
+            }
+        }
+        
+    return $availableBlocks;
+}
+
+// Dropdown to select a block to add
+function obwp_dropdown_block_selector($blocks_library) {
+    ?>
+    <!-- <label for="block-selector">Liste des blocs :</label> -->
+    <select name="blocks" id="block-type-selector">
+        <?php
+        foreach ($blocks_library as $block) {
+            echo $block->display_name;
+            ?>
+            <option value="<?= esc_attr($block->type) ?>"><?= esc_html($block->display_name) ?></option>
+            <?php
+        }
+        ?>
+    </select>
+    <?php
+}
+
+// Simple function to get the JSON of saved blocks in page from the meta key _page_blocks
+function obwp_get_blocks_in_page(int $post_id): array {
+    $json_meta = get_post_meta($post_id, '_page_blocks', true);
+
+    return $json_meta ? json_decode($json_meta, true) : [];
+}
+
+// Displays an error if metabox's callback is missing
+function meta_box_error() {
+    echo "Error with callback function. Page builder's path missing. File : admin-page-builder.php";
+}
+
+//================================================================================================================================================================
+//                                                          1. Timber & Setup theme
+//================================================================================================================================================================
+
 if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
     require_once __DIR__ . '/vendor/autoload.php';
 } else {
@@ -28,20 +93,44 @@ add_action('after_setup_theme', function() {
     ]);
 });
 
-// ================================
 // Context Timber & options thème
-// ================================
 add_filter('timber/context', function($context) {
     $custom_logo_id = get_theme_mod('custom_logo');
     $context['logo_url'] = wp_get_attachment_image_url($custom_logo_id, 'full');
     return $context;
 });
 
+$page_builder_path = get_template_directory() . '/admin-page-builder.php';
+if (file_exists($page_builder_path)) {
+    require_once $page_builder_path;
+}
 
+//================================================================================================================================================================
+//                                                          2. Theme options & option page
+//================================================================================================================================================================
 
-// ================================
+// Get rid of Gutemberg
+add_action('admin_init', function() {
+    remove_post_type_support('page', 'editor');
+    remove_post_type_support('page', 'comments');
+});
+
+//
+add_action('admin_menu', function() {
+    add_theme_page(
+        'Options du thème',      // titre de la page
+        'Options du thème',      // titre du menu
+        'manage_options',        // capacité
+        'theme-options',         // slug
+        'render_theme_options'   // callback qui affiche la page
+    );
+});
+
+//================================================================================================================================================================
+//                                                          3. Enqueue scripts/styles
+//================================================================================================================================================================
+
 // Enqueue CSS & JS
-// ================================
 add_action('wp_enqueue_scripts', function() {
 
     wp_enqueue_style(
@@ -105,24 +194,17 @@ add_action('admin_enqueue_scripts', function($hook) {
 });
 
 
-// ================================
-// ENQUEUE BLOCKS' CSS & JS
-// ================================
-
-// (Only from blocks on page #optimazor2000)
+// ENQUEUE BLOCKS' CSS & JS (FRONT)
+// (Only from blocks on page #optimizor2000)
 add_action('wp_enqueue_scripts', function() {
     if (!is_singular()) return; // seulement sur les pages/posts
-
     global $post;
     if (!$post) return;
-    $blocks_data = get_post_meta($post->ID, '_page_blocks', true);
-    $blocks = $blocks_data ? json_decode($blocks_data, true) : [];
+    $page_blocks = obwp_get_blocks_in_page($post->ID);
+    if (!$page_blocks) return;
 
-    if (!$blocks) return;
-
-    $types = array_unique(array_column($blocks, 'type'));
-
-    foreach ($types as $block_type) {
+    foreach ($page_blocks as $block) {
+        $block_type = $block['type'] ?? '';
         $css_file = get_template_directory() . "/templates/blocks/$block_type/assets/css/style.css";
         $js_file = get_template_directory() . "/templates/blocks/$block_type/assets/js/script.js";
 
@@ -146,140 +228,9 @@ add_action('wp_enqueue_scripts', function() {
     }
 });
 
-
-
-
-
-// ================================
-//            FUNCTIONS
-// ================================
-// Get a list of all blocks and make class instances
-function get_library() {
-    $blocks_dir = get_template_directory() . '/templates/blocks';
-    $availableBlocks = [];
-
-        foreach (glob($blocks_dir . '/*', GLOB_ONLYDIR) as $block_folder) {
-            $block_name = basename($block_folder); // ex: "text"
-
-            // Get full path
-            $class_path = $block_folder . '/' . ucfirst($block_name) . '.php';
-            // Get class name only
-            $class_name = ucfirst($block_name);
-            
-            //var_dump($class_name);
-            //var_dump($class_path);
-
-            if (file_exists($class_path)) {
-                require_once $class_path;
-                
-                if (class_exists($class_name)) {
-                    $availableBlocks[$block_name] = new $class_name();
-                }
-            }
-        }
-        
-    return $availableBlocks;
-}
-
-// Dropdown to select a block to add
-function dropdown_block_selector($blocks_library) {
-    ?>
-    <!-- <label for="block-selector">Liste des blocs :</label> -->
-    <select name="blocks" id="block-type-selector">
-        <?php
-        foreach ($blocks_library as $block) {
-            echo $block->display_name;
-            ?>
-            <option value="<?= esc_attr($block->type) ?>"><?= esc_html($block->display_name) ?></option>
-            <?php
-        }
-        ?>
-    </select>
-    <?php
-}
-
-
-
-// ================================
-// Page Builder
-// ================================
-
-// Get rid of Gutemberg
-add_action('admin_init', function() {
-    remove_post_type_support('page', 'editor');
-    remove_post_type_support('page', 'comments');
-});
-
-// Ajouter la metabox
-add_action('add_meta_boxes', function() {
-    add_meta_box(
-        '_page_blocks',
-        'Blocs de la page',
-        'render_admin_UI',
-        'page',
-        'normal',
-        'high'
-    );
-});
-
-
-
-function render_admin_UI($post) {
-    $post = get_post();
-    if ( ! $post || ! $post->ID ) {
-        echo 'Publiez la page avant de pouvoir utiliser le page builder.';
-        return;
-    }
-    // Get library of all available blocks
-    $blocks_library = get_library();
-
-    // BLOCKS INIT
-    $page_blocks = get_post_meta($post->ID, '_page_blocks', true);
-    // On décode le JSON, si ça échoue on retombe sur un tableau vide
-    $page_blocks = is_string($page_blocks) ? json_decode($page_blocks, true) : [];
-    if (!is_array($page_blocks)) {
-        $page_blocks = [];
-    }
-
-    // Dropdown to select a block to add
-    ?> 
-    <div class="inside">
-        <?php dropdown_block_selector($blocks_library); ?>
-        <button type="button" id="add_block_btn">Ajouter un bloc</button>
-        <button type="button" id="debug_btn">debug</button>
-        <input type="text" hidden name="_page_blocks" id="blocks_data" value="<?php echo esc_attr(json_encode($page_blocks ?: [])); ?>"></input>
-    </div>
-    <?php
-
-
-    // Render admin
-    if (is_array($page_blocks)) {
-        foreach ($page_blocks as $block) {
-            $type = $block['type'] ?? '';
-            if (isset($blocks_library[$type])) {
-                $blocks_library[$type]->renderAdmin($block['values'] ?? []);
-            }
-        }
-    }
-
-
-    // BLOCKS LIBRARY FOR JS
-    //var_dump($library_array);
-    $library_array = (array) $blocks_library;
-    foreach ($library_array as $block) {
-        $block_array = (array) $block;
-        $type = $block_array['type'];
-        $blocks_library[$type]->html = $blocks_library[$type]->getHTML();
-    }
-
-    wp_localize_script('page-blocks-js', 'php', [
-        'ajaxurl' => admin_url('admin-ajax.php'),
-        'pageBlocks' => $page_blocks,
-        'blocksLibrary' => $blocks_library
-    ]);
-}
-
-
+//================================================================================================================================================================
+//                                                          4. Hooks & filters
+//================================================================================================================================================================
 
 // ================================
 //            SAUVEGARDE
@@ -306,38 +257,6 @@ add_action('save_post', function($post_id) {
 
 
 
-
-
-// ================================
-// Afficher les blocs en JSON
-// ================================
-
-add_action('add_meta_boxes', function() {
-    add_meta_box(
-        'page_blocks_json',
-        'JSON des blocs',
-        'render_blocks_json_meta_box',
-        'page',
-        'side', // position sur la droite
-        'default'
-    );
-});
-
-function render_blocks_json_meta_box($post) {
-    // Récupère le JSON actuel
-    //$json_blocks = get_post_meta($post->ID, '_page_blocks', true);
-    $page_blocks = get_post_meta($post->ID, '_page_blocks', true);
-    $page_blocks = $page_blocks ? json_decode($page_blocks, true) : [];
-    ?>
-    <label for="blocks-json">JSON actuel :</label>
-    <!-- <textarea id="blocks-json" rows="10" style="width:100%;"><?php //echo htmlspecialchars(json_encode($page_blocks, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)); ?></textarea> -->
-    <?php //echo esc_attr(json_encode($page_blocks ?: [])); ?>
-    <?php
-}
-
-
-
-
 // ==============================
 // 🎨 Personnalisation TinyMCE
 // ==============================
@@ -350,7 +269,7 @@ add_filter('mce_buttons', function ($buttons) {
         'alignleft',
         'aligncenter',
         'alignright',
-        'alignjustify', // ✅ bouton justifié
+        'alignjustify',
         'bullist',
         'numlist',
         'link',
@@ -366,3 +285,62 @@ add_filter('tiny_mce_before_init', function($init) {
     $init['toolbar1'] .= ' | fullscreen';
     return $init;
 });
+
+
+
+
+//================================================================================================================================================================
+//                                                          5. Metabox Wordpress
+//================================================================================================================================================================
+
+// Metabox template
+/* add_meta_box(
+    $id,
+    $title,
+    $callback,
+    $screen = null,
+    $context = 'advanced',
+    $priority = 'default',
+    $callback_args = null
+); */
+
+// Main Metabox, thats the page editor. Also checks if the callback function exists.
+add_action('add_meta_boxes', function() {
+    $render_function = '';
+    if (function_exists('render_admin_UI')) {
+        $render_function = 'render_admin_UI';
+    } else {
+        $render_function = 'meta_box_error';
+    }
+    add_meta_box(
+        '_page_blocks',
+        'Open Builder : Blocs de la page',
+        $render_function,
+        'page',
+        'normal',
+        'high'
+    );
+});
+
+// Display the JSON that will be saved in DB
+add_action('add_meta_boxes', function($post) {
+
+    add_meta_box(
+        'page_blocks_json',
+        'JSON des blocs',
+        'render_blocks_json_meta_box',
+        'page',
+        'side',
+        'default'
+    );
+});
+
+// Callback for the displayed JSON metabox
+function render_blocks_json_meta_box($post) {
+    $page_blocks = obwp_get_blocks_in_page($post->ID);
+    ?>
+    <label for="blocks-json">JSON actuel :</label>
+    <?php
+}
+
+// Would be great to have a metabox to select which block to place

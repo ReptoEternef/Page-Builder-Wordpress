@@ -32,10 +32,4 @@ class EmptyTemplate extends Block {
         $template_path = 'blocks/' . $this->type . '/view.twig';
         Timber::render($template_path, $data);
     }
-
-    public function getHTML() {
-        ob_start();
-        include __DIR__ . '/admin.php';
-        return ob_get_clean();
-    }
 }

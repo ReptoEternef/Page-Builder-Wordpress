@@ -33,9 +33,9 @@ class Bandeau extends Block {
         Timber::render($template_path, $data);
     }
 
-    public function getHTML() {
+/*     public function getHTML() {
         ob_start();
         include __DIR__ . '/admin.php';
         return ob_get_clean();
-    }
+    } */
 }

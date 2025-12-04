@@ -10,7 +10,7 @@ $json_blocks = get_post_meta($post_id, '_page_blocks', true);
 $blocks = $json_blocks ? json_decode($json_blocks, true) : [];
 
 // Récupère tous les blocs disponibles (Text, Movie, etc.)
-$availableBlocks = get_library();
+$availableBlocks = obwp_get_library();
 
 $rendered_blocks = [];
 

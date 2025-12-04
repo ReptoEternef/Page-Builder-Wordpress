@@ -52,4 +52,10 @@ abstract class Block {
 
     // Display block on site
     abstract public function renderFrontend($values);
+
+    public function getHTML() {
+        ob_start();
+        include __DIR__ . $this->type . DIRECTORY_SEPARATOR . 'admin.php';
+        return ob_get_clean();
+    }
 }

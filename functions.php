@@ -8,30 +8,30 @@
 // 5. Metabox Wordpress
 
 
-//================================================================================================================================================================
+//=============================================================================================================================================================
 //                                                          0. Fonctions utilitaires / helpers
-//================================================================================================================================================================
+//=============================================================================================================================================================
 
 // Get a list of all blocks and make class instances so they can be used in page editor
 function obwp_get_library() {
     $blocks_dir = get_template_directory() . '/templates/blocks';
-    $availableBlocks = [];
+    $blocks_library = [];
 
-        foreach (glob($blocks_dir . '/*', GLOB_ONLYDIR) as $block_folder) {
-            $block_name = basename($block_folder);  // ex: "text"
-            $class_name = ucfirst($block_name);     // ex: "Text"
-            $class_path = $block_folder . '/' . $class_name . '.php';
+    foreach (glob($blocks_dir . '/*', GLOB_ONLYDIR) as $block_folder) {
+        $block_name = basename($block_folder);  // ex: "text"
+        $class_name = ucfirst($block_name);     // ex: "Text"
+        $class_path = $block_folder . '/' . $class_name . '.php';
 
-            if (file_exists($class_path)) {
-                require_once $class_path;
-                
-                if (class_exists($class_name)) {
-                    $availableBlocks[$block_name] = new $class_name();
-                }
+        if (file_exists($class_path)) {
+            require_once $class_path;
+            
+            if (class_exists($class_name)) {
+                $blocks_library[$block_name] = new $class_name();
             }
         }
+    }
         
-    return $availableBlocks;
+    return $blocks_library;
 }
 
 // Dropdown to select a block to add
@@ -41,7 +41,6 @@ function obwp_dropdown_block_selector($blocks_library) {
     <select name="blocks" id="block-type-selector">
         <?php
         foreach ($blocks_library as $block) {
-            echo $block->display_name;
             ?>
             <option value="<?= esc_attr($block->type) ?>"><?= esc_html($block->display_name) ?></option>
             <?php
@@ -50,6 +49,21 @@ function obwp_dropdown_block_selector($blocks_library) {
     </select>
     <?php
 }
+function obwp_dropdown_lang_selector($lang_array) {
+    ?>
+    <!-- <label for="block-selector">Liste des blocs :</label> -->
+    <select name="langs" id="lang-selector">
+        <?php
+        foreach ($lang_array as $lang) {
+            ?>
+            <option value="<?= esc_attr($lang) ?>"><?= esc_html($lang) ?></option>
+            <?php
+        }
+        ?>
+    </select>
+    <?php
+}
+
 
 // Simple function to get the JSON of saved blocks in page from the meta key _page_blocks
 function obwp_get_blocks_in_page(int $post_id): array {
@@ -63,9 +77,9 @@ function meta_box_error() {
     echo "Error with callback function. Page builder's path missing. File : admin-page-builder.php";
 }
 
-//================================================================================================================================================================
+//=============================================================================================================================================================
 //                                                          1. Timber & Setup theme
-//================================================================================================================================================================
+//=============================================================================================================================================================
 
 if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
     require_once __DIR__ . '/vendor/autoload.php';
@@ -97,17 +111,18 @@ add_action('after_setup_theme', function() {
 add_filter('timber/context', function($context) {
     $custom_logo_id = get_theme_mod('custom_logo');
     $context['logo_url'] = wp_get_attachment_image_url($custom_logo_id, 'full');
+    $context['options'] = get_option('obwp_options', []);
     return $context;
 });
 
-$page_builder_path = get_template_directory() . '/admin-page-builder.php';
+$page_builder_path = get_template_directory() . '/includes/admin-page-builder.php';
 if (file_exists($page_builder_path)) {
     require_once $page_builder_path;
 }
 
-//================================================================================================================================================================
+//=============================================================================================================================================================
 //                                                          2. Theme options & option page
-//================================================================================================================================================================
+//=============================================================================================================================================================
 
 // Get rid of Gutemberg
 add_action('admin_init', function() {
@@ -115,20 +130,32 @@ add_action('admin_init', function() {
     remove_post_type_support('page', 'comments');
 });
 
-//
+// 1. Ajouter la page d'options
 add_action('admin_menu', function() {
     add_theme_page(
-        'Options du thème',      // titre de la page
-        'Options du thème',      // titre du menu
-        'manage_options',        // capacité
-        'theme-options',         // slug
-        'render_theme_options'   // callback qui affiche la page
+        'Options du thème',      // Titre de la page
+        'Options du thème',      // Titre du menu
+        'manage_options',        // Capacité
+        'obwp-theme-options',    // Slug
+        'render_theme_options'   // Callback
     );
 });
 
-//================================================================================================================================================================
+function render_theme_options() {
+    include get_template_directory() . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'admin-option-page.php';
+}
+
+add_action('admin_init', function() {
+    register_setting('obwp_options_group', 'obwp_options');
+});
+
+
+
+
+
+//=============================================================================================================================================================
 //                                                          3. Enqueue scripts/styles
-//================================================================================================================================================================
+//=============================================================================================================================================================
 
 // Enqueue CSS & JS
 add_action('wp_enqueue_scripts', function() {
@@ -174,7 +201,7 @@ add_action('admin_enqueue_scripts', function($hook) {
         filemtime(get_template_directory() . '/assets/css/admin.css')
     );
     
-    if ($hook === 'post.php' && $post && $post->post_type === 'page') {
+/*     if ($hook === 'post.php' && $post && $post->post_type === 'page') {
         wp_enqueue_script(
             'page-blocks-js',
             get_template_directory_uri() . '/assets/js/page-blocks.js',
@@ -182,7 +209,26 @@ add_action('admin_enqueue_scripts', function($hook) {
             filemtime(get_template_directory() . '/assets/js/page-blocks.js'),
             true
         );
+    } */
+    if ($hook === 'post.php' && $post && $post->post_type === 'page') {
+        wp_enqueue_script(
+            'page-builder-js',
+            get_template_directory_uri() . '/assets/js/page-builder.js',
+            [],
+            filemtime(get_template_directory() . '/assets/js/page-builder.js'),
+            true
+        );
     }
+    if ($hook === 'appearance_page_obwp-theme-options') {
+        wp_enqueue_script(
+            'obwp-option-page-js',
+            get_template_directory_uri() . '/assets/js/obwp-option-page.js',
+            [],
+            filemtime(get_template_directory() . '/assets/js/obwp-option-page.js'),
+            true
+        );
+    }
+
     
     wp_enqueue_script(
         'iconify',
@@ -228,9 +274,9 @@ add_action('wp_enqueue_scripts', function() {
     }
 });
 
-//================================================================================================================================================================
+//=============================================================================================================================================================
 //                                                          4. Hooks & filters
-//================================================================================================================================================================
+//=============================================================================================================================================================
 
 // ================================
 //            SAUVEGARDE
@@ -289,9 +335,9 @@ add_filter('tiny_mce_before_init', function($init) {
 
 
 
-//================================================================================================================================================================
+//=============================================================================================================================================================
 //                                                          5. Metabox Wordpress
-//================================================================================================================================================================
+//=============================================================================================================================================================
 
 // Metabox template
 /* add_meta_box(

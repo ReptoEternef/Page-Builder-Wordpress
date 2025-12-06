@@ -1,0 +1,13 @@
+{
+    "block_type" : "container",
+    "display_name" : "Conteneur",
+    "fields" : [
+        "custom_css",
+        "layout",
+        "children"
+    ],
+    "layouts" : [
+        "vertical",
+        "horizontal"
+    ]
+}

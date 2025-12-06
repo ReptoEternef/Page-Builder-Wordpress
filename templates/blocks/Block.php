@@ -7,6 +7,7 @@ abstract class Block {
     public array $layouts;
     public array $values;
     public int $display_order;
+    public string $id;
 
     public function __construct(
         $type,
@@ -14,7 +15,8 @@ abstract class Block {
         $fields = [],
         $layouts = [],
         $values = [],
-        $display_order = 0
+        $display_order = 0,
+        $id = ''
         ) {
         $this->type = $type;
         $this->display_name = $display_name;
@@ -22,6 +24,7 @@ abstract class Block {
         $this->layouts = $layouts;
         $this->values = $values;
         $this->display_order = $display_order;
+        $this->id = $id;
     }
 
     protected function normalizeData(): array {
@@ -42,9 +45,11 @@ abstract class Block {
     {
         $this->setValues($values ?: $this->values);
         $data = $this->normalizeData();
+        $this->generate_block_ID();
 
         ?>
-        <div class="block-item block-<?= $this->type ?>">
+        <div class="block-item">
+            <?php //$this->generate_block_ID(); ?>
             <?php include __DIR__ . DIRECTORY_SEPARATOR . $this->type . DIRECTORY_SEPARATOR . 'admin.php'; ?>
         </div>
         <?php
@@ -55,7 +60,13 @@ abstract class Block {
 
     public function getHTML() {
         ob_start();
-        include __DIR__ . $this->type . DIRECTORY_SEPARATOR . 'admin.php';
+        include __DIR__ . DIRECTORY_SEPARATOR . $this->type . DIRECTORY_SEPARATOR . 'admin.php';
         return ob_get_clean();
     }
+
+    public function generate_block_ID() {
+        $id = uniqid();
+        $this->id = 'block-' . $this->type . '-' . $id;
+    }
+
 }

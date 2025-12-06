@@ -1,6 +1,8 @@
 <?php
 function render_admin_UI($post) {
     $post = get_post();
+    $obwp_options = get_option('obwp_options', []);
+    $available_langs = $obwp_options['available_langs'];
 
     // Get library of all available blocks
     $blocks_library = obwp_get_library();
@@ -14,16 +16,38 @@ function render_admin_UI($post) {
     // TOOLBAR / HIDDEN INPUT (dropdown / buttons / '_page_blocks' hidden input)
     // Hidden_input stores a JSON created in JS of data/values from blocks. Avoids AJAX / useless server requests
     ?> 
-    <div class="inside">
+    <div class="obwp-toolbar">
         <!-- dropdown -->
         <?php obwp_dropdown_block_selector($blocks_library); ?>
         <!-- buttons -->
         <button type="button" id="add_block_btn">Ajouter un bloc</button>
         <button type="button" id="debug_btn">debug</button>
+        <!-- language selector -->
+        <?php obwp_dropdown_lang_selector($available_langs); ?>
         <!-- hidden input -->
         <input type="text" hidden name="_page_blocks" id="blocks_data" value="<?php echo esc_attr(json_encode($page_blocks ?: [])); ?>"></input>
     </div>
     <?php
+
+
+    // BLOCKS LIBRARY FOR JS
+    $library_array = (array) $blocks_library;
+    foreach ($library_array as $block) {
+        $block_array = (array) $block;
+        $type = $block_array['type'];
+        $blocks_library[$type]->html = $blocks_library[$type]->getHTML();
+    }
+
+    wp_localize_script('page-builder-js', 'php', [
+        'ajaxurl' => admin_url('admin-ajax.php'),
+        'pageBlocks' => $page_blocks,
+        'blocksLibrary' => $blocks_library
+    ]);
+    /*     wp_localize_script('page-blocks-js', 'php', [
+        'ajaxurl' => admin_url('admin-ajax.php'),
+        'pageBlocks' => $page_blocks,
+        'blocksLibrary' => $blocks_library
+    ]); */
 
 
     // RENDER ADMIN
@@ -35,18 +59,4 @@ function render_admin_UI($post) {
             }
         }
     }
-
-    // BLOCKS LIBRARY FOR JS
-    $library_array = (array) $blocks_library;
-    foreach ($library_array as $block) {
-        $block_array = (array) $block;
-        $type = $block_array['type'];
-        $blocks_library[$type]->html = $blocks_library[$type]->getHTML();
-    }
-
-    wp_localize_script('page-blocks-js', 'php', [
-        'ajaxurl' => admin_url('admin-ajax.php'),
-        'pageBlocks' => $page_blocks,
-        'blocksLibrary' => $blocks_library
-    ]);
 }

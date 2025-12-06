@@ -12,7 +12,7 @@ use Timber\Timber;
 
 require_once get_template_directory() . '/templates/blocks/Block.php';
 
-class Bandeau extends Block {
+class Container extends Block {
 
     public function __construct()
     {
@@ -24,21 +24,12 @@ class Bandeau extends Block {
 
     public function renderFrontend($values = [])
     {
-        $context = Timber::context(); // récupère le contexte global, avec test_timber, logo_url, etc.
-
-        //$context = $this->normalizeData();
-        $context['values'] = $values['values'] ?? $values;
-        $context['block']  = $this->type;
-        $context['layouts'] = $this->layouts;
+        $data = $this->normalizeData();
+        $data['values'] = $values['values'] ?? $values;
+        $data['block'] = $this->type;
+        $data['layouts'] = $this->layouts;
 
         $template_path = 'blocks/' . $this->type . '/view.twig';
-        Timber::render($template_path, $context);
+        Timber::render($template_path, $data);
     }
-
-
-/*     public function getHTML() {
-        ob_start();
-        include __DIR__ . '/admin.php';
-        return ob_get_clean();
-    } */
 }

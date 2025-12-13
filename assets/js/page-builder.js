@@ -3,7 +3,8 @@
 // 2. Init
 // 3. Add block
 // 4. Container block
-// 5. TINY MCE WYSIWYG
+// 5. Tiny MCE WYSIWYG
+// 6. WP import images
 
 //=============================================================================================================================================================
 //                                                                        0. FUNCTIONS
@@ -132,20 +133,39 @@ function applyToAllBlocks(block, callback) {
     }
 }
 
-function findObjectByID(elementID, parent) {
-    for (const block of parent.children) {
-
-        // Si c'est le bon ID → on le retourne
-        if (block.id === elementID) {
-            return block;
+function findObjectByID(elementID, parentArray) {
+    if (!parentArray) {        
+        for (const block of pageRoot.children) {
+    
+            // Si c'est le bon ID → on le retourne
+            if (block.id === elementID) {
+                return block;
+            }
+    
+            // Si container → recherche récursive
+            if (block.type === 'container') {
+                const found = findObjectByID(elementID, block);
+    
+                if (found) {
+                    return found; // on sort direct
+                }
+            }
         }
-
-        // Si container → recherche récursive
-        if (block.type === 'container') {
-            const found = findObjectByID(elementID, block);
-
-            if (found) {
-                return found; // on sort direct
+    } else {
+        for (const block of parentArray.children) {
+    
+            // Si c'est le bon ID → on le retourne
+            if (block.id === elementID) {
+                return block;
+            }
+    
+            // Si container → recherche récursive
+            if (block.type === 'container') {
+                const found = findObjectByID(elementID, block);
+    
+                if (found) {
+                    return found; // on sort direct
+                }
             }
         }
     }
@@ -579,3 +599,80 @@ function setTinyContentWhenReady(editor, value) {
     // Loop jusqu'à ce qu'il soit prêt
     setTimeout(() => setTinyContentWhenReady(editor, value), 30);
 }
+
+//=============================================================================================================================================================
+//                                                                        6. WP IMPORT IMAGES
+//=============================================================================================================================================================
+
+jQuery(document).ready(function($){
+    $('body').on('click', '.select-media, .hero-image', function(e){
+        e.preventDefault();
+
+        const trigger = $(this);
+        const wpMediaImport = trigger.closest('.block-field');
+        const imgPreviewContainer = wpMediaImport.find('.preview-container');
+        const isGallery = wpMediaImport.data('multiple') || false;
+
+        const mediaFrame = wp.media({
+            title: 'Choisir une image' + (isGallery ? 's' : ''),
+            button: { text: 'Utiliser cette image' + (isGallery ? 's' : '') },
+            multiple: isGallery
+        });
+
+        mediaFrame.on('select', function(){
+            const selection = mediaFrame.state().get('selection').toArray();
+            const urls = selection.map(att => att.toJSON().url);
+            
+            if(imgPreviewContainer.length){
+                imgPreviewContainer.empty();
+                urls.forEach(url => {
+                    $('<img>').attr('src', url).css({ width: '80px', margin: '5px' }).appendTo(imgPreviewContainer);
+                });
+                imgPreviewContainer.show();
+            }
+            
+            const innerBlockDOM = wpMediaImport[0].parentElement;
+            const blockDOM = innerBlockDOM.parentElement;
+            const block = findObjectByID(blockDOM.id)
+            
+            const field = wpMediaImport[0].dataset.name;
+            if (block.fields.includes(field)) {
+                const value = (urls.length < 2) ? urls[0] : urls;
+                block.values[field] = value;
+            }
+
+            const JSON = exportPageJSON();
+            refreshSideJSON(JSON);
+        });
+
+        mediaFrame.open();
+    });
+});
+// Display preview images at INIT
+jQuery(document).ready(function($){
+    $('.block-field').each(function(){
+        const wpMediaImport = $(this);
+        const imgPreviewContainer = wpMediaImport.find('.preview-container');
+
+        const innerBlockDOM = wpMediaImport[0].parentElement;
+        const blockDOM = innerBlockDOM.parentElement;
+        const block = findObjectByID(blockDOM.id)
+        const fieldName = wpMediaImport.data('name');
+        
+        
+        if (block.fields.includes(fieldName)) {
+            const value = block.values[fieldName];
+            if (!value) return;
+
+            const urls = Array.isArray(value) ? value : [value];
+
+            if(imgPreviewContainer.length){
+                imgPreviewContainer.empty();
+                urls.forEach(url => {
+                    $('<img>').attr('src', url).css({ width: '80px', margin: '5px' }).appendTo(imgPreviewContainer);
+                });
+                imgPreviewContainer.show();
+            }
+        }
+    });
+});

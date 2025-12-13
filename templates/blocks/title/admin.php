@@ -7,7 +7,7 @@
 */
 ?>
 
-<div class="flex-column wrap">
+<div class="flex-column wrap full-width">
     <strong><?= $this->display_name ?></strong>
     <div class="flex-row">
 
@@ -28,9 +28,11 @@
         } // ----------------------------------
         ?>
         
-        <input type="text" name="title" value="<?= $data['title'] ?? '' ?>" placeholder="Titre">
-        <input type="text" name="subtitle" value="<?= $data['subtitle'] ?? '' ?>" placeholder="Sous-titre">
     </div>
+    <b>Titre</b>
+    <textarea class="wysiwyg-h2" name="title" rows="1"></textarea>
+    <b>Sous-titre</b>
+    <textarea class="wysiwyg-h3" name="subtitle" rows="1"></textarea>
 </div>
 
 

@@ -1,0 +1,14 @@
+{
+    "block_type" : "text",
+    "display_name" : "Text",
+    "fields" : [
+        "custom_css",
+        "layout",
+        "title",
+        "content"
+    ],
+    "layouts" : [
+        "default",
+        "bloc"
+    ]
+}

@@ -77,6 +77,26 @@ function meta_box_error() {
     echo "Error with callback function. Page builder's path missing. File : admin-page-builder.php";
 }
 
+function createInput($data, $inputType, $name, $placeholder) {
+    $obwp_options = get_option('obwp_options', []);
+    $available_langs = $obwp_options['available_langs'];
+    $default_lang = $available_langs[0];
+
+    switch ($inputType) {
+        case 'text':
+            ?> <input type="text" name="<?= $name ?>" placeholder="<?= $placeholder ?>" value="<?= $data[$name][$default_lang] ?? '' ?>"> <?php
+            break;
+        
+        case 'textarea':
+            ?> <textarea type="text" name="<?= $name ?>" placeholder="<?= $placeholder ?>"><?= $data[$name][$default_lang] ?? '' ?></textarea> <?php
+            break;
+        
+        default:
+            # code...
+            break;
+    }
+}
+
 //=============================================================================================================================================================
 //                                                          1. Timber & Setup theme
 //=============================================================================================================================================================
@@ -119,6 +139,9 @@ $page_builder_path = get_template_directory() . '/includes/admin-page-builder.ph
 if (file_exists($page_builder_path)) {
     require_once $page_builder_path;
 }
+
+
+
 
 //=============================================================================================================================================================
 //                                                          2. Theme options & option page
@@ -174,9 +197,17 @@ add_action('wp_enqueue_scripts', function() {
     );
 
     wp_enqueue_script(
+        'TinyMCE',
+        'https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js',
+        [],
+        null,
+        true
+    );
+
+    wp_enqueue_script(
         'main-js',
         get_template_directory_uri() . '/assets/js/main.js',
-        [],
+        ['TinyMCE'],
         filemtime(get_template_directory() . '/assets/js/main.js'),
         true
     );
@@ -301,35 +332,12 @@ add_action('save_post', function($post_id) {
 });
 
 
-
-
-// ==============================
-// 🎨 Personnalisation TinyMCE
-// ==============================
-add_filter('mce_buttons', function ($buttons) {
-    // Les boutons visibles dans la barre principale
-    return [
-        'bold',
-        'italic',
-        'underline',
-        'alignleft',
-        'aligncenter',
-        'alignright',
-        'alignjustify',
-        'bullist',
-        'numlist',
-        'link',
-        'unlink',
-        'removeformat',
-    ];
+add_action('wp_print_scripts', function() {
+    wp_deregister_script('tinymce');
 });
-
-add_filter('tiny_mce_before_init', function($init) {
-    // Ajouter le plugin fullscreen
-    $init['plugins'] .= ' fullscreen'; // concatène si d’autres plugins sont déjà définis
-    // Ajouter le bouton fullscreen
-    $init['toolbar1'] .= ' | fullscreen';
-    return $init;
+add_action('wp_print_scripts', function() {
+    wp_dequeue_script('editor');      // WP editor core
+    wp_dequeue_script('wp-editor');   // TinyMCE wrapper
 });
 
 

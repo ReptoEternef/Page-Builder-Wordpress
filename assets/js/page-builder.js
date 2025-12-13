@@ -3,24 +3,11 @@
 // 2. Init
 // 3. Add block
 // 4. Container block
+// 5. TINY MCE WYSIWYG
 
 //=============================================================================================================================================================
 //                                                                        0. FUNCTIONS
 //=============================================================================================================================================================
-
-// Convert blocksInPage Array to a final JSON for DB
-function dataToJSON() {
-    const cleanedArray = blocksInPage.map(block => ({
-        type: block.type,
-        values: block.values,
-        id: block.id,
-    }));
-
-    //console.log(cleanedArray);
-    refreshSideJSON(cleanedArray);
-    hiddenInput.value = JSON.stringify(cleanedArray);
-    //console.log(hiddenInput.value);
-}
 
 // Creates a space to display the side JSON (needs sideJSON = document.getElementById('page_blocks_json'))
 function displaySideJSON() {
@@ -30,12 +17,15 @@ function displaySideJSON() {
     parent.appendChild(JSONtextEl);
     JSONtextEl.id = 'JSON-text-element';
 }
-// Takes a cleaned array such as cleanedArray in dataToJSON()
+
 function refreshSideJSON(innerText) {
     const parent = sideJSON.children[1];
 
+    
+    //JSONtextEl.innerHTML = hiddenInput.value;
     stringifiedJSON = JSON.stringify(innerText, null, 2);
-    JSONtextEl.innerHTML = stringifiedJSON;
+    JSONtextEl.innerHTML = innerText;
+    //JSONtextEl.innerHTML = stringifiedJSON;
 }
 
 function uniqueID(blockType) {
@@ -44,18 +34,27 @@ function uniqueID(blockType) {
     return id;
 }
 
-function cleanArray() {
-    const cleanedArray = blocksInPage.map(block => {
-        return {
-            type: block.type,
-            values: block.values,
-            id: block.id,
-        }
-    });
+function serializeBlock(block) {
+    return {
+        id: block.id,
+        type: block.type,
+        values: (block.values && !Array.isArray(block.values)) ? block.values : {},
+        children: block.children?.map(child => serializeBlock(child)) ?? []
+    };
+}
+
+function exportPageJSON() {
+    const output = pageRoot.children.map(child => serializeBlock(child));
+    const json = JSON.stringify(output, null, 2);
+    
+    hiddenInput.value = json;
+    return json;
 }
 
 // Generates UI around blocks (arrows and delete)
-function addUIElements(singleBlockContainer, index) {
+function addUIElements(blockInstance) {
+    singleBlockContainer = blockInstance.DOM;
+
     // Flèches pour déplacer
     const arrowsContainer = document.createElement('div');
     arrowsContainer.classList.add('arrows-container');
@@ -64,16 +63,21 @@ function addUIElements(singleBlockContainer, index) {
     upArrow.innerHTML = '⇈';
     upArrow.classList.add('upArrow');
     upArrow.classList.add('prevent-select');
-    upArrow.id = index;
+    //upArrow.id = index;
     //console.log(pageRoot.indexOf(singleBlockContainer))
-    //upArrow.addEventListener('click', moveBlock);
-
+    upArrow.addEventListener('click', () => {
+        blockInstance.moveUp();
+    });
+    
     const downArrow = document.createElement('span');
     downArrow.innerHTML = '⇊';
     downArrow.classList.add('downArrow');
     downArrow.classList.add('prevent-select');
-    downArrow.id = index;
+    //downArrow.id = index;
     //downArrow.addEventListener('click', moveBlock);
+    downArrow.addEventListener('click', () => {
+        blockInstance.moveDown();
+    });
 
     arrowsContainer.appendChild(upArrow);
     arrowsContainer.appendChild(downArrow);
@@ -82,6 +86,9 @@ function addUIElements(singleBlockContainer, index) {
     // Bouton supprimer
     const deleteBtnContainer = document.createElement('div');
     deleteBtnContainer.classList.add('delete-btn-container');
+    deleteBtnContainer.addEventListener('click', () => {
+        blockInstance.delete();
+    });
 
     // Créer l'icône avec Iconify
     const icon = document.createElement("span");
@@ -93,10 +100,63 @@ function addUIElements(singleBlockContainer, index) {
     // Delete Btn
     deleteBtnContainer.appendChild(icon);
     singleBlockContainer.appendChild(deleteBtnContainer);
-
-    //console.log(singleBlockContainer);
-    //deleteBtnContainer.addEventListener('click', deleteBlock);
 }
+
+// Source - https://stackoverflow.com/a
+// Posted by user236139, modified by community. See post 'Timeline' for change history
+// Retrieved 2025-12-08, License - CC BY-SA 3.0
+
+function array_move(arr, old_index, new_index) {
+    while (old_index < 0) {
+        old_index += arr.length;
+    }
+    while (new_index < 0) {
+        new_index += arr.length;
+    }
+    if (new_index >= arr.length) {
+        let k = new_index - arr.length + 1;
+        while (k--) {
+            arr.push(undefined);
+        }
+    }
+    arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+    return arr; // for testing purposes
+};
+
+function applyToAllBlocks(block, callback) {
+    callback(block);
+    if (block.children && block.children.length) {
+        for (const child of block.children) {
+            applyToAllBlocks(child, callback);
+        }
+    }
+}
+
+function findObjectByID(elementID, parent) {
+    for (const block of parent.children) {
+
+        // Si c'est le bon ID → on le retourne
+        if (block.id === elementID) {
+            return block;
+        }
+
+        // Si container → recherche récursive
+        if (block.type === 'container') {
+            const found = findObjectByID(elementID, block);
+
+            if (found) {
+                return found; // on sort direct
+            }
+        }
+    }
+
+    // Rien trouvé dans cette branche
+    return null;
+}
+
+
+
+
 
 //=============================================================================================================================================================
 //                                                                        1. CLASS
@@ -106,7 +166,9 @@ class Block {
     constructor(raw) {
         this.id = raw.id ?? null;
         this.type = raw.type;
-        this.values = raw.values ?? {};
+        this.values = (!raw.values || Array.isArray(raw.values))
+            ? {}
+            : raw.values;
         this.parent = raw.parent ?? null;
         this.children = raw.children ?? [];
         
@@ -114,6 +176,7 @@ class Block {
             this.html = blocksLibrary[this.type].html;
             this.fields = blocksLibrary[this.type].fields;
             this.displayName = blocksLibrary[this.type].display_name;
+            this.wys = [];
         } else {
             // Block racine → aucune info liée à blocksLibrary
             this.html = null;
@@ -124,7 +187,7 @@ class Block {
         this.DOM = null;
     }
 
-    test() {
+    debug() {
         console.log(blocksLibrary);
     }
 
@@ -143,8 +206,8 @@ class Block {
         }
     }
 
-    setListener(eventType) {
-        this.DOM.addEventListener(eventType, (e) => {
+    setListener() {
+        this.DOM.addEventListener('input', (e) => {
             const inputEl = e.target; // l'élément qui a changé
             const field = inputEl.name; // récupère le nom du champ
             let value;
@@ -158,7 +221,7 @@ class Block {
             // -------------------------------
             const index = this.displayOrder;
 
-            // ---- RESYNC INDEX (if bloc is added, then another bloc deleted, then it desyncs index)
+            // USELESS ? ---- RESYNC INDEX (if bloc is added, then another bloc deleted, then it desyncs index)
             if (blocksInPage[index] === undefined) {
                 blocksInPage.forEach(block => {
                     block.displayOrder = syncDisplayOrder(block);
@@ -167,29 +230,106 @@ class Block {
             }
 
             // on met à jour la valeur dans le bloc correspondant
-            if (blocksInPage[index].values) {
-                let selectedLang = langSelector.selectedOptions[0].value;
+            if (!staticFields.includes(field)) {
+                const selectedLang = langSelector.value;
 
-                /* if (!blocksInPage[index].values[field]) {
-                    blocksInPage[index].values[field] = {};
-                }
-                blocksInPage[index].values[field][selectedLang] = value; */
+                this.values[field] = this.values[field] || {};
+                this.values[field][selectedLang] = value;
 
-                blocksInPage[index].values[field] = value;
-
-                
+            } else {
+                this.values[field] = value;
             }
 
-            /* const data = blocksInPage.map(block => {
-                return {
-                    type: block.type,
-                    displayOrder: block.displayOrder,
-                    values: block.values
-                }
-            }); */
-
-            dataToJSON(blocksInPage);
+            const JSON = exportPageJSON();
+            refreshSideJSON(JSON);
         })
+    }
+
+    setValues() {
+        for (const fieldName in this.values) {
+            const selector = '[name="' + fieldName + '"]';
+            const fieldEl = this.DOM.querySelector(selector);
+            if (!fieldEl) continue;
+            
+            const value = staticFields.includes(fieldName)
+            ? (this.values[fieldName] ?? '')
+            : (this.values[fieldName][selectedLang] ?? '');
+            
+            // TinyMCE ?
+            const editor = tinymce.get(fieldEl.id);
+            if (editor) {
+                setTinyContentWhenReady(editor, value);
+                continue;
+            }
+
+            // Sinon field normal
+            fieldEl.value = value;
+        }
+    }
+
+
+    moveUp() {
+        const parent = this.parent;
+        if (!parent) return;
+
+        const siblings = parent.children;
+        const index = siblings.indexOf(this);
+        if (index <= 0) return; // déjà en haut
+
+        // 1. Déplacer dans l’array (LOGIQUE)
+        [siblings[index - 1], siblings[index]] = [siblings[index], siblings[index - 1]];
+
+        // 2. Déplacer dans le DOM (VISUEL)
+        const dom = this.DOM; // élément HTML du block
+        const parentDOM = dom.parentNode;
+
+        const previous = dom.previousElementSibling;
+        if (previous) {
+            parentDOM.insertBefore(dom, previous);
+        }
+
+        const JSON = exportPageJSON();
+        refreshSideJSON(JSON);
+    }
+
+
+    moveDown() {
+        const parent = this.parent;
+        if (!parent) return;
+        
+        const siblings = parent.children;
+        const index = siblings.indexOf(this);
+        if (index >= siblings.length - 1) return; // déjà en bas
+        
+        // 1. Déplacer dans l’array
+        [siblings[index + 1], siblings[index]] = [siblings[index], siblings[index + 1]];
+        
+        // 2. Déplacer dans le DOM
+        const dom = this.DOM;
+        const next = dom.nextElementSibling;
+        
+        if (next) {
+            dom.parentNode.insertBefore(next, dom);
+        }
+
+        const JSON = exportPageJSON();
+        refreshSideJSON(JSON);
+    }
+
+    delete() {
+        const parentArray = this.parent.children
+        const index = parentArray.indexOf(this);
+        this.DOM.remove();
+        parentArray.splice(index, 1);
+        const JSON = exportPageJSON();
+        refreshSideJSON(JSON);
+    }
+
+    apply(callback) {
+        callback(this);
+        for (const child of this.children) {
+            child.apply(callback);
+        }
     }
 }
 
@@ -208,94 +348,234 @@ const addBlockBtn = document.getElementById('add_block_btn');
 const rootContainer = document.querySelector('#_page_blocks .inside');
 const blockTypeSelector = document.getElementById('block-type-selector');
 const langSelector = document.getElementById('lang-selector');
+let selectedLang = langSelector.selectedOptions[0].value;
+
+const debugBtn = document.getElementById('debug_btn');
+
+// Fields we dont want translation to affect
+const staticFields = ['custom_css', 'layout'];
+let obwpOptions;
 
 const pageRoot = new Block({
     type: 'root',
     id: 'root',
+    DOM: {},
     children: []
 });
 
 
 function initPageBuilder() {
-    //const domBlocks = document.querySelectorAll('.block-item');
+    obwpOptions = php.obwp_options;
+    pageRoot.DOM = rootContainer;
     
     displaySideJSON();
     
     phpPageBlocks.forEach((block, index) => {
-/*         const blockInstance = new Block(block);
-        blockInstance.DOM = domBlocks[index];
-        blockInstance.pushInArray(blockInstance);
-
-        blockInstance.setListener('input'); */
-        //addBlockToUI(rootContainer, block, index);
+        initBlocks(block, pageRoot);
     });
-
-    dataToJSON(blocksInPage);
+    
+    const JSON = exportPageJSON();
+    refreshSideJSON(JSON);
 }
 
-document.addEventListener('DOMContentLoaded', initPageBuilder);
+function initBlocks(block, parent) {
+    const values = block.values;
+    const initBlock = addBlock(parent, block.type);
+    initBlock.values = (!values || Array.isArray(values)) ? {} : values;
+    initBlock.setValues();
+    
+    for (const children of block.children) {
+        initBlocks(children, initBlock);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    initPageBuilder();
+    initTinyFor(pageRoot.DOM);
+});
+
+
+langSelector.addEventListener('change', () => {
+    selectedLang = langSelector.selectedOptions[0].value;
+    pageRoot.apply(block => block.setValues());
+})
 
 //=============================================================================================================================================================
 //                                                                        3. ADD BLOCK
 //=============================================================================================================================================================
-// Asks for an element, the block type (string), and where to place the block
-function addBlockToUI(parentDOM, blockType, index = 0) {
-    // inst new block and give unique ID
+
+function createBlockInstance(blockType) {
     const base = blocksLibrary[blockType];
-    const blockInstance = new Block({
+
+    return new Block({
         ...base,
         type: blockType,
         values: {},
         id: uniqueID(blockType)
     });
-    
-    // Prepare div to insert UI elements
+}
+
+function addBlock(parentBlockArray, blockType, index = null) {
+    const block = createBlockInstance(blockType);
+
+    // 1. structure logique
+    parentBlockArray.addChild(block, index);
+
+    // 2. structure visuelle
+    renderBlock(block);    
+    initTinyFor(block.DOM);
+
+
+    const JSON = exportPageJSON();
+    refreshSideJSON(JSON);
+
+    return block;
+}
+
+function renderBlock(blockInstance) {
+    const parentDOM = blockInstance.parent?.DOM.querySelector('.inner-' + blockInstance.parent.type)
+        || blockInstance.parent?.DOM;
+
     const singleBlockContainer = document.createElement('div');
     singleBlockContainer.classList.add('block-item');
     singleBlockContainer.id = blockInstance.id;
+
+    // Inject HTML
     singleBlockContainer.insertAdjacentHTML('beforeend', blockInstance.html);
 
-    // Add arrows and delete btn
-    addUIElements(singleBlockContainer, index);
+    blockInstance.DOM = singleBlockContainer;
 
-    // Add block to the DOM
-    blockInstance.DOM = parentDOM.appendChild(singleBlockContainer);
-    //blockInstance.setListener('input');
-    //dataToJSON(blocksInPage);
-    
-    if (blockType === 'container') {
-        containerBlock(parentDOM, blockInstance);
+    addUIElements(blockInstance);
+
+    parentDOM.appendChild(singleBlockContainer);
+
+    if (blockInstance.type === 'container') {
+        containerBlock(blockInstance);
+    } else {
+        blockInstance.setListener();
     }
 
-    return blockInstance;
+    // Set Textareas ready for WYSIWYG and give IDs
+    const textareas = singleBlockContainer.querySelectorAll('textarea');
+    textareas.forEach(textarea => {
+        textarea.id = uniqueID('wys');
+        blockInstance.wys.push(textarea);
+        textarea.dataset.blockId = blockInstance.id;
+    });
 }
 
 addBlockBtn.addEventListener('click', () => {
     const selectedBlock = blockTypeSelector.selectedOptions[0].value;
-    const index = blocksInPage.length;
-
-    const newBlock = addBlockToUI(rootContainer, selectedBlock);
-    pageRoot.addChild(newBlock);
-    console.log(pageRoot);
-    //addBlockToUI(rootContainer, selectedBlock, index);
+    addBlock(pageRoot, selectedBlock);
 });
 
 //=============================================================================================================================================================
 //                                                                        4. CONTAINER BLOCK
 //=============================================================================================================================================================
 
-function containerBlock(parent, blockInstance) {
+function containerBlock(blockInstance) {
     const containerDOM = blockInstance.DOM;
     const containerBlockSelector = containerDOM.querySelector("#block-type-selector");
-    
     const containerAddBtn = containerDOM.querySelector(".container-btn");
+    
     containerAddBtn.addEventListener('click', () => {
-        let containerSelectedBlock = containerBlockSelector.selectedOptions[0].value;
-        const selector = '.inner-' + blockInstance.type;
-        const parentContainer = containerDOM.querySelector(selector);
-        
-        const nestedBlock = addBlockToUI(parentContainer, containerSelectedBlock);
-        blockInstance.addChild(nestedBlock);
-        console.log(pageRoot);
+        const selectedBlock = containerBlockSelector.value;
+        addBlock(blockInstance, selectedBlock);
     })
+}
+
+
+
+//=============================================================================================================================================================
+//                                                                        5. TINY MCE WYSIWYG
+//=============================================================================================================================================================
+
+function initTinyFor(container) {
+    const editors = container.querySelectorAll('textarea.wysiwyg, textarea.wysiwyg-h2, textarea.wysiwyg-h3');
+
+    editors.forEach(textarea => {
+
+        // TinyMCE a besoin d'un id unique, sinon il bug
+        if (!textarea.id) {
+            textarea.id = uniqueID('wys');
+        }
+
+        // Déjà initialisé ? Alors on saute
+        if (tinymce.get(textarea.id)) {
+            return;
+        }
+
+        // Choix de la config en fonction de la classe
+        let config = {
+            target: textarea,
+            menubar: false,
+            forced_root_block: 'p',    // défaut pour .wysiwyg
+            toolbar: 'undo redo removeformat | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify',
+            min_height: 150
+        };
+
+        if (textarea.classList.contains('wysiwyg-h2')) {
+            config = {
+                target: textarea,
+                menubar: false,
+                forced_root_block: 'h2',
+                toolbar: 'undo redo removeformat | bold italic underline strikethrough | alignleft aligncenter alignright',
+                min_height: 60
+            };
+        }
+        else if (textarea.classList.contains('wysiwyg-h3')) {
+            config = {
+                target: textarea,
+                menubar: false,
+                forced_root_block: 'h3',
+                toolbar: 'undo redo removeformat | bold italic underline strikethrough | alignleft aligncenter alignright',
+                min_height: 60
+            };
+        }
+
+        tinymce.init(config).then(editors => {
+            const editor = editors[0];
+            if (editor && !editor._listenersAdded) {
+                editor._listenersAdded = true;
+                editor.on('input', () => setupTinyMCE(editor));
+            }
+        });
+    });
+}
+
+
+
+function setupTinyMCE(editor) {
+    let blockId;
+    if (!editor.targetElm.dataset.blockId) {
+        blockId = blockInstance.id; // ou ce que tu utilises
+        console.log(blockId);
+    } else {
+        blockId = editor.targetElm.dataset.blockId;
+    }
+    const content = editor.getContent();
+    const fieldName = editor.targetElm.name;
+    
+    // Tu peux retrouver ton block:
+    const blockInstance = findObjectByID(blockId, pageRoot);
+    
+    if (blockInstance && blockInstance.values) {
+        const selectedLang = langSelector.value;
+        
+        blockInstance.values[fieldName] = blockInstance.values[fieldName] ?? {};
+        blockInstance.values[fieldName][selectedLang] = content;
+    }
+
+    const JSON = exportPageJSON();
+    refreshSideJSON(JSON);
+}
+
+function setTinyContentWhenReady(editor, value) {
+    if (editor.initialized) {
+        editor.setContent(value);
+        return;
+    }
+
+    // Loop jusqu'à ce qu'il soit prêt
+    setTimeout(() => setTinyContentWhenReady(editor, value), 30);
 }

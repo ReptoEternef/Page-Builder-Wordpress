@@ -12,7 +12,7 @@ function render_admin_UI($post) {
     if (!is_array($page_blocks)) {
         $page_blocks = [];
     }
-
+    
     // TOOLBAR / HIDDEN INPUT (dropdown / buttons / '_page_blocks' hidden input)
     // Hidden_input stores a JSON created in JS of data/values from blocks. Avoids AJAX / useless server requests
     ?> 
@@ -41,14 +41,9 @@ function render_admin_UI($post) {
     wp_localize_script('page-builder-js', 'php', [
         'ajaxurl' => admin_url('admin-ajax.php'),
         'pageBlocks' => $page_blocks,
-        'blocksLibrary' => $blocks_library
+        'blocksLibrary' => $blocks_library,
+        'obwp_options' => $obwp_options
     ]);
-    /*     wp_localize_script('page-blocks-js', 'php', [
-        'ajaxurl' => admin_url('admin-ajax.php'),
-        'pageBlocks' => $page_blocks,
-        'blocksLibrary' => $blocks_library
-    ]); */
-
 
     // RENDER ADMIN
     if (is_array($page_blocks)) {

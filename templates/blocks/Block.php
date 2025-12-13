@@ -22,7 +22,7 @@ abstract class Block {
         $this->display_name = $display_name;
         $this->fields = $fields;
         $this->layouts = $layouts;
-        $this->values = $values;
+        $this->values = is_array($values) ? $values : (array) $values;
         $this->display_order = $display_order;
         $this->id = $id;
     }
@@ -43,16 +43,9 @@ abstract class Block {
     // Display block in admin
     public function renderAdmin($values = [])
     {
-        $this->setValues($values ?: $this->values);
-        $data = $this->normalizeData();
-        $this->generate_block_ID();
-
-        ?>
-        <div class="block-item">
-            <?php //$this->generate_block_ID(); ?>
-            <?php include __DIR__ . DIRECTORY_SEPARATOR . $this->type . DIRECTORY_SEPARATOR . 'admin.php'; ?>
-        </div>
-        <?php
+/*         $this->setValues($values ?: $this->values);
+        $data = $this->normalizeData(); */
+        $data = array_merge($this->values, $this->normalizeData());
     }
 
     // Display block on site

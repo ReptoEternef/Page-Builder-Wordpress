@@ -27,6 +27,10 @@ p {
     color: var(--text);
 }
 
+#text {
+    color: var(--text);
+}
+
 
 /* ----------- ELEMENTS ----------- */
 

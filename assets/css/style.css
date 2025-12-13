@@ -13,6 +13,7 @@
 body {
   background-color: var(--dark);
   margin: 0;
+  color: var(--text);
 }
 h1, h2, h3 {
   color: var(--accented);

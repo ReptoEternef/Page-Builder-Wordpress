@@ -83,14 +83,13 @@ function addUIElements(singleBlockContainer, index) {
     deleteBtnContainer.addEventListener('click', deleteBlock);
 }
 
-function moveBlock(e) {
+/* function moveBlock(e) {
     const arrow = e.target;
     const rowId = parseInt(arrow.id, 10);
     const currRow = blocksArray[rowId];
     const upperRow = blocksArray[rowId - 1];
     const lowerRow = blocksArray[rowId + 1];
 
-    //console.log(blocksArray);
     
     flashRow(currRow.DOM);
     
@@ -102,8 +101,6 @@ function moveBlock(e) {
         swapArray(blocksArray, rowId + 1, rowId);
     }
     
-    //console.log(blocksArray);
-    // Mettre à jour dataset.order et IDs des flèches
     blocksArray.forEach((block, i) => {
         block.display_order = i;
         const arrows = block.DOM.querySelectorAll('.arrows-container span');
@@ -111,7 +108,7 @@ function moveBlock(e) {
     });
 
     forceSync();
-}
+} */
 
 function swapElements(el1, el2) {
     const parent = el1.parentNode;

@@ -1,0 +1,14 @@
+{
+    "block_type" : "title",
+    "display_name" : "Titre",
+    "fields" : [
+        "custom_css",
+        "layout",
+        "title",
+        "subtitle"
+    ],
+    "layouts" : [
+        "default",
+        "left"
+    ]
+}

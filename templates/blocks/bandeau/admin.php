@@ -29,8 +29,8 @@
         ?>
         <input type="text" name="custom_css" value="<?= $data['custom_css'] ?? '' ?>" placeholder="Custom CSS">
         
-        <input type="text" name="title" value="<?= $data['title'] ?? '' ?>" placeholder="Titre">
-        <textarea type="text" name="subtitle" placeholder="Sous-titre"><?= $data['subtitle'] ?? '' ?></textarea>
+        <?php echo createInput($data ?? '', 'text', 'title', 'Titre') ?>
+        <?php echo createInput($data ?? '', 'textarea', 'subtitle', 'Sous-titre') ?>
     </div>
     
     <div class="block-field" data-name="background">

@@ -1,0 +1,18 @@
+{# Bloc texte multilingue #}
+{% set lang = options.available_langs[0] ?? 'fr' %} {# fallback sur 'fr' si options manquantes #}
+
+<div class="container block-{{ block }}">
+  {% if values.layout is defined and values.layout == layouts[0] %}
+    <div class="{{ block }}-{{ layouts[0] }}">
+        {{ values.title[lang]|default('')|raw }}
+        {{ values.content[lang]|default('')|raw }}
+    </div>
+  {% elseif values.layout is defined and values.layout == layouts[1] %}
+    <div class="{{ block }}-{{ layouts[1] }}">
+        {{ values.title[lang]|default('')|raw }}
+        {{ values.content[lang]|default('')|raw }}
+    </div>  
+  {% else %}
+      <span>Erreur : layout ou contenu manquant</span>
+  {% endif %}
+</div>

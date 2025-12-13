@@ -1,17 +1,19 @@
+{% set lang = options.available_langs[0] ?? 'fr' %}
+
 <div class="container">
   {% if values.layout == layouts[0] %}
     <div class="bandeau-background" style="background-image:url( {{ values.background }} ); {{ values.custom_css }}">
       <div class="bandeau-text">
-        <h1> {{ values.title }} </h1>
-        <p> {{ options.available_langs[2] }} </p>
+        <h1> {{ values.title[lang] }} </h1>
+        <p> {{ values.subtitle[lang] }} </p>
 
       </div>
     </div>  
   {% elseif values.layout == layouts[1] %}
     <div class="bandeau-background-left" style="background-image:url( {{ values.background }} );">
       <div class="bandeau-left-text">
-        <h1> {{ values.title }} </h1>
-        <p> {{ values.subtitle }} </p>
+        <h1> {{ values.title[lang] }} </h1>
+        <p> {{ values.subtitle[lang] }} </p>
       </div>
     </div>  
   {% else %}

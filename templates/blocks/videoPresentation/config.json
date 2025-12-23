@@ -1,0 +1,13 @@
+{
+    "block_type" : "videoPresentation",
+    "display_name" : "Présentation vidéo",
+    "fields" : [
+        "custom_css",
+        "layout",
+        "urls"
+    ],
+    "layouts" : [
+        "default",
+        ""
+    ]
+}

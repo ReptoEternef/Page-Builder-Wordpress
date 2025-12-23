@@ -27,10 +27,10 @@
             <?php
         } // ----------------------------------
         
-        
         obwp_dropdown_block_selector(obwp_get_library());
         ?>
         <button type="button" class="container-btn">Ajouter un bloc</button>
+        <input type="text" name="custom_css" value="<?= $data['custom_css'] ?? '' ?>" placeholder="Custom CSS">
         
     </div>
 </div>

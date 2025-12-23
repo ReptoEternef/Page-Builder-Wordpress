@@ -1,10 +1,8 @@
 {% extends "base.twig" %}
-
 {% block content %}
   {% if rendered_blocks %}
     {% for block in rendered_blocks %}
-      {# Affiche directement le HTML généré par renderFrontend() #}
-      {{ block.html|raw }}
+      {% include 'partials/block.twig' with { block: block } %}
     {% endfor %}
   {% else %}
     <p>Aucun bloc défini pour cette page.</p>

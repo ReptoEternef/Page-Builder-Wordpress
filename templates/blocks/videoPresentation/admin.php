@@ -30,13 +30,11 @@
         
     </div>
 
+    <?php add_field_btn('input', 'video_link', 'Lien vidéo', 'Ajouter vidéo') ?>
 
-    <div class="video-links">
-        <input type="text" name="video_link_1" value="<?= $data['video_link_1'] ?? '' ?>" placeholder="lien vidéo 1">
-        <input type="text" name="video_link_2" value="<?= $data['video_link_2'] ?? '' ?>" placeholder="lien vidéo 2">
-        <input type="text" name="video_link_3" value="<?= $data['video_link_3'] ?? '' ?>" placeholder="lien vidéo 3">
-        <input type="text" name="video_link_4" value="<?= $data['video_link_4'] ?? '' ?>" placeholder="lien vidéo 4">
-        <input type="text" name="video_link_5" value="<?= $data['video_link_5'] ?? '' ?>" placeholder="lien vidéo 5">
+
+    <div class="added-fields">
+        <!-- <input type="text" name="video_link_1" value="" placeholder="lien vidéo 1"> -->
     </div>
 </div>
 

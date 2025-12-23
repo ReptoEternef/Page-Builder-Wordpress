@@ -8,6 +8,7 @@ abstract class Block {
     public array $values;
     public int $display_order;
     public string $id;
+    public string $html;
 
     public function __construct(
         $type,

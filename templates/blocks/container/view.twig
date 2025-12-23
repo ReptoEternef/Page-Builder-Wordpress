@@ -1,6 +1,6 @@
 {# BLOC NAME #}
-
-<div class="container block-{{ block }}">
+{% set lang = options.available_langs[0] ?? 'fr' %}
+{# <div class="container block-{{ block }}">
   {% if values.layout == layouts[0] %}
     <div class="{{ block }}-{{ layouts[0] }}">
 
@@ -12,7 +12,9 @@
   {% else %}
       <span>Erreur : layout</span>
   {% endif %}
-</div>
+</div> #}
+
+
 
 
 {# SNIPPETS & TIPS

@@ -5,6 +5,7 @@
 // 4. Container block
 // 5. Tiny MCE WYSIWYG
 // 6. WP import images
+// 7. Other options
 
 //=============================================================================================================================================================
 //                                                                        0. FUNCTIONS
@@ -65,7 +66,6 @@ function addUIElements(blockInstance) {
     upArrow.classList.add('upArrow');
     upArrow.classList.add('prevent-select');
     //upArrow.id = index;
-    //console.log(pageRoot.indexOf(singleBlockContainer))
     upArrow.addEventListener('click', () => {
         blockInstance.moveUp();
     });
@@ -197,6 +197,7 @@ class Block {
             this.fields = blocksLibrary[this.type].fields;
             this.displayName = blocksLibrary[this.type].display_name;
             this.wys = [];
+            this.addFieldBtns = {};
         } else {
             // Block racine → aucune info liée à blocksLibrary
             this.html = null;
@@ -403,6 +404,7 @@ function initBlocks(block, parent) {
     const initBlock = addBlock(parent, block.type);
     initBlock.values = (!values || Array.isArray(values)) ? {} : values;
     initBlock.setValues();
+    addFieldBtn(initBlock);
     
     for (const children of block.children) {
         initBlocks(children, initBlock);
@@ -444,6 +446,7 @@ function addBlock(parentBlockArray, blockType, index = null) {
     // 2. structure visuelle
     renderBlock(block);    
     initTinyFor(block.DOM);
+    //addFieldBtn(block);
 
 
     const JSON = exportPageJSON();
@@ -470,6 +473,7 @@ function renderBlock(blockInstance) {
     parentDOM.appendChild(singleBlockContainer);
 
     if (blockInstance.type === 'container') {
+        blockInstance.setListener();
         containerBlock(blockInstance);
     } else {
         blockInstance.setListener();
@@ -557,7 +561,7 @@ function initTinyFor(container) {
             const editor = editors[0];
             if (editor && !editor._listenersAdded) {
                 editor._listenersAdded = true;
-                editor.on('input', () => setupTinyMCE(editor));
+                editor.on('change', () => setupTinyMCE(editor));
             }
         });
     });
@@ -569,7 +573,6 @@ function setupTinyMCE(editor) {
     let blockId;
     if (!editor.targetElm.dataset.blockId) {
         blockId = blockInstance.id; // ou ce que tu utilises
-        console.log(blockId);
     } else {
         blockId = editor.targetElm.dataset.blockId;
     }
@@ -676,3 +679,72 @@ jQuery(document).ready(function($){
         }
     });
 });
+
+
+//=============================================================================================================================================================
+//                                                                        7. OTHER OPTIONS
+//=============================================================================================================================================================
+
+function addFieldBtn(blockInstance) {
+    const parentDOM = blockInstance.DOM;
+    const addFieldBtns = parentDOM.querySelectorAll('.add-field');
+    
+    if (!addFieldBtns) return;
+    
+    
+    addFieldBtns.forEach(btn => {
+        const fieldName = btn.dataset.fieldName;
+
+        const keys = Object.keys(blockInstance.values);
+        keys.forEach(key => {
+            if (key.startsWith(fieldName)) {
+                addField(btn, fieldName, blockInstance, parentDOM);
+            }
+        });
+
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            addField(btn, fieldName, blockInstance, parentDOM);
+        })
+    });
+}
+
+function addField(btn, fieldName, blockInstance, parentDOM) {
+    
+    if (!blockInstance.addFieldBtns[fieldName]) {
+        blockInstance.addFieldBtns[fieldName] = {
+            btn,
+            fields: []
+        };
+    }
+    const fields = blockInstance.addFieldBtns[fieldName].fields;
+    const index = Object.keys(fields).length;
+    //let thisField = fieldName + '_' + (Object.keys(fields).length + 1);
+    
+    const parent = parentDOM.querySelector('.added-fields');
+    let newEl;
+    switch (btn.dataset.fieldType) {
+        case 'input':
+            newEl = document.createElement('input');
+            newEl.type = 'text';
+            newEl.placeholder = blockInstance.values[fieldName] ?? btn.dataset.fieldPlaceholder + ' ' + (Object.keys(fields).length + 1);
+            newEl.name = btn.dataset.fieldName + '_' + (Object.keys(fields).length);
+            newEl.value = blockInstance.values[fieldName + '_' + index]?.[selectedLang] ?? '';
+            parent.appendChild(newEl);
+            
+            break;
+            
+        default:
+            break;
+        }
+            
+    fields.push(newEl);
+    
+
+    const name = btn.dataset.fieldName;
+    
+
+    
+    
+    
+}

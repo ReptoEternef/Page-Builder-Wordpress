@@ -1,14 +1,21 @@
-{% set video_links = [
-  values.video_link_1,
-  values.video_link_2,
-  values.video_link_3,
-  values.video_link_4,
-  values.video_link_5,
-] %}
+{% set lang = options.available_langs[0] ?? 'fr' %}
 
-{% set video_ids = [] %}
+{% set video_links = [] %}
 
 {% for link in video_links %}
+  <p>{{link[lang]}}</p>
+{% endfor %}
+
+{% for key, value in values %}
+  {% if key starts with 'video_link' %}
+    {% set video_links = video_links|merge([value]) %}
+  {% endif %}
+{% endfor %}
+  
+{% set video_ids = [] %}
+
+{% for rawLink in video_links %}
+  {% set link = rawLink[lang] %}
   {% set video_id = '' %}
   
   {# Cas 1: lien avec watch?v= #}
@@ -49,6 +56,7 @@
     </div>
   </div>
 </div>
+
 
 
 {# SNIPPETS & TIPS

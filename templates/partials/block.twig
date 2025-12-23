@@ -1,0 +1,16 @@
+{% set layout = block.values.layout|default('vertical') %}
+
+{% if block.type == 'container' %}
+  <div
+    class="container container-{{ block.values.layout }}-layout"
+    {% if block.values.custom_css %}
+      style="{{ block.values.custom_css }}"
+    {% endif %}
+  >
+    {% for child in block.children %}
+      {% include "partials/block.twig" with { block: child } %}
+    {% endfor %}
+  </div>
+{% else %}
+  {{ block.html|raw }}
+{% endif %}

@@ -14,57 +14,55 @@ $availableBlocks = obwp_get_library();
 
 $rendered_blocks = [];
 
+//var_dump($blocks);
+
 
 function render_block_context($block, $availableBlocks) {
-    $output = [];
-
     $type = $block['type'] ?? 'default';
+
     $block['values'] = $block['values'] ?? [];
     $block['values']['layout'] = $block['values']['layout'] ?? 'default';
+    $block['children'] = $block['children'] ?? [];
 
-/*     if (!empty($block['children'])) {
-        foreach ($block['children'] as $child) {
-            $output = array_merge($output, render_block_context($child, $availableBlocks));
-        }
-    } else {
-    } */
-    if (isset($availableBlocks[$type])) {
-        $instance = $availableBlocks[$type];
+    // Rendu des enfants
+    $renderedChildren = [];
+    foreach ($block['children'] as $child) {
+        $renderedChildren[] = render_block_context($child, $availableBlocks);
+    }
 
-        ob_start();
-        $instance->renderFrontend($block);
-        $html = ob_get_clean();
-
-        $output[] = [
-            'type' => $type,
-            'html' => $html,
-            'values' => $block,
-        ];
-    } else {
-        $output[] = [
+    if (!isset($availableBlocks[$type])) {
+        return [
             'type' => $type,
             'html' => "<div style='color:red;'>⚠️ Bloc inconnu : $type</div>",
             'values' => $block,
+            'children' => $renderedChildren,
         ];
     }
 
-    return $output;
+    $instance = $availableBlocks[$type];
+
+    ob_start();
+    $instance->renderFrontend($block);
+    $html = ob_get_clean();
+
+    return [
+        'type' => $type,
+        'html' => $html,
+        'values' => $block['values'],
+        'id' => $block['id'] ?? null,
+        'children' => $renderedChildren,
+    ];
 }
+
 
 
 
 $rendered_blocks = [];
 foreach ($blocks as $block) {
-    $rendered_blocks = array_merge($rendered_blocks, render_block_context($block, $availableBlocks));
+    $rendered_blocks[] = render_block_context($block, $availableBlocks);
 }
-
-/* if (!empty($block['html'])) {
-    echo nl2br(htmlspecialchars($block['html']));
-} else {
-    echo "Pas de HTML pour ce block.";
-} */
-
-
+/* var_dump($rendered_blocks);
+exit(); */
 
 $context['rendered_blocks'] = $rendered_blocks;
 

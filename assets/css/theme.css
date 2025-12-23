@@ -66,3 +66,17 @@ p {
 .background {
     background-color: var(--light);
 }
+
+
+/* ------- CONTAINER BLOCKS ------- */
+
+.container-default-layout,
+.container-vertical-layout {
+    display: flex;
+    flex-direction: column;
+}
+
+.container-horizontal-layout {
+    display: flex;
+    flex-direction: row;
+}

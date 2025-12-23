@@ -172,6 +172,10 @@ add_action('admin_init', function() {
     register_setting('obwp_options_group', 'obwp_options');
 });
 
+add_filter('timber/twig', function ($twig) {
+    $twig->enableDebug();
+    return $twig;
+});
 
 
 
@@ -273,17 +277,16 @@ add_action('admin_enqueue_scripts', function($hook) {
 
 // ENQUEUE BLOCKS' CSS & JS (FRONT)
 // (Only from blocks on page #optimizor2000)
-add_action('wp_enqueue_scripts', function() {
-    if (!is_singular()) return; // seulement sur les pages/posts
-    global $post;
-    if (!$post) return;
-    $page_blocks = obwp_get_blocks_in_page($post->ID);
-    if (!$page_blocks) return;
+function obwp_enqueue_blocks_assets(array $blocks) {
+    foreach ($blocks as $block) {
 
-    foreach ($page_blocks as $block) {
-        $block_type = $block['type'] ?? '';
+        $block_type = $block['type'] ?? null;
+        if (!$block_type) {
+            continue;
+        }
+
         $css_file = get_template_directory() . "/templates/blocks/$block_type/assets/css/style.css";
-        $js_file = get_template_directory() . "/templates/blocks/$block_type/assets/js/script.js";
+        $js_file  = get_template_directory() . "/templates/blocks/$block_type/assets/js/script.js";
 
         if (file_exists($css_file)) {
             wp_enqueue_style(
@@ -293,6 +296,7 @@ add_action('wp_enqueue_scripts', function() {
                 filemtime($css_file)
             );
         }
+
         if (file_exists($js_file)) {
             wp_enqueue_script(
                 "block-$block_type",
@@ -302,8 +306,32 @@ add_action('wp_enqueue_scripts', function() {
                 true
             );
         }
+
+        // 🔁 Récursivité : on traite les enfants
+        if (!empty($block['children']) && is_array($block['children'])) {
+            obwp_enqueue_blocks_assets($block['children']);
+        }
     }
+}
+
+add_action('wp_enqueue_scripts', function() {
+
+    if (!is_singular()) return;
+
+    global $post;
+    if (!$post) return;
+
+    $page_blocks = obwp_get_blocks_in_page($post->ID);
+    if (!$page_blocks) return;
+
+    obwp_enqueue_blocks_assets($page_blocks);
 });
+
+
+
+function add_field_btn($type, $name, $placeholder, $text) {
+    ?> <button class="add-field" data-field-type="<?= $type ?>" data-field-name="<?= $name ?>" data-field-placeholder="<?= $placeholder ?>"><?= $text ?></button> <?php
+}
 
 //=============================================================================================================================================================
 //                                                          4. Hooks & filters

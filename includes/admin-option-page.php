@@ -4,7 +4,7 @@ $options = get_option('obwp_options', []);
 
 $color = $options['color'] ?? '';
 $langs = $options['languages'] ?? 1;
-$available_langs = $options['available_langs'] ?? [];
+$available_langs = obwp_get_available_langs();
 
 ?>
 <div class="wrap">

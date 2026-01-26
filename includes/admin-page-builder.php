@@ -2,7 +2,7 @@
 function render_admin_UI($post) {
     $post = get_post();
     $obwp_options = get_option('obwp_options', []);
-    $available_langs = $obwp_options['available_langs'];
+    $available_langs = obwp_get_available_langs();
 
     // Get library of all available blocks
     $blocks_library = obwp_get_library();
@@ -14,7 +14,7 @@ function render_admin_UI($post) {
     }
     
     // TOOLBAR / HIDDEN INPUT (dropdown / buttons / '_page_blocks' hidden input)
-    // Hidden_input stores a JSON created in JS of data/values from blocks. Avoids AJAX / useless server requests
+    // Hidden input stores a JSON created in JS of data/values from blocks. Avoids AJAX / useless server requests
     ?> 
     <div class="obwp-toolbar">
         <!-- dropdown -->
@@ -42,7 +42,7 @@ function render_admin_UI($post) {
         'ajaxurl' => admin_url('admin-ajax.php'),
         'pageBlocks' => $page_blocks,
         'blocksLibrary' => $blocks_library,
-        'obwp_options' => $obwp_options
+        'obwp_options' => $obwp_options,
     ]);
 
     // RENDER ADMIN

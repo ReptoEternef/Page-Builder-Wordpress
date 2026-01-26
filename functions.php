@@ -78,17 +78,15 @@ function meta_box_error() {
 }
 
 function createInput($data, $inputType, $name, $placeholder) {
-    $obwp_options = get_option('obwp_options', []);
-    $available_langs = $obwp_options['available_langs'];
-    $default_lang = $available_langs[0];
+    $lang = obwp_get_current_lang();
 
     switch ($inputType) {
         case 'text':
-            ?> <input type="text" name="<?= $name ?>" placeholder="<?= $placeholder ?>" value="<?= $data[$name][$default_lang] ?? '' ?>"> <?php
+            ?> <input type="text" name="<?= $name ?>" placeholder="<?= $placeholder ?>" value="<?= $data[$name][$lang] ?? '' ?>"> <?php
             break;
         
         case 'textarea':
-            ?> <textarea type="text" name="<?= $name ?>" placeholder="<?= $placeholder ?>"><?= $data[$name][$default_lang] ?? '' ?></textarea> <?php
+            ?> <textarea type="text" name="<?= $name ?>" placeholder="<?= $placeholder ?>"><?= $data[$name][$lang] ?? '' ?></textarea> <?php
             break;
         
         default:
@@ -96,6 +94,37 @@ function createInput($data, $inputType, $name, $placeholder) {
             break;
     }
 }
+
+function obwp_get_available_langs() {
+    $options = get_option('obwp_options', []);
+    $langs = $options['available_langs'] ?? [];
+
+    if (!is_array($langs)) {
+        return [];
+    }
+
+    return array_values(array_map('sanitize_key', $langs));
+}
+
+function obwp_get_default_lang() {
+    $langs = obwp_get_available_langs();
+    return $langs[0] ?? 'fr';
+}
+
+function obwp_get_current_lang() {
+    $available = obwp_get_available_langs();
+    $default = obwp_get_default_lang();
+
+    if (empty($available)) {
+        return $default;
+    }
+
+    $lang = $_GET['lang'] ?? $default;
+    $lang = sanitize_key($lang);
+
+    return in_array($lang, $available, true) ? $lang : $default;
+}
+
 
 //=============================================================================================================================================================
 //                                                          1. Timber & Setup theme
@@ -132,6 +161,7 @@ add_filter('timber/context', function($context) {
     $custom_logo_id = get_theme_mod('custom_logo');
     $context['logo_url'] = wp_get_attachment_image_url($custom_logo_id, 'full');
     $context['options'] = get_option('obwp_options', []);
+    $context['lang'] = obwp_get_current_lang();
     return $context;
 });
 

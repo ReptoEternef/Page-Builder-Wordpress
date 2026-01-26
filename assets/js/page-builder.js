@@ -101,6 +101,12 @@ function addUIElements(blockInstance) {
     // Delete Btn
     deleteBtnContainer.appendChild(icon);
     singleBlockContainer.appendChild(deleteBtnContainer);
+    //Creates a backup button in case it couldn't load Iconify
+    if (icon.children.length === 0) {
+        const backupDeleteBtn = document.createElement('button');
+        backupDeleteBtn.innerHTML = 'X';
+        icon.appendChild(backupDeleteBtn);
+    }
 }
 
 // Source - https://stackoverflow.com/a
@@ -448,6 +454,10 @@ function addBlock(parentBlockArray, blockType, index = null) {
     initTinyFor(block.DOM);
     //addFieldBtn(block);
 
+    debugBtn.addEventListener('click', () => {
+        console.log(block);
+    })
+
 
     const JSON = exportPageJSON();
     refreshSideJSON(JSON);
@@ -541,10 +551,13 @@ function initTinyFor(container) {
         if (textarea.classList.contains('wysiwyg-h2')) {
             config = {
                 target: textarea,
-                menubar: false,
+                menubar: true,
                 forced_root_block: 'h2',
                 toolbar: 'undo redo removeformat | bold italic underline strikethrough | alignleft aligncenter alignright',
-                min_height: 60
+                min_height: 60,
+                valid_elements: 'h2',
+                cleanup: true,
+                verify_html: true
             };
         }
         else if (textarea.classList.contains('wysiwyg-h3')) {
@@ -558,6 +571,7 @@ function initTinyFor(container) {
         }
 
         tinymce.init(config).then(editors => {
+            console.log(editors);
             const editor = editors[0];
             if (editor && !editor._listenersAdded) {
                 editor._listenersAdded = true;

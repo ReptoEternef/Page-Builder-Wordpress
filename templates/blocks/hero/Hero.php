@@ -24,12 +24,19 @@ class Hero extends Block {
 
     public function renderFrontend($values = [])
     {
-        $data = $this->normalizeData();
-        $data['values'] = $values['values'] ?? $values;
-        $data['block'] = $this->type;
+        // 🔑 CONTEXTE GLOBAL
+        $data = Timber::context();
+
+        // Données du block
+        $data['values']  = $values['values'] ?? $values;
+        $data['block']   = $this->type;
         $data['layouts'] = $this->layouts;
+
+        // Si normalizeData ajoute des choses utiles :
+        $data = array_merge($data, $this->normalizeData());
 
         $template_path = 'blocks/' . $this->type . '/view.twig';
         Timber::render($template_path, $data);
     }
+
 }

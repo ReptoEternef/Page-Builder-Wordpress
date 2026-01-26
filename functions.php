@@ -95,6 +95,23 @@ function createInput($data, $inputType, $name, $placeholder) {
     }
 }
 
+function layoutsDropdown($object) {
+    if (count($object->layouts) > 1) {
+    ?>
+    <!-- <label for="layout">Layout :</label> -->
+    <select name="layout" id="">
+        <?php
+        if ($object->layouts) {
+            foreach ($object->layouts as $layout) {
+                ?> <option value="<?= esc_attr($layout) ?>" id=""><?= esc_attr($layout) ?></option> <?php
+            }
+        }
+        ?>
+    </select>
+    <?php
+}
+}
+
 function obwp_get_available_langs() {
     $options = get_option('obwp_options', []);
     $langs = $options['available_langs'] ?? [];

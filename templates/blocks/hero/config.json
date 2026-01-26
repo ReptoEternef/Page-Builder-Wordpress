@@ -7,9 +7,11 @@
         "title",
         "slogan",
         "btn1",
-        "btn2"
+        "btn2",
+        "background"
     ],
     "layouts" : [
-        "default"
+        "default",
+        "second"
     ]
 }

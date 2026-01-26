@@ -138,3 +138,102 @@
 .mce-container.mce-panel {
     border: 1px #e8e8e8 solid;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* GPT */
+
+/* ===============================
+   Structure générale
+   =============================== */
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.wrap {
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #fff;
+}
+
+/* ===============================
+   Titre
+   =============================== */
+
+.flex-column > strong {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+/* ===============================
+   Inputs
+   =============================== */
+
+.obwp-input-ctn {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.obwp-input-ctn input,
+.obwp-input-ctn textarea {
+    width: 100%;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.85rem;
+    font-family: inherit;
+    color: #111827;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    background-color: #fff;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.obwp-input-ctn textarea {
+    min-height: 60px;
+    resize: vertical;
+}
+
+/* Focus states */
+.obwp-input-ctn input:focus,
+.obwp-input-ctn textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 1px #3b82f6;
+}
+
+/* ===============================
+   Variantes par type
+   =============================== */
+
+/* Exemple :
+.inner-hero { background: #f9fafb; }
+.inner-footer { opacity: 0.85; }
+*/

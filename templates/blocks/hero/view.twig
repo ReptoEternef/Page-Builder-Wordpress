@@ -1,9 +1,10 @@
-{# BLOC NAME #}
+{# HERO #}
 
 <div class="container block-{{ block }}">
   {% if values.layout == layouts[0] %}
     <div class="{{ block }}-{{ layouts[0] }}">
-
+      <p>{{ values.title[lang] }}</p>
+      <p>{{ values.slogan[lang] }}</p>
     </div>
   {% elseif values.layout == layouts[1] %}
     <div class="{{ block }}-{{ layouts[1] }}">

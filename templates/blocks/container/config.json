@@ -4,7 +4,8 @@
     "fields" : [
         "custom_css",
         "layout",
-        "children"
+        "children",
+        "full-width"
     ],
     "layouts" : [
         "vertical",

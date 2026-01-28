@@ -380,7 +380,7 @@ let selectedLang = langSelector.selectedOptions[0].value;
 const debugBtn = document.getElementById('debug_btn');
 
 // Fields we dont want translation to affect
-const staticFields = ['custom_css', 'layout'];
+const staticFields = ['custom_css', 'layout', 'height', 'width', 'full-width'];
 let obwpOptions;
 
 const pageRoot = new Block({
@@ -544,7 +544,18 @@ function initTinyFor(container) {
             target: textarea,
             menubar: false,
             forced_root_block: 'p',    // défaut pour .wysiwyg
-            toolbar: 'undo redo removeformat | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify',
+            plugins: 'textcolor link',
+            toolbar: 'undo redo removeformat | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify forecolor link',
+            textcolor_map: [
+                "EEEAE8", "light",
+                "2E3F2C", "accented",
+                "92C189", "color 2",
+                "B1D8A9", "color 2 hover",
+                "7A7A7A", "text",
+                "5b6077", "light text",
+                "1a1e31", "dark text",
+            ],
+            textcolor_cols: 4,
             min_height: 150
         };
 
@@ -553,9 +564,19 @@ function initTinyFor(container) {
                 target: textarea,
                 menubar: true,
                 forced_root_block: 'h2',
-                toolbar: 'undo redo removeformat | bold italic underline strikethrough | alignleft aligncenter alignright',
+                plugins: 'textcolor link',
+                toolbar: 'undo redo removeformat | bold italic underline strikethrough | alignleft aligncenter alignright forecolor link',
+                textcolor_map: [
+                    "EEEAE8", "light",
+                    "2E3F2C", "accented",
+                    "92C189", "color 2",
+                    "B1D8A9", "color 2 hover",
+                    "7A7A7A", "text",
+                    "5b6077", "light text",
+                    "1a1e31", "dark text",
+                ],
+                textcolor_cols: 4,
                 min_height: 60,
-                valid_elements: 'h2',
                 cleanup: true,
                 verify_html: true
             };
@@ -565,7 +586,18 @@ function initTinyFor(container) {
                 target: textarea,
                 menubar: false,
                 forced_root_block: 'h3',
-                toolbar: 'undo redo removeformat | bold italic underline strikethrough | alignleft aligncenter alignright',
+                plugins: 'textcolor link',
+                toolbar: 'undo redo removeformat | bold italic underline strikethrough | alignleft aligncenter alignright forecolor link',
+                textcolor_map: [
+                    "EEEAE8", "light",
+                    "2E3F2C", "accented",
+                    "92C189", "color 2",
+                    "B1D8A9", "color 2 hover",
+                    "7A7A7A", "text",
+                    "5b6077", "light text",
+                    "1a1e31", "dark text",
+                ],
+                textcolor_cols: 4,
                 min_height: 60
             };
         }
@@ -672,8 +704,9 @@ jQuery(document).ready(function($){
         const imgPreviewContainer = wpMediaImport.find('.preview-container');
 
         const innerBlockDOM = wpMediaImport[0].parentElement;
+        console.log(wpMediaImport);
         const blockDOM = innerBlockDOM.parentElement;
-        const block = findObjectByID(blockDOM.id)
+        const block = findObjectByID(blockDOM.id);
         const fieldName = wpMediaImport.data('name');
         
         

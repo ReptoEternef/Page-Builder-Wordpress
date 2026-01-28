@@ -1,8 +1,19 @@
 {% set layout = block.values.layout|default('vertical') %}
 
-{% if block.type == 'container' %}
+{% if block.type == 'container' and not block.values['full-width'] %}
   <div
     class="container container-{{ block.values.layout }}-layout"
+    {% if block.values.custom_css %}
+      style="{{ block.values.custom_css }}"
+    {% endif %}
+  >
+    {% for child in block.children %}
+      {% include "partials/block.twig" with { block: child } %}
+    {% endfor %}
+  </div>
+{% elseif block.type == 'container' and block.values['full-width'] %}
+  <div
+    class="container-{{ block.values.layout }}-layout"
     {% if block.values.custom_css %}
       style="{{ block.values.custom_css }}"
     {% endif %}

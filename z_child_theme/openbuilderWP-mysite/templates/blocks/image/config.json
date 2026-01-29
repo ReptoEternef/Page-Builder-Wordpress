@@ -1,0 +1,14 @@
+{
+    "block_type" : "image",
+    "display_name" : "Image",
+    "fields" : [
+        "custom_css",
+        "layout",
+        "image",
+        "alt",
+        "height"
+    ],
+    "layouts" : [
+        "default"
+    ]
+}

@@ -1,8 +1,5 @@
 @charset "UTF-8";
 
-/* body {
-  max-width: 800px;
-} */
 
 
 
@@ -11,7 +8,6 @@
 }
 
 body {
-  background-color: var(--dark);
   margin: 0;
 }
 p, ul {
@@ -87,3 +83,60 @@ html, body {
 }
 
 /*# sourceMappingURL=style.css.map */
+
+
+/* ------- CONTAINER BLOCKS ------- */
+
+.container {
+    display: flex;
+    box-sizing: border-box;
+    align-items: stretch;
+    gap: 1rem;
+}
+
+.container--vertical {
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+}
+
+
+.container--horizontal {
+    flex-direction: row;
+}
+
+.container--wrap {
+    flex-wrap: wrap;
+}
+
+.container--center {
+    justify-content: center;
+    align-items: center;
+}
+
+.container--space-between {
+    justify-content: space-between;
+}
+
+.container--gap-vsm { gap: 0.5rem; }
+.container--gap-sm { gap: 1rem; }
+.container--gap-md { gap: 2rem; }
+.container--gap-lg { gap: 3rem; }
+.container--gap-vlg { gap: 4rem; }
+
+.container--horizontal > .block {
+    flex: 1 1 0; /* prend la même part, rétrécit si nécessaire */
+    min-width: 0; /* IMPORTANT : pour que le texte long n'explose pas le container */
+    margin: auto;
+}
+
+
+/* ------- READY TO USE CLASSES ------- */
+
+.center {
+    margin: 0 auto;
+}
+
+.background {
+    background-color: var(--light);
+}

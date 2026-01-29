@@ -1,0 +1,20 @@
+{
+    "block_type" : "hero",
+    "display_name" : "Hero",
+    "fields" : [
+        "custom_css",
+        "layout",
+        "title",
+        "subtitle",
+        "slogan",
+        "btn1",
+        "btn1-link",
+        "btn2",
+        "btn2-link",
+        "background"
+    ],
+    "layouts" : [
+        "default",
+        "second"
+    ]
+}

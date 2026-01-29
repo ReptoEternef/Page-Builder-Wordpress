@@ -1,0 +1,51 @@
+/* IMPORT FONT */
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400..700;1,400..700&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+main {
+    overflow: hidden;
+}
+
+:root {
+    /* COLORS */
+    --light: #EEEAE8;
+    --accented: #2E3F2C;
+    --color2: #92C189;
+    --color2-hover: #B1D8A9;
+    --text: #7A7A7A;
+    --lighter-text: #5b6077;
+    --darker-text: #1a1e31;
+}
+
+/* FONTS */
+
+
+
+
+
+
+
+
+/* ------- READY TO USE CLASSES ------- */
+
+.center {
+    margin: 0 auto;
+}
+
+.background {
+    background-color: var(--light);
+}
+
+
+/* ------- CONTAINER BLOCKS ------- */
+
+.container-default-layout,
+.container-vertical-layout {
+    display: flex;
+    flex-direction: column;
+}
+
+.container-horizontal-layout {
+    display: flex;
+    flex-direction: row;
+}

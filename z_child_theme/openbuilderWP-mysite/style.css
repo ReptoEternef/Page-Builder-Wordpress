@@ -1,0 +1,93 @@
+/*
+Theme Name: Open Builder WP - Child
+Template: openbuilderWP
+Description: Thème enfant pour Open Builder WP - Personnalisations client
+Author: Votre Nom
+Version: 1.0.0
+Text Domain: openbuilderWP-child
+*/
+
+/* 
+ * Vos styles personnalisés ici
+ * Le thème parent sera chargé automatiquement
+ */
+
+/* THEME */
+@import url('https://fonts.googleapis.com/css2?family=Afacad:ital,wght@0,400..700;1,400..700&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+/* MAIN COLORS */
+:root {
+    --light: #EEEAE8;
+    --accented: #2E3F2C;
+    --color2: #92C189;
+    --color2-hover: #B1D8A9;
+    --text: #7A7A7A;
+    --lighter-text: #5b6077;
+    --darker-text: #1a1e31;
+}
+/* COLOR PROFILES */
+.block.color-inverted {
+    --context-bg: var(--accented);
+    --context-text: var(--light);
+    --context-span: var(--light);
+    --context-heading: var(--light);
+    --context-accent: var(--color2);
+}
+
+body {
+  background-color: var(--light);
+}
+
+* {
+    font-family: 'Libre Baskerville', Times;
+}
+h1, h2, h3, h4, h5, span {
+    font-weight: 100;
+}
+
+h1 {
+    font-size: 4.5rem;
+}
+h2 {
+    font-size: 3.5rem;
+    font-weight: 100;
+}
+p {
+    font-family: "Nunito", sans-serif;
+    color: var(--text);
+    font-size: 1rem;
+}
+
+/* ----------- ELEMENTS ----------- */
+
+button {
+    font-size: 1.2rem;
+    padding: 16px 24px;
+    border: 0;
+    border-radius: 999px;
+    color: var(--light);
+
+    background: linear-gradient(
+        45deg,
+        #3f523c,
+        #31612c,
+        #3b6f32,
+        #479a3e
+    );
+    background-size: 300% 300%;
+    background-position: 0% 50%;
+
+    transition: 0.4s;
+}
+
+button:hover {
+    background-position: 100% 50%;
+    cursor: pointer;
+    color: white;
+}
+
+
+/* Surcharge d'un style du parent si nécessaire */
+.openbuilder-container {
+    /* vos modifications */
+}

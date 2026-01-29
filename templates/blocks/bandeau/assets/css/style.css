@@ -5,6 +5,7 @@
     padding: 100px 50px;
     border-radius: 8px;
     overflow: hidden; /* pour que le ::before ne dépasse pas */
+    min-width: 250px;
 }
 
 .bandeau-background::before {
@@ -100,3 +101,5 @@
         background-position: center;
     }
 }
+
+

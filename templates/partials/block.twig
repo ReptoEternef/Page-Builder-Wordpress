@@ -1,27 +1,39 @@
 {% set layout = block.values.layout|default('vertical') %}
 
-{% if block.type == 'container' and not block.values['full-width'] %}
+{% if block.type == 'container' %}
+
+  {# set a style for the congainer #}
+  {% set style_for_container = '' %}
+
+  {% if block.values.custom_css %}
+      {% set style_for_container = style_for_container ~ ' ' ~ block.values.custom_css %}
+  {% endif %}
+  {# set a style for the congainer #}
+
+  {# set correct layout #}
+  {% set container_layout = '' %}
+  {% if block.values.layout == 'default' or block.values.layout == 'vertical' %}
+    {% set container_layout = 'vertical' %}
+  {% elseif block.values.layout == 'horizontal' %}
+    {% set container_layout = 'horizontal' %}
+  {% endif %}
+  {# set correct layout #}
+
+  {# full width #}
+  {% if not block.values['full-width'] %}
+    {% set container_full_width = 'contained' %}
+  {% endif %}
+ {# full width #}
+
   <div
-    class="container container-{{ block.values.layout }}-layout"
-    {% if block.values.custom_css %}
-      style="{{ block.values.custom_css }}"
-    {% endif %}
-  >
+    class="container container--{{ container_layout }} {{ container_full_width }}" style="{{ style_for_container }}">
     {% for child in block.children %}
       {% include "partials/block.twig" with { block: child } %}
     {% endfor %}
   </div>
-{% elseif block.type == 'container' and block.values['full-width'] %}
-  <div
-    class="container-{{ block.values.layout }}-layout"
-    {% if block.values.custom_css %}
-      style="{{ block.values.custom_css }}"
-    {% endif %}
-  >
-    {% for child in block.children %}
-      {% include "partials/block.twig" with { block: child } %}
-    {% endfor %}
-  </div>
+
 {% else %}
-  {{ block.html|raw }}
+  <div id="{{ block.id }}" class="block block-{{ block.type }} {{ block.values.color_context }}">
+    {{ block.html|raw }}
+  </div>
 {% endif %}

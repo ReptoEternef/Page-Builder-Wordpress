@@ -11,22 +11,10 @@
     <strong><?= $this->display_name ?></strong>
     <div class="">
 
-        <?php // ----- LAYOUTS DROPDOWN -------
-        if (count($this->layouts) > 1) {
-            ?>
-            <!-- <label for="layout">Layout :</label> -->
-            <select name="layout" id="">
-                <?php
-                if ($this->layouts) {
-                    foreach ($this->layouts as $layout) {
-                        ?> <option value="<?= esc_attr($layout) ?>" id=""><?= esc_attr($layout) ?></option> <?php
-                    }
-                }
-                ?>
-            </select>
-            <?php
-        } // ----------------------------------
-        ?>
+        <div class="obwp-options">
+            <?php obwp_dropdown($this, 'layout'); ?>
+        </div>
+        
         <input type="text" name="custom_css" value="<?= $data['custom_css'] ?? '' ?>" placeholder="Custom CSS">
         
         <?php echo createInput($data ?? '', 'text', 'title', 'Titre') ?>

@@ -20,6 +20,7 @@
 
     border: 1px solid #dfdfdf;
     border-radius: 5px;
+    overflow: scroll;
 }
 
 .block-item.inside[data-order="0"] {

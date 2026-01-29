@@ -3,7 +3,7 @@
     <div class="flex-row">
 
         <?php // ----- LAYOUTS DROPDOWN -------
-        layoutsDropdown($this);
+        obwp_dropdown($this, 'layout');
         ?>
         
         <div class="obwp-input-ctn">

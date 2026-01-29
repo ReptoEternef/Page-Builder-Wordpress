@@ -2,7 +2,7 @@
 {% block content %}
   {% if rendered_blocks %}
     {% for block in rendered_blocks %}
-      {% include 'partials/block.twig' with { block: block } %}
+        {% include 'partials/block.twig' with { block: block } %}
     {% endfor %}
   {% else %}
     <p>Aucun bloc défini pour cette page.</p>

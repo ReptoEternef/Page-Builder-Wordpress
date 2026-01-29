@@ -6,6 +6,7 @@
 // 3. Enqueue scripts/styles
 // 4. Hooks & filters
 // 5. Metabox Wordpress
+// 6. Updates Wordpress
 
 
 //=============================================================================================================================================================
@@ -95,19 +96,28 @@ function createInput($data, $inputType, $name, $placeholder) {
     }
 }
 
-function layoutsDropdown($object) {
+function obwp_dropdown($object, $option) {
+    // $object is $this
+    // $option can be either 'layout' or 'color_context' for instance
+
     if (count($object->layouts) > 1) {
     ?>
-    <!-- <label for="layout">Layout :</label> -->
-    <select name="layout" id="">
-        <?php
-        if ($object->layouts) {
-            foreach ($object->layouts as $layout) {
-                ?> <option value="<?= esc_attr($layout) ?>" id=""><?= esc_attr($layout) ?></option> <?php
+    <div>
+        <label for="<?php echo $option ?>"><?php echo $option ?></label>
+        <select name="<?php echo $option ?>" id="">
+            <?php
+            if ($option === 'layout' && $object->layouts) {
+                foreach ($object->layouts as $layout) {
+                    ?> <option value="<?= esc_attr($layout) ?>" id=""><?= esc_attr($layout) ?></option> <?php
+                }
             }
-        }
-        ?>
-    </select>
+            else if ($option === 'color_context') {
+                ?> <option value="default" id="">default colors</option> <?php
+                ?> <option value="color-inverted" id="">inverted colors</option> <?php
+            }
+            ?>
+        </select>
+    </div>
     <?php
 }
 }
@@ -473,3 +483,20 @@ function render_blocks_json_meta_box($post) {
 }
 
 // Would be great to have a metabox to select which block to place
+
+
+//=============================================================================================================================================================
+//                                                               6. Updates WP
+//=============================================================================================================================================================
+
+/* require 'plugin-update-checker/plugin-update-checker.php';
+
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
+
+$updateChecker = PucFactory::buildUpdateChecker(
+    'https://github.com/ReptoEternef/Page-Builder-Wordpress.git',
+    get_stylesheet_directory() . '/style.css',
+    'obwp-theme'
+);
+
+$updateChecker->setBranch('main'); */

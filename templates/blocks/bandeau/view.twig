@@ -1,20 +1,18 @@
-<div class="container">
-  {% if values.layout == layouts[0] %}
-    <div class="bandeau-background" style="background-image:url( {{ values.background }} ); {{ values.custom_css }}">
-      <div class="bandeau-text">
-        <h1> {{ values.title[lang] }} </h1>
-        <p> {{ values.subtitle[lang] }} </p>
+{% if values.layout == layouts[0] %}
+  <div class="bandeau-background" style="background-image:url( {{ values.background }} ); {{ values.custom_css }}">
+    <div class="bandeau-text">
+      <h1> {{ values.title[lang] }} </h1>
+      <p> {{ values.subtitle[lang] }} </p>
 
-      </div>
-    </div>  
-  {% elseif values.layout == layouts[1] %}
-    <div class="bandeau-background-left" style="background-image:url( {{ values.background }} );">
-      <div class="bandeau-left-text">
-        <h1> {{ values.title[lang] }} </h1>
-        <p> {{ values.subtitle[lang] }} </p>
-      </div>
-    </div>  
-  {% else %}
-      <span>Erreur : layout</span>
-  {% endif %}
-</div>
+    </div>
+  </div>  
+{% elseif values.layout == layouts[1] %}
+  <div class="bandeau-background-left" style="background-image:url( {{ values.background }} );">
+    <div class="bandeau-left-text">
+      <h1> {{ values.title[lang] }} </h1>
+      <p> {{ values.subtitle[lang] }} </p>
+    </div>
+  </div>  
+{% else %}
+    <span>Erreur : layout</span>
+{% endif %}

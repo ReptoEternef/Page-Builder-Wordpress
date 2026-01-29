@@ -2,9 +2,12 @@
     <strong><?= $this->display_name ?></strong>
     <div class="flex-row">
 
-        <?php // ----- LAYOUTS DROPDOWN -------
-        layoutsDropdown($this);
-        ?>
+        <div class="obwp-options">
+            <?php
+            obwp_dropdown($this, 'layout');
+            obwp_dropdown($this, 'color_context');
+            ?>
+        </div>
         
         <div class="obwp-input-ctn">
             <input type="text" name="title" value="<?= $data['title'] ?? '' ?>" placeholder="Titre">

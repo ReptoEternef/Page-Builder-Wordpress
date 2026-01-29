@@ -3,12 +3,13 @@
     "display_name" : "Text",
     "fields" : [
         "custom_css",
+        "color_context",
         "layout",
         "title",
         "content"
     ],
     "layouts" : [
         "default",
-        "bloc"
+        "test"
     ]
 }

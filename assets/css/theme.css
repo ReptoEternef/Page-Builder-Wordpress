@@ -5,8 +5,8 @@ main {
     overflow: hidden;
 }
 
+/* COLORS */
 :root {
-    /* COLORS */
     --light: #ffffff;
     --dark: #20222d;
     --accented: #1b7ad6;
@@ -15,20 +15,18 @@ main {
     --text: #a1b0d3;
     --lighter-text: #5b6077;
     --darker-text: #1a1e31;
-
+}
+.block.color-inverted {
+  --context-bg: var(--accented);
+  --context-text: var(--light);
+  --context-span: var(--light);
+  --context-heading: var(--light);
+  --context-accent: var(--color2);
 }
 
 /* FONTS */
 * {
     font-family: 'afacad';
-}
-
-p {
-    color: var(--text);
-}
-
-#text {
-    color: var(--text);
 }
 
 
@@ -50,7 +48,7 @@ p {
     color: var(--light);
 }
 
-.container {
+.contained {
     max-width: 1200px;  /* largeur max du contenu */
     margin: 0 auto;     /* centre horizontalement */
     padding: 70px 1.5rem;  /* espace de respiration sur les côtés */
@@ -70,13 +68,47 @@ p {
 
 /* ------- CONTAINER BLOCKS ------- */
 
-.container-default-layout,
-.container-vertical-layout {
+.container {
     display: flex;
-    flex-direction: column;
+    box-sizing: border-box;
+    align-items: stretch;
+    gap: 1rem;
 }
 
-.container-horizontal-layout {
-    display: flex;
+.container--vertical {
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+}
+
+
+.container--horizontal {
     flex-direction: row;
 }
+
+.container--wrap {
+    flex-wrap: wrap;
+}
+
+.container--center {
+    justify-content: center;
+    align-items: center;
+}
+
+.container--space-between {
+    justify-content: space-between;
+}
+
+.container--gap-vsm { gap: 0.5rem; }
+.container--gap-sm { gap: 1rem; }
+.container--gap-md { gap: 2rem; }
+.container--gap-lg { gap: 3rem; }
+.container--gap-vlg { gap: 4rem; }
+
+.container--horizontal > .block {
+    flex: 1 1 0; /* prend la même part, rétrécit si nécessaire */
+    min-width: 0; /* IMPORTANT : pour que le texte long n'explose pas le container */
+    margin: auto;
+}
+
+

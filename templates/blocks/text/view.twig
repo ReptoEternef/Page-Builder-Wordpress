@@ -1,17 +1,16 @@
-{# Bloc texte multilingue #}
+{# TEXT #}
 
-<div class="container block-{{ block }}">
-  {% if values.layout is defined and values.layout == layouts[0] %}
-    <div class="{{ block }}-{{ layouts[0] }}">
-        {{ values.title[lang]|default('')|raw }}
-        {{ values.content[lang]|default('')|raw }}
-    </div>
-  {% elseif values.layout is defined and values.layout == layouts[1] %}
-    <div class="{{ block }}-{{ layouts[1] }}">
-        {{ values.title[lang]|default('')|raw }}
-        {{ values.content[lang]|default('')|raw }}
-    </div>  
-  {% else %}
-      <span>Erreur : layout ou contenu manquant</span>
-  {% endif %}
-</div>
+
+{% if values.layout is defined and values.layout == layouts[0] %}
+  <div class="{{ block }}-{{ layouts[0] }}" style="{{ values.custom_css }}">
+      {{ values.title[lang]|default('')|raw }}
+      {{ values.content[lang]|default('')|raw }}
+  </div>
+{% elseif values.layout is defined and values.layout == layouts[1] %}
+  <div class="{{ block }}-{{ layouts[1] }}">
+      {{ values.title[lang]|default('')|raw }}
+      {{ values.content[lang]|default('')|raw }}
+  </div>  
+{% else %}
+    <span>Erreur : layout ou contenu manquant</span>
+{% endif %}

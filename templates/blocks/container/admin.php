@@ -31,6 +31,10 @@
         ?>
         <button type="button" class="container-btn">Ajouter un bloc</button>
         <input type="text" name="custom_css" value="<?= $data['custom_css'] ?? '' ?>" placeholder="Custom CSS">
+        <div>
+            <label for="full-width">Full width</label>
+            <input type="checkbox" name="full-width" value="<?= $data['custom_css'] ?? '' ?>">
+        </div>
         
     </div>
 </div>

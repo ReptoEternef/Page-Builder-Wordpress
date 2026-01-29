@@ -23,6 +23,7 @@ function render_block_context($block, $availableBlocks) {
     $block['values'] = $block['values'] ?? [];
     $block['values']['layout'] = $block['values']['layout'] ?? 'default';
     $block['children'] = $block['children'] ?? [];
+    $block['id'] = $block['id'] ?? [];
 
     // Rendu des enfants
     $renderedChildren = [];

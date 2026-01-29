@@ -8,9 +8,9 @@ require_once get_template_directory() . '/lib/plugin-update-checker/plugin-updat
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 $themeUpdateChecker = PucFactory::buildUpdateChecker(
-    'https://github.com/TON-USER/TON-REPO/',
+    'https://github.com/ReptoEternef/Page-Builder-Wordpress.git',
     get_template_directory() . '/style.css',
-    'obwp-theme'
+    'openbuilderWP'
 );
 
 // Branche surveillée

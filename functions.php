@@ -489,6 +489,9 @@ function render_blocks_json_meta_box($post) {
 //                                                               6. Updates WP
 //=============================================================================================================================================================
 
+// Charger le système de mise à jour
+require_once get_template_directory() . '/includes/theme-updater.php';
+
 /* require 'plugin-update-checker/plugin-update-checker.php';
 
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
@@ -500,3 +503,75 @@ $updateChecker = PucFactory::buildUpdateChecker(
 );
 
 $updateChecker->setBranch('main'); */
+
+
+
+
+/**
+ * Theme Update Checker - Debug
+ * À placer temporairement dans functions.php pour diagnostiquer les problèmes
+ */
+
+// Afficher les erreurs (à retirer en production)
+add_action('admin_notices', function() {
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+    
+    // Vérifier que la bibliothèque est chargée
+    $lib_path = get_template_directory() . '/lib/plugin-update-checker/plugin-update-checker.php';
+    if (!file_exists($lib_path)) {
+        echo '<div class="notice notice-error"><p>❌ Plugin Update Checker non trouvé à : ' . esc_html($lib_path) . '</p></div>';
+        return;
+    }
+    
+    // Vérifier la version du thème
+    $theme = wp_get_theme();
+    echo '<div class="notice notice-info"><p>';
+    echo '📦 Thème : ' . esc_html($theme->get('Name')) . '<br>';
+    echo '🔢 Version actuelle : ' . esc_html($theme->get('Version')) . '<br>';
+    echo '📁 Slug : ' . esc_html($theme->get_stylesheet()) . '<br>';
+    echo '📂 Dossier : ' . esc_html(get_template_directory());
+    echo '</p></div>';
+    
+    // Tester la connexion GitHub
+    if (isset($_GET['test_github'])) {
+        $url = 'https://api.github.com/repos/ReptoEternef/Page-Builder-Wordpress/releases/latest';
+        $response = wp_remote_get($url);
+        
+        if (is_wp_error($response)) {
+            echo '<div class="notice notice-error"><p>❌ Erreur GitHub : ' . esc_html($response->get_error_message()) . '</p></div>';
+        } else {
+            $body = json_decode(wp_remote_retrieve_body($response), true);
+            echo '<div class="notice notice-success"><p>';
+            echo '✅ Connexion GitHub OK<br>';
+            if (isset($body['tag_name'])) {
+                echo '🏷️ Dernière release : ' . esc_html($body['tag_name']) . '<br>';
+                echo '📅 Publiée le : ' . esc_html($body['published_at']);
+            }
+            echo '</p></div>';
+        }
+    }
+});
+
+// Ajouter un lien de test dans la barre d'admin
+add_action('admin_bar_menu', function($wp_admin_bar) {
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+    
+    $wp_admin_bar->add_node([
+        'id'    => 'test-theme-update',
+        'title' => '🔍 Test Update GitHub',
+        'href'  => admin_url('themes.php?test_github=1'),
+    ]);
+}, 100);
+
+// Forcer la vérification des mises à jour
+add_action('admin_init', function() {
+    if (isset($_GET['force_update_check']) && current_user_can('manage_options')) {
+        delete_site_transient('update_themes');
+        wp_redirect(admin_url('themes.php'));
+        exit;
+    }
+});

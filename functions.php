@@ -369,22 +369,41 @@ function obwp_enqueue_blocks_assets(array $blocks) {
             continue;
         }
 
-        $css_file = get_template_directory() . "/templates/blocks/$block_type/assets/css/style.css";
-        $js_file  = get_template_directory() . "/templates/blocks/$block_type/assets/js/script.js";
+        // ✅ NOUVEAU : Déterminer si le bloc existe dans l'enfant ou le parent
+        $block_path = '';
+        $block_uri = '';
+        
+        if (is_child_theme()) {
+            $child_path = get_stylesheet_directory() . "/templates/blocks/$block_type";
+            if (is_dir($child_path)) {
+                $block_path = $child_path;
+                $block_uri = get_stylesheet_directory_uri() . "/templates/blocks/$block_type";
+            }
+        }
+        
+        // Si pas trouvé dans l'enfant, utiliser le parent
+        if (empty($block_path)) {
+            $block_path = get_template_directory() . "/templates/blocks/$block_type";
+            $block_uri = get_template_directory_uri() . "/templates/blocks/$block_type";
+        }
 
+        // Charger CSS
+        $css_file = $block_path . "/assets/css/style.css";
         if (file_exists($css_file)) {
             wp_enqueue_style(
                 "block-$block_type",
-                get_template_directory_uri() . "/templates/blocks/$block_type/assets/css/style.css",
+                $block_uri . "/assets/css/style.css",
                 [],
                 filemtime($css_file)
             );
         }
 
+        // Charger JS
+        $js_file = $block_path . "/assets/js/script.js";
         if (file_exists($js_file)) {
             wp_enqueue_script(
                 "block-$block_type",
-                get_template_directory_uri() . "/templates/blocks/$block_type/assets/js/script.js",
+                $block_uri . "/assets/js/script.js",
                 [],
                 filemtime($js_file),
                 true

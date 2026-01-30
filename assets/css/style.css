@@ -3,9 +3,6 @@
 
 
 
-.full-width {
-  width: 100vw;
-}
 
 body {
   margin: 0;
@@ -139,4 +136,15 @@ html, body {
 
 .background {
     background-color: var(--light);
+}
+
+.contained {
+    max-width: 1200px;  /* largeur max du contenu */
+    margin: 0 auto;     /* centre horizontalement */
+    padding: 70px 1.5rem;  /* espace de respiration sur les côtés */
+}
+
+
+.full-width {
+  width: 100vw;
 }

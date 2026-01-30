@@ -15,12 +15,45 @@
 
 // Get a list of all blocks and make class instances so they can be used in page editor
 function obwp_get_library() {
-    $blocks_dir = get_template_directory() . '/templates/blocks';
     $blocks_library = [];
+    
+    // 1. Charger les blocs du thème parent
+    $parent_blocks_dir = get_template_directory() . '/templates/blocks';
+    if (is_dir($parent_blocks_dir)) {
+        $blocks_library = obwp_scan_blocks_directory($parent_blocks_dir, $blocks_library, 'parent');
+    }
+    
+    // 2. Charger/écraser avec les blocs du thème enfant (si thème enfant actif)
+    if (is_child_theme()) {
+        $child_blocks_dir = get_stylesheet_directory() . '/templates/blocks';
+        if (is_dir($child_blocks_dir)) {
+            $blocks_library = obwp_scan_blocks_directory($child_blocks_dir, $blocks_library, 'child');
+        }
+    }
+        
+    return $blocks_library;
+}
 
+// Helper function to scan a blocks directory and populate the library
+function obwp_scan_blocks_directory($blocks_dir, $blocks_library = [], $source = 'parent') {
     foreach (glob($blocks_dir . '/*', GLOB_ONLYDIR) as $block_folder) {
-        $block_name = basename($block_folder);  // ex: "text"
-        $class_name = ucfirst($block_name);     // ex: "Text"
+        $block_name = basename($block_folder);  // ex: "text", "hero"
+        $class_name = ucfirst($block_name);     // ex: "Text", "Hero"
+        
+        // Si c'est l'enfant et que la classe existe déjà (vient du parent), on skip le require
+        if ($source === 'child' && class_exists($class_name)) {
+            // La classe existe déjà (du parent), on vérifie juste si le fichier enfant existe
+            $class_path = $block_folder . '/' . $class_name . '.php';
+            if (file_exists($class_path)) {
+                // On ne peut pas redéclarer la classe, donc on utilise celle du parent
+                // mais on note qu'il y a une version enfant (pour logs si besoin)
+                if (!isset($blocks_library[$block_name])) {
+                    $blocks_library[$block_name] = new $class_name();
+                }
+            }
+            continue;
+        }
+        
         $class_path = $block_folder . '/' . $class_name . '.php';
 
         if (file_exists($class_path)) {
@@ -31,7 +64,7 @@ function obwp_get_library() {
             }
         }
     }
-        
+    
     return $blocks_library;
 }
 
@@ -249,12 +282,6 @@ add_action('wp_enqueue_scripts', function() {
         get_template_directory_uri() . '/assets/css/style.css',
         [],
         filemtime(get_template_directory() . '/assets/css/style.css')
-    );
-    wp_enqueue_style(
-        'theme-style',
-        get_template_directory_uri() . '/assets/css/theme.css',
-        [],
-        filemtime(get_template_directory() . '/assets/css/theme.css')
     );
 
     wp_enqueue_script(

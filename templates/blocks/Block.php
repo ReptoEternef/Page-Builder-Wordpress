@@ -9,6 +9,7 @@ abstract class Block {
     public int $display_order;
     public string $id;
     public string $html;
+    protected string $block_path;
 
     public function __construct(
         $type,
@@ -26,6 +27,21 @@ abstract class Block {
         $this->values = is_array($values) ? $values : (array) $values;
         $this->display_order = $display_order;
         $this->id = $id;
+        
+        // Déterminer le bon chemin (enfant prioritaire)
+        $this->block_path = $this->resolveBlockPath();
+    }
+
+    // Résout le chemin du bloc (enfant > parent)
+    protected function resolveBlockPath(): string {
+        if (is_child_theme()) {
+            $child_path = get_stylesheet_directory() . '/templates/blocks/' . $this->type;
+            if (is_dir($child_path)) {
+                return $child_path;
+            }
+        }
+        
+        return get_template_directory() . '/templates/blocks/' . $this->type;
     }
 
     protected function normalizeData(): array {
@@ -44,17 +60,16 @@ abstract class Block {
     // Display block in admin
     public function renderAdmin($values = [])
     {
-/*         $this->setValues($values ?: $this->values);
-        $data = $this->normalizeData(); */
         $data = array_merge($this->values, $this->normalizeData());
     }
 
     // Display block on site
     abstract public function renderFrontend($values);
 
+    // Utilise $this->block_path au lieu de __DIR__
     public function getHTML() {
         ob_start();
-        include __DIR__ . DIRECTORY_SEPARATOR . $this->type . DIRECTORY_SEPARATOR . 'admin.php';
+        include $this->block_path . DIRECTORY_SEPARATOR . 'admin.php';
         return ob_get_clean();
     }
 
@@ -62,5 +77,16 @@ abstract class Block {
         $id = uniqid();
         $this->id = 'block-' . $this->type . '-' . $id;
     }
-
+    
+    // Helper statique pour résoudre le chemin avant l'instanciation
+    protected static function resolveBlockPathStatic($block_type): string {
+        if (is_child_theme()) {
+            $child_path = get_stylesheet_directory() . '/templates/blocks/' . $block_type;
+            if (is_dir($child_path)) {
+                return $child_path;
+            }
+        }
+        
+        return get_template_directory() . '/templates/blocks/' . $block_type;
+    }
 }

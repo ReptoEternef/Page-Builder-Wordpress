@@ -8,10 +8,19 @@ class Gallery extends Block {
 
     public function __construct()
     {
-        $json_directory = __DIR__ . DIRECTORY_SEPARATOR . 'config.json';
+        // Déterminer d'abord où se trouve le bloc
+        $block_path = self::resolveBlockPathStatic('gallery');
+        
+        // Charger le config depuis le bon endroit
+        $json_directory = $block_path . DIRECTORY_SEPARATOR . 'config.json';
         $json_config = json_decode(file_get_contents($json_directory), true);
 
-        parent::__construct($json_config['block_type'], $json_config['display_name'], $json_config['fields'], $json_config['layouts']);
+        parent::__construct(
+            $json_config['block_type'], 
+            $json_config['display_name'], 
+            $json_config['fields'], 
+            $json_config['layouts']
+        );
     }
 
     public function renderFrontend($values = [])
@@ -46,7 +55,6 @@ class Gallery extends Block {
 
             $data['values']['gallery'] = $gallery;
         }
-
 
         Timber::render($template_path, $data);
     }

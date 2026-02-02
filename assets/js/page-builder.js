@@ -140,8 +140,6 @@ function applyToAllBlocks(block, callback) {
 }
 
 function findObjectByID(elementID, parentArray) {
-    console.log("Element ID : ", elementID);
-    console.log("Parrent Array : ", parentArray);
     if (!parentArray) {        
         for (const block of pageRoot.children) {
     
@@ -666,6 +664,7 @@ function setTinyContentWhenReady(editor, value) {
 //                                                                        6. WP IMPORT IMAGES
 //=============================================================================================================================================================
 
+// WP IMPORT IMAGES
 jQuery(document).ready(function($){
     $('body').on('click', '.select-media, .hero-image', function(e){
         e.preventDefault();
@@ -685,6 +684,7 @@ jQuery(document).ready(function($){
             const selection = mediaFrame.state().get('selection').toArray();
             const urls = selection.map(att => att.toJSON().url);
             
+            // Update preview
             if(imgPreviewContainer.length){
                 imgPreviewContainer.empty();
                 urls.forEach(url => {
@@ -693,11 +693,26 @@ jQuery(document).ready(function($){
                 imgPreviewContainer.show();
             }
             
-            const innerBlockDOM = wpMediaImport[0].parentElement;
-            const blockDOM = innerBlockDOM.parentElement;
-            const block = findObjectByID(blockDOM.id)
+            // Find the block using .closest() instead of manual parent navigation
+            const blockItem = wpMediaImport.closest('.block-item');
+            if (!blockItem.length) {
+                console.error('No .block-item found for media import');
+                return;
+            }
             
-            const field = wpMediaImport[0].dataset.name;
+            const blockId = blockItem.attr('id');
+            if (!blockId) {
+                console.error('No ID found on .block-item');
+                return;
+            }
+            
+            const block = findObjectByID(blockId);
+            if (!block) {
+                console.error('Block not found for ID:', blockId);
+                return;
+            }
+            
+            const field = wpMediaImport.data('name');
             if (block.fields.includes(field)) {
                 const value = (urls.length < 2) ? urls[0] : urls;
                 block.values[field] = value;
@@ -716,12 +731,26 @@ jQuery(document).ready(function($){
         const wpMediaImport = $(this);
         const imgPreviewContainer = wpMediaImport.find('.preview-container');
 
-        const innerBlockDOM = wpMediaImport[0].parentElement;
-        const blockDOM = innerBlockDOM.parentElement;
-        console.log(blockDOM);
-        const block = findObjectByID(blockDOM.id);
-        const fieldName = wpMediaImport.data('name');
+        // Remonter jusqu'au .block-item qui contient l'ID
+        const blockItem = wpMediaImport.closest('.block-item');
+        if (!blockItem.length) {
+            console.warn('No .block-item found for', wpMediaImport);
+            return;
+        }
         
+        const blockId = blockItem.attr('id');
+        if (!blockId) {
+            console.warn('No ID found on .block-item', blockItem);
+            return;
+        }
+        
+        const block = findObjectByID(blockId);
+        if (!block) {
+            console.warn('Block not found for ID:', blockId);
+            return;
+        }
+        
+        const fieldName = wpMediaImport.data('name');
         
         if (block.fields.includes(fieldName)) {
             const value = block.values[fieldName];

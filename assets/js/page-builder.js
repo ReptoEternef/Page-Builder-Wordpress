@@ -140,6 +140,8 @@ function applyToAllBlocks(block, callback) {
 }
 
 function findObjectByID(elementID, parentArray) {
+    console.log("Element ID : ", elementID);
+    console.log("Parrent Array : ", parentArray);
     if (!parentArray) {        
         for (const block of pageRoot.children) {
     
@@ -716,6 +718,7 @@ jQuery(document).ready(function($){
 
         const innerBlockDOM = wpMediaImport[0].parentElement;
         const blockDOM = innerBlockDOM.parentElement;
+        console.log(blockDOM);
         const block = findObjectByID(blockDOM.id);
         const fieldName = wpMediaImport.data('name');
         

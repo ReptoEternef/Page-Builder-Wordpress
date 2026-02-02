@@ -1,57 +1,50 @@
-<?php
-/* 
-à remplir :
-    > name des input (avec nom du field)
-    > les value $data[] (sauf pour textarea)
-    > dropdown : si autre que layout, bien mettre <option value="" disabled selected>-- Choisissez une option --</option>
-*/
-?>
-
-<div class="flex-column wrap inner-<?= $this->type ?>">
-    <strong><?= $this->display_name ?></strong>
-    <div class="">
-
-        <div class="obwp-options">
-            <?php obwp_dropdown($this, 'layout'); ?>
-        </div>
-        
-        <input type="text" name="custom_css" value="<?= $data['custom_css'] ?? '' ?>" placeholder="Custom CSS">
-        
-        <?php echo createInput($data ?? '', 'text', 'title', 'Titre') ?>
-        <?php echo createInput($data ?? '', 'textarea', 'subtitle', 'Sous-titre') ?>
+<div class="obwp-block-admin">
+    <div class="obwp-block-header">
+        <strong class="obwp-block-title"><?= $this->display_name ?></strong>
     </div>
     
-    <div class="block-field" data-name="background">
-        <label for="image">Background</label>
-        <button type="button" class="button select-media">Choisir une image</button>
+    <div class="obwp-block-body">
 
-        <div class="preview-container"></div>
+        <!-- Options système -->
+        <?php if (!empty($this->layouts) && count($this->layouts) > 1): ?>
+        <div class="obwp-system-options">
+            <?php obwp_dropdown($this, 'layout'); ?>
+        </div>
+        <?php endif; ?>
+        
+        <!-- Champs de contenu -->
+        <div class="obwp-content-fields">
+            <div class="obwp-field-row">
+
+                <div class="obwp-field-col">
+                    <input type="text" name="title" placeholder="Titre">
+                    <textarea name="subtitle" placeholder="Sous-titre"></textarea>
+                </div>
+
+            </div>
+        </div>
+        
+        <!-- Champs médias -->
+        <div class="block-field" data-name="background">
+            <label class="obwp-label">Image de fond</label>
+            <button type="button" class="button select-media">Choisir une image</button>
+            <div class="preview-container"></div>
+        </div>
+<!--         <div class="obwp-media-fields">
+        </div>
+
+        <div class="block-field" data-name="background">
+            <label for="image">Background</label>
+            <button type="button" class="button select-media">Choisir une image</button>
+            <div class="preview-container"></div>
+        </div> -->
+        
+        <!-- Custom CSS -->
+        <?php if (in_array('custom_css', $this->fields)): ?>
+        <div class="obwp-advanced-options">
+            <input type="text" name="custom_css" placeholder="Custom CSS" class="obwp-input-full">
+        </div>
+        <?php endif; ?>
+
     </div>
 </div>
-
-
-
-<?php
-
-/* SNIPPETS & TIPS
-
-<?= $this->display_name ?>
-
-<?= $data['field'] ?? '' ?>
-
-<input type="text" name="NOM_DU_FIELD" value="<?= $data['title'] ?? '' ?>" placeholder="Titre">
-<textarea type="text" name="NOM_DU_FIELD" placeholder="Slogan"><?= $data['slogan'] ?? '' ?></textarea>
-
-> IMPORT D'IMAGES
-bien penser à :
-    class="block-field"
-    data-name="field de la classe"
-
-<div class="block-field" data-name="background">
-    <label for="image">Background</label>
-    <button type="button" class="button select-media">Choisir une image</button>
-
-    <div class="preview-container"></div>
-</div>
-
-*/

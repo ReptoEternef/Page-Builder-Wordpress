@@ -360,57 +360,76 @@ add_action('admin_enqueue_scripts', function($hook) {
 
 
 // ENQUEUE BLOCKS' CSS & JS (FRONT)
-// (Only from blocks on page #optimizor2000)
 function obwp_enqueue_blocks_assets(array $blocks) {
     foreach ($blocks as $block) {
-
         $block_type = $block['type'] ?? null;
-        if (!$block_type) {
-            continue;
-        }
+        if (!$block_type) continue;
 
-        // ✅ NOUVEAU : Déterminer si le bloc existe dans l'enfant ou le parent
-        $block_path = '';
-        $block_uri = '';
+        // Déterminer si le bloc existe dans l'enfant ou le parent
+        $child_path = '';
+        $child_uri = '';
+        $parent_path = '';
+        $parent_uri = '';
         
         if (is_child_theme()) {
             $child_path = get_stylesheet_directory() . "/templates/blocks/$block_type";
-            if (is_dir($child_path)) {
-                $block_path = $child_path;
-                $block_uri = get_stylesheet_directory_uri() . "/templates/blocks/$block_type";
-            }
+            $child_uri = get_stylesheet_directory_uri() . "/templates/blocks/$block_type";
         }
         
-        // Si pas trouvé dans l'enfant, utiliser le parent
-        if (empty($block_path)) {
-            $block_path = get_template_directory() . "/templates/blocks/$block_type";
-            $block_uri = get_template_directory_uri() . "/templates/blocks/$block_type";
-        }
+        $parent_path = get_template_directory() . "/templates/blocks/$block_type";
+        $parent_uri = get_template_directory_uri() . "/templates/blocks/$block_type";
 
-        // Charger CSS
-        $css_file = $block_path . "/assets/css/style.css";
-        if (file_exists($css_file)) {
+        // Charger CSS du parent d'abord (s'il existe)
+        $parent_css = $parent_path . "/assets/css/style.css";
+        if (file_exists($parent_css)) {
             wp_enqueue_style(
-                "block-$block_type",
-                $block_uri . "/assets/css/style.css",
+                "block-$block_type-parent",
+                $parent_uri . "/assets/css/style.css",
                 [],
-                filemtime($css_file)
+                filemtime($parent_css)
             );
         }
 
-        // Charger JS
-        $js_file = $block_path . "/assets/js/script.js";
-        if (file_exists($js_file)) {
+        // Charger CSS de l'enfant ensuite (s'il existe) - il override le parent
+        if (is_child_theme()) {
+            $child_css = $child_path . "/assets/css/style.css";
+            if (file_exists($child_css)) {
+                wp_enqueue_style(
+                    "block-$block_type-child",
+                    $child_uri . "/assets/css/style.css",
+                    ["block-$block_type-parent"], // Dépend du parent pour override
+                    filemtime($child_css)
+                );
+            }
+        }
+
+        // Charger JS du parent d'abord (s'il existe)
+        $parent_js = $parent_path . "/assets/js/script.js";
+        if (file_exists($parent_js)) {
             wp_enqueue_script(
-                "block-$block_type",
-                $block_uri . "/assets/js/script.js",
+                "block-$block_type-parent",
+                $parent_uri . "/assets/js/script.js",
                 [],
-                filemtime($js_file),
+                filemtime($parent_js),
                 true
             );
         }
 
-        // 🔁 Récursivité : on traite les enfants
+        // Charger JS de l'enfant ensuite (s'il existe)
+        if (is_child_theme()) {
+            $child_js = $child_path . "/assets/js/script.js";
+            if (file_exists($child_js)) {
+                wp_enqueue_script(
+                    "block-$block_type-child",
+                    $child_uri . "/assets/js/script.js",
+                    ["block-$block_type-parent"], // Dépend du parent
+                    filemtime($child_js),
+                    true
+                );
+            }
+        }
+
+        // Récursivité : traiter les enfants
         if (!empty($block['children']) && is_array($block['children'])) {
             obwp_enqueue_blocks_assets($block['children']);
         }

@@ -1,8 +1,3 @@
-@charset "UTF-8";
-
-
-
-
 
 body {
   margin: 0;
@@ -144,7 +139,14 @@ html, body {
     padding: 70px 1.5rem;  /* espace de respiration sur les côtés */
 }
 
-
 .full-width {
   width: 100vw;
+}
+
+.prevent-select {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none;    /* Firefox */
+  -ms-user-select: none;     /* IE10+/Edge */
+  user-select: none;         /* Standard */
+  cursor: default;           /* Curseur par défaut au lieu du curseur texte */
 }

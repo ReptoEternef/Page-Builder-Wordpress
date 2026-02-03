@@ -71,16 +71,18 @@ function obwp_scan_blocks_directory($blocks_dir, $blocks_library = [], $source =
 // Dropdown to select a block to add
 function obwp_dropdown_block_selector($blocks_library) {
     ?>
-    <!-- <label for="block-selector">Liste des blocs :</label> -->
-    <select name="blocks" id="block-type-selector">
-        <?php
-        foreach ($blocks_library as $block) {
-            ?>
-            <option value="<?= esc_attr($block->type) ?>"><?= esc_html($block->display_name) ?></option>
+    <div>
+        <label for="block-selector">Liste des blocs</label>
+        <select name="blocks" id="block-type-selector">
             <?php
-        }
-        ?>
-    </select>
+            foreach ($blocks_library as $block) {
+                ?>
+                <option value="<?= esc_attr($block->type) ?>"><?= esc_html($block->display_name) ?></option>
+                <?php
+            }
+            ?>
+        </select>
+    </div>
     <?php
 }
 function obwp_dropdown_lang_selector($lang_array) {
@@ -319,16 +321,7 @@ add_action('admin_enqueue_scripts', function($hook) {
         [],
         filemtime(get_template_directory() . '/assets/css/admin.css')
     );
-    
-/*     if ($hook === 'post.php' && $post && $post->post_type === 'page') {
-        wp_enqueue_script(
-            'page-blocks-js',
-            get_template_directory_uri() . '/assets/js/page-blocks.js',
-            [],
-            filemtime(get_template_directory() . '/assets/js/page-blocks.js'),
-            true
-        );
-    } */
+
     if ($hook === 'post.php' && $post && $post->post_type === 'page') {
         wp_enqueue_script(
             'page-builder-js',
@@ -347,6 +340,14 @@ add_action('admin_enqueue_scripts', function($hook) {
             true
         );
     }
+
+    wp_enqueue_script(
+        'block-accordion-js',
+        get_template_directory_uri() . '/assets/js/block-accordion.js',
+        [],
+        filemtime(get_template_directory() . '/assets/js/block-accordion.js'),
+        true
+    );
 
     
     wp_enqueue_script(
@@ -451,8 +452,13 @@ add_action('wp_enqueue_scripts', function() {
 
 
 
-function add_field_btn($type, $name, $placeholder, $text) {
-    ?> <button class="add-field" data-field-type="<?= $type ?>" data-field-name="<?= $name ?>" data-field-placeholder="<?= $placeholder ?>"><?= $text ?></button> <?php
+function add_field_btn($type, $name, $placeholder, $text, $trad) {
+    ?> <button class="add-field"
+        data-field-type="<?= $type ?>"
+        data-field-name="<?= $name ?>"
+        data-field-placeholder="<?= $placeholder ?>"
+        data-field-trad="<?= $trad ?>"
+    ><?= $text ?></button> <?php
 }
 
 //=============================================================================================================================================================

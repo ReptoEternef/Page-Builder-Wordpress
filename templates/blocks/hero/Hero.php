@@ -8,11 +8,8 @@ class Hero extends Block {
 
     public function __construct()
     {
-        // Déterminer d'abord où se trouve le bloc
-        $block_path = self::resolveBlockPathStatic('hero');
-        
         // Charger le config depuis le bon endroit
-        $json_directory = $block_path . DIRECTORY_SEPARATOR . 'config.json';
+        $json_directory = __DIR__ . DIRECTORY_SEPARATOR . 'config.json';
         $json_config = json_decode(file_get_contents($json_directory), true);
 
         parent::__construct(

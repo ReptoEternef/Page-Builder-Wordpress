@@ -387,7 +387,7 @@ let selectedLang = langSelector.selectedOptions[0].value;
 const debugBtn = document.getElementById('debug_btn');
 
 // Fields we dont want translation to affect
-const staticFields = ['custom_css', 'color_context', 'layout', 'height', 'width', 'full-width'];
+let staticFields = ['custom_css', 'color_context', 'blocks','layout', 'height', 'width', 'full-width', "display_desc"];
 let obwpOptions;
 
 const pageRoot = new Block({
@@ -493,6 +493,7 @@ function renderBlock(blockInstance) {
     addUIElements(blockInstance);
 
     parentDOM.appendChild(singleBlockContainer);
+
 
     if (blockInstance.type === 'container') {
         blockInstance.setListener();
@@ -783,22 +784,23 @@ function addFieldBtn(blockInstance) {
     
     addFieldBtns.forEach(btn => {
         const fieldName = btn.dataset.fieldName;
+        const fieldTrad = btn.dataset.fieldTrad;
 
         const keys = Object.keys(blockInstance.values);
         keys.forEach(key => {
             if (key.startsWith(fieldName)) {
-                addField(btn, fieldName, blockInstance, parentDOM);
+                addField(btn, fieldName, blockInstance, parentDOM, fieldTrad);
             }
         });
 
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            addField(btn, fieldName, blockInstance, parentDOM);
+            addField(btn, fieldName, blockInstance, parentDOM, fieldTrad);
         })
     });
 }
 
-function addField(btn, fieldName, blockInstance, parentDOM) {
+function addField(btn, fieldName, blockInstance, parentDOM, fieldTrad) {
     
     if (!blockInstance.addFieldBtns[fieldName]) {
         blockInstance.addFieldBtns[fieldName] = {
@@ -828,10 +830,14 @@ function addField(btn, fieldName, blockInstance, parentDOM) {
         }
             
     fields.push(newEl);
+    // Avoids trad on those fields if "notrad"
+    if (fieldTrad === "notrad") {
+        staticFields.push(newEl.name);
+    }
     
 
     const name = btn.dataset.fieldName;
-    
+    // Pas fini ?
 
     
     

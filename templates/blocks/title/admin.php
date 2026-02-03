@@ -1,63 +1,46 @@
-<?php
-/* 
-à remplir :
-    > name des input (avec nom du field)
-    > les value $data[] (sauf pour textarea)
-    > dropdown : si autre que layout, bien mettre <option value="" disabled selected>-- Choisissez une option --</option>
-*/
-?>
-
-<div class="flex-column wrap full-width">
-    <strong><?= $this->display_name ?></strong>
-    <div class="flex-row">
-
-        <?php // ----- LAYOUTS DROPDOWN -------
-        if (count($this->layouts) > 1) {
-            ?>
-            <!-- <label for="layout">Layout :</label> -->
-            <select name="layout" id="">
-                <?php
-                if ($this->layouts) {
-                    foreach ($this->layouts as $layout) {
-                        ?> <option value="<?= esc_attr($layout) ?>" id=""><?= esc_attr($layout) ?></option> <?php
-                    }
-                }
-                ?>
-            </select>
-            <?php
-        } // ----------------------------------
-        ?>
-        
+<div class="obwp-block-admin">
+    <div class="obwp-block-header">
+        <strong class="obwp-block-title"><?= $this->display_name ?></strong>
     </div>
-    <b>Titre</b>
-    <textarea class="wysiwyg-h2" name="title" rows="1"></textarea>
-    <b>Sous-titre</b>
-    <textarea class="wysiwyg-h3" name="subtitle" rows="1"></textarea>
+    
+    <div class="obwp-block-body">
+
+        <!-- Options système (layouts, contexte couleur, etc.) -->
+        <?php if (!empty($this->layouts) || in_array('color_context', $this->fields)): ?>
+        <div class="obwp-system-options">
+            <?php 
+            obwp_dropdown($this, 'layout');
+            obwp_dropdown($this, 'color_context');
+            ?>
+        </div>
+        <?php endif; ?>
+        
+        <!-- Champs de contenu principal -->
+        <div class="obwp-content-fields">
+            <b>Titre</b>
+            <textarea class="wysiwyg-h2" name="title" rows="1"></textarea>
+            <b>Sous-titre</b>
+            <textarea class="wysiwyg-h3" name="subtitle" rows="1"></textarea>
+        </div>
+        
+        <!-- Custom CSS (toujours en dernier) -->
+        <?php if (in_array('custom_css', $this->fields)): ?>
+        <div class="obwp-advanced-options">
+            <input type="text" name="custom_css" placeholder="Custom CSS" class="obwp-input-full">
+        </div>
+        <?php endif; ?>
+        
+        <!-- Full Width Option -->
+        <?php if (in_array('full-width', $this->fields)): ?>
+        <div class="obwp-full-width-option">
+            <label class="obwp-checkbox-label">
+                <input type="checkbox" name="full-width">
+                <span class="prevent-select change-cursor">Pleine largeur</span>
+            </label>
+        </div>
+        <?php endif; ?>
+    </div>
 </div>
 
-
-
-<?php
-
-/* SNIPPETS & TIPS
-
-<?= $this->display_name ?>
-
-<?= $data['field'] ?? '' ?>
-
-<input type="text" name="NOM_DU_FIELD" value="<?= $data['title'] ?? '' ?>" placeholder="Titre">
-<textarea type="text" name="NOM_DU_FIELD" placeholder="Slogan"><?= $data['slogan'] ?? '' ?></textarea>
-
-> IMPORT D'IMAGES
-bien penser à :
-    class="block-field"
-    data-name="field de la classe"
-
-<div class="block-field" data-name="background">
-    <label for="image">Background</label>
-    <button type="button" class="button select-media">Choisir une image</button>
-
-    <div class="preview-container"></div>
-</div>
-
-*/
+<!-- Pour les WYSIWYG :
+class="wysiwyg" ou wysiwyg-h2/h3 etc... -->

@@ -46,5 +46,14 @@
         </div>
         <?php endif; ?>
 
+        <!-- Full Width Option -->
+        <?php if (in_array('full-width', $this->fields)): ?>
+        <div class="obwp-full-width-option">
+            <label class="obwp-checkbox-label">
+                <input type="checkbox" name="full-width">
+                <span class="prevent-select change-cursor">Pleine largeur</span>
+            </label>
+        </div>
+        <?php endif; ?>
     </div>
 </div>

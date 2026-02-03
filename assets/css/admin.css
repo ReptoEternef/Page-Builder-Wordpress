@@ -3,6 +3,8 @@
    ======================================== */
 
 .obwp-toolbar {
+    display: flex;
+    gap: 5px;
     position: sticky;
     top: 32px;
     background: white;
@@ -131,6 +133,15 @@
     background: #f9fafb;
     border: 1px solid #e5e7eb;
     border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.obwp-block-header:hover {
+    background: #f3f4f6;
 }
 
 .obwp-block-title {
@@ -140,12 +151,31 @@
     margin: 0;
 }
 
+.obwp-accordion-toggle {
+    font-size: 0.75rem;
+    color: #6b7280;
+    transition: transform 0.3s ease;
+    user-select: none;
+}
+
+.obwp-collapsed .obwp-accordion-toggle {
+    transform: rotate(-90deg);
+}
+
 .obwp-block-body {
     padding: 0.75rem;
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
     flex: 1;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.obwp-collapsed .obwp-block-body {
+    max-height: 0 !important;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
 
@@ -351,6 +381,10 @@
 
 .inner-container {
     width: 100%;
+}
+
+.change-cursor:hover {
+    cursor: pointer;
 }
 
 

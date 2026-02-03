@@ -15,13 +15,9 @@ require_once get_template_directory() . '/templates/blocks/Block.php';
 class EmptyTemplate extends Block {
 
     public function __construct()
-    {
-        // ✅ Déterminer d'abord où se trouve le bloc
-        // IMPORTANT: Remplacer 'type' par le nom du dossier du bloc (ex: 'hero', 'text', 'myblock')
-        $block_path = self::resolveBlockPathStatic('type');
-        
+    {   
         // Charger le config depuis le bon endroit
-        $json_directory = $block_path . DIRECTORY_SEPARATOR . 'config.json';
+        $json_directory = __DIR__ . DIRECTORY_SEPARATOR . 'config.json';
         $json_config = json_decode(file_get_contents($json_directory), true);
 
         parent::__construct(

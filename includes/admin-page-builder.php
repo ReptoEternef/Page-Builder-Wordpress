@@ -4,6 +4,9 @@ function render_admin_UI($post) {
     $obwp_options = get_option('obwp_options', []);
     $available_langs = obwp_get_available_langs();
 
+    $current_user = wp_get_current_user();
+    $role = $current_user->roles[0];
+
     // Get library of all available blocks
     $blocks_library = obwp_get_library();
 
@@ -43,6 +46,7 @@ function render_admin_UI($post) {
         'pageBlocks' => $page_blocks,
         'blocksLibrary' => $blocks_library,
         'obwp_options' => $obwp_options,
+        'user_role' => $role,
     ]);
 
     // RENDER ADMIN

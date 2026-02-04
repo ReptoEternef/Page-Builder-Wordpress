@@ -55,6 +55,11 @@ function exportPageJSON() {
 
 // Generates UI around blocks (arrows and delete)
 function addUIElements(blockInstance) {
+
+    if (userRole != 'administrator') {
+        return;
+    }
+
     singleBlockContainer = blockInstance.DOM;
 
     // Flèches pour déplacer
@@ -387,8 +392,10 @@ let selectedLang = langSelector.selectedOptions[0].value;
 const debugBtn = document.getElementById('debug_btn');
 
 // Fields we dont want translation to affect
-let staticFields = ['custom_css', 'color_context', 'blocks','layout', 'height', 'width', 'full-width', "display_desc"];
+let staticFields = ['custom_css', 'color_context', 'blocks','layout', 'height', 'width', 'full-width', "display_desc",
+    'object_position', 'object_fit', 'alignment', 'link', 'dimension_unit'];
 let obwpOptions;
+let userRole;
 
 const pageRoot = new Block({
     type: 'root',
@@ -401,6 +408,7 @@ const pageRoot = new Block({
 function initPageBuilder() {
     obwpOptions = php.obwp_options;
     pageRoot.DOM = rootContainer;
+    userRole = php.user_role;
     
     displaySideJSON();
     
@@ -487,6 +495,13 @@ function renderBlock(blockInstance) {
 
     // Inject HTML
     singleBlockContainer.insertAdjacentHTML('beforeend', blockInstance.html);
+    // Hide advanced options if the user is not an administrator
+    if (userRole != 'administrator') {        
+        const advancedOptions = singleBlockContainer.querySelectorAll('.obwp-advanced-options');
+        for (const el of advancedOptions) {
+            el.style.display = 'none';
+        }
+    }
 
     blockInstance.DOM = singleBlockContainer;
 

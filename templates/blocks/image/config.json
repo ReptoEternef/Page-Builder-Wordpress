@@ -1,0 +1,25 @@
+{
+    "block_type": "image",
+    "display_name": "Image",
+    "fields": [
+        "custom_css",
+        "layout",
+        "full-width",
+        "image",
+        "alt",
+        "caption",
+        "link",
+        "width",
+        "width_unit",
+        "height",
+        "height_unit",
+        "alignment",
+        "object_fit",
+        "object_position"
+    ],
+    "layouts": [
+        "default",
+        "rounded",
+        "circular"
+    ]
+}

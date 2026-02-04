@@ -1,0 +1,54 @@
+{# IMAGE BLOCK #}
+
+{% set image_url = values.image %}
+{% set alt = values.alt[lang]|default('') %}
+{% set caption = values.caption[lang]|default('') %}
+{% set link = values.link|default('') %}
+{% set alignment = values.alignment|default('center') %}
+{% set object_fit = values.object_fit|default('cover') %}
+{% set object_position = values.object_position|default('center') %}
+{% set width_unit = values.width_unit|default('px') %}
+{% set height_unit = values.height_unit|default('px') %}
+{% set custom_width = values.width ? values.width ~ width_unit : 'auto' %}
+{% set custom_height = values.height ? values.height ~ height_unit : 'auto' %}
+
+<div class="block-{{ block }} block-{{ block }}--{{ values.layout|default('default') }} block-{{ block }}--align-{{ alignment }}" style="{{ values.custom_css }}">
+  
+  {% if image_url %}
+    <div class="image-wrapper">
+      
+      {% if link %}
+        <a href="{{ link }}" class="image-link">
+      {% endif %}
+      
+      <img 
+        src="{{ image_url }}" 
+        alt="{{ alt }}"
+        class="block-image"
+        {% if custom_width != 'auto' or custom_height != 'auto' %}
+        style="
+          {% if custom_width != 'auto' %}width: {{ custom_width }};{% endif %}
+          {% if custom_height != 'auto' %}height: {{ custom_height }};{% endif %}
+          object-fit: {{ object_fit }};
+          object-position: {{ object_position }};
+        "
+        {% else %}
+        style="object-fit: {{ object_fit }}; object-position: {{ object_position }};"
+        {% endif %}
+        loading="lazy"
+      >
+      
+      {% if link %}
+        </a>
+      {% endif %}
+      
+      {% if caption %}
+        <p class="image-caption">{{ caption }}</p>
+      {% endif %}
+      
+    </div>
+  {% else %}
+    <p class="image-placeholder">⚠️ Aucune image sélectionnée</p>
+  {% endif %}
+  
+</div>

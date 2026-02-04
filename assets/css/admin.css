@@ -61,6 +61,7 @@
     flex-direction: column;
     justify-content: center;
     gap: 5px;
+    height: fit-content;
 }
 
 .upArrow, 
@@ -101,6 +102,7 @@
     justify-content: center;
     cursor: pointer;
     padding: 0.25rem;
+    height: fit-content;
 }
 
 .delete-btn-container .iconify {
@@ -385,6 +387,26 @@
 
 .change-cursor:hover {
     cursor: pointer;
+}
+
+.obwp-input-with-unit {
+    display: flex;
+    gap: 0;  /* Pas d'espace entre input et select */
+}
+
+/* ========================================
+   UNITÉS DE CHAMPS
+   ======================================== */
+
+.obwp-input-with-unit input {
+    border-right: none;  /* Supprime la bordure droite */
+    border-radius: 4px 0 0 4px;  /* Arrondi seulement à gauche */
+}
+
+.obwp-input-with-unit select {
+    width: 70px;  /* Largeur fixe pour le dropdown */
+    border-radius: 0 4px 4px 0;  /* Arrondi seulement à droite */
+    background: #f9fafb;  /* Légèrement grisé */
 }
 
 

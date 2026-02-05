@@ -202,6 +202,11 @@ class Block {
             : raw.values;
         this.parent = raw.parent ?? null;
         this.children = raw.children ?? [];
+
+        if (!blocksLibrary.hasOwnProperty(this.type) && this.type != 'root') {
+            console.log("Le bloc >", this.type, "< ne fait pas parti de la librairie et n'a pas pu être chargé.");
+            return;
+        }
         
         if (this.type !== 'root') {
             this.html = blocksLibrary[this.type].html;

@@ -398,7 +398,7 @@ const debugBtn = document.getElementById('debug_btn');
 
 // Fields we dont want translation to affect
 let staticFields = ['custom_css', 'color_context', 'blocks','layout', 'height', 'width', 'full-width', "display_desc",
-    'object_position', 'object_fit', 'alignment', 'link', 'dimension_unit'];
+    'object_position', 'object_fit', 'alignment', 'link', 'dimension_unit', 'custom_post_type'];
 let obwpOptions;
 let userRole;
 
@@ -450,8 +450,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
 langSelector.addEventListener('change', () => {
     selectedLang = langSelector.selectedOptions[0].value;
-    pageRoot.apply(block => block.setValues());
-})
+    
+    // Mettre à jour les valeurs affichées
+    pageRoot.apply(block => {
+        block.setValues();
+        
+        // Mettre à jour aussi les dynamic fields
+        for (const baseName in block.addFieldBtns) {
+            const fieldData = block.addFieldBtns[baseName];
+            fieldData.fields.forEach(input => {
+                const fullName = input.name;
+                const isTrad = !staticFields.includes(fullName);
+                
+                if (isTrad && block.values[fullName]) {
+                    input.value = block.values[fullName][selectedLang] ?? '';
+                }
+            });
+        }
+    });
+});
 
 //=============================================================================================================================================================
 //                                                                        3. ADD BLOCK
@@ -795,71 +812,136 @@ jQuery(document).ready(function($){
 //                                                                        7. OTHER OPTIONS
 //=============================================================================================================================================================
 
+// Dynamic Fields
 function addFieldBtn(blockInstance) {
     const parentDOM = blockInstance.DOM;
     const addFieldBtns = parentDOM.querySelectorAll('.add-field');
     
-    if (!addFieldBtns) return;
-    
+    if (!addFieldBtns.length) return;
     
     addFieldBtns.forEach(btn => {
-        const fieldName = btn.dataset.fieldName;
+        const fieldBaseName = btn.dataset.fieldName; // ex: "video_link"
         const fieldTrad = btn.dataset.fieldTrad;
-
-        const keys = Object.keys(blockInstance.values);
-        keys.forEach(key => {
-            if (key.startsWith(fieldName)) {
-                addField(btn, fieldName, blockInstance, parentDOM, fieldTrad);
+        
+        // Initialiser la structure si elle n'existe pas
+        if (!blockInstance.addFieldBtns[fieldBaseName]) {
+            blockInstance.addFieldBtns[fieldBaseName] = {
+                btn,
+                fields: []
+            };
+        }
+        
+        // Recréer les champs existants depuis values
+        const existingFields = Object.keys(blockInstance.values).filter(key => 
+            key.startsWith(fieldBaseName + '_')
+        );
+        
+        existingFields.forEach(fullFieldName => {
+            const indexMatch = fullFieldName.match(/_(\d+)$/);
+            if (indexMatch) {
+                const index = parseInt(indexMatch[1]);
+                createFieldElement(btn, fieldBaseName, index, blockInstance, parentDOM, fieldTrad);
             }
         });
-
+        
+        // Gérer l'ajout de nouveaux champs
         btn.addEventListener('click', (e) => {
             e.preventDefault();
-            addField(btn, fieldName, blockInstance, parentDOM, fieldTrad);
-        })
+            
+            // Trouver le prochain index disponible
+            const fields = blockInstance.addFieldBtns[fieldBaseName].fields;
+            const nextIndex = fields.length;
+            
+            createFieldElement(btn, fieldBaseName, nextIndex, blockInstance, parentDOM, fieldTrad);
+            
+            // Forcer la mise à jour du JSON
+            const JSON = exportPageJSON();
+            refreshSideJSON(JSON);
+        });
     });
 }
 
-function addField(btn, fieldName, blockInstance, parentDOM, fieldTrad) {
+function createFieldElement(btn, fieldBaseName, index, blockInstance, parentDOM, fieldTrad) {
+    const fields = blockInstance.addFieldBtns[fieldBaseName].fields;
+    const fullFieldName = fieldBaseName + '_' + index;
     
-    if (!blockInstance.addFieldBtns[fieldName]) {
-        blockInstance.addFieldBtns[fieldName] = {
-            btn,
-            fields: []
-        };
+    // Vérifier si le champ existe déjà (éviter les doublons)
+    if (fields.some(el => el.name === fullFieldName)) {
+        return;
     }
-    const fields = blockInstance.addFieldBtns[fieldName].fields;
-    const index = Object.keys(fields).length;
-    //let thisField = fieldName + '_' + (Object.keys(fields).length + 1);
     
     const parent = parentDOM.querySelector('.added-fields');
+    if (!parent) {
+        console.error('Container .added-fields introuvable pour', blockInstance.type);
+        return;
+    }
+    
     let newEl;
+    
     switch (btn.dataset.fieldType) {
         case 'input':
+            // Créer un wrapper pour pouvoir ajouter un bouton de suppression
+            const wrapper = document.createElement('div');
+            wrapper.classList.add('dynamic-field-wrapper');
+            wrapper.style.display = 'flex';
+            wrapper.style.gap = '0.5rem';
+            wrapper.style.alignItems = 'center';
+            
             newEl = document.createElement('input');
             newEl.type = 'text';
-            newEl.placeholder = blockInstance.values[fieldName] ?? btn.dataset.fieldPlaceholder + ' ' + (Object.keys(fields).length + 1);
-            newEl.name = btn.dataset.fieldName + '_' + (Object.keys(fields).length);
-            newEl.value = blockInstance.values[fieldName + '_' + index]?.[selectedLang] ?? '';
-            parent.appendChild(newEl);
+            newEl.name = fullFieldName;
+            newEl.placeholder = btn.dataset.fieldPlaceholder + ' ' + (index + 1);
             
+            // Récupérer la valeur existante
+            if (fieldTrad === "notrad") {
+                newEl.value = blockInstance.values[fullFieldName] ?? '';
+            } else {
+                const langValue = blockInstance.values[fullFieldName];
+                newEl.value = (langValue && langValue[selectedLang]) ? langValue[selectedLang] : '';
+            }
+            
+            // Bouton de suppression
+            const deleteBtn = document.createElement('button');
+            deleteBtn.type = 'button';
+            deleteBtn.innerHTML = '✕';
+            deleteBtn.style.cssText = 'padding: 0.45rem 0.75rem; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;';
+            deleteBtn.addEventListener('click', () => {
+                // Supprimer du DOM
+                wrapper.remove();
+                
+                // Supprimer du tableau fields
+                const fieldIndex = fields.indexOf(newEl);
+                if (fieldIndex > -1) {
+                    fields.splice(fieldIndex, 1);
+                }
+                
+                // Supprimer des values
+                delete blockInstance.values[fullFieldName];
+                
+                // Mettre à jour le JSON
+                const JSON = exportPageJSON();
+                refreshSideJSON(JSON);
+            });
+            
+            wrapper.appendChild(newEl);
+            wrapper.appendChild(deleteBtn);
+            parent.appendChild(wrapper);
+            break;
+            
+        case 'textarea':
+            // À implémenter si nécessaire
             break;
             
         default:
-            break;
-        }
-            
-    fields.push(newEl);
-    // Avoids trad on those fields if "notrad"
-    if (fieldTrad === "notrad") {
-        staticFields.push(newEl.name);
+            console.warn('Type de champ inconnu:', btn.dataset.fieldType);
+            return;
     }
     
-
-    const name = btn.dataset.fieldName;
-    // Pas fini ?
-
+    // Ajouter aux champs trackés
+    fields.push(newEl);
     
-    
-    
+    // Ajouter aux staticFields si notrad
+    if (fieldTrad === "notrad" && !staticFields.includes(fullFieldName)) {
+        staticFields.push(fullFieldName);
+    }
 }

@@ -16,9 +16,9 @@
         <?php endif; ?>
         
         <!-- Champs médias (images, vidéos) -->
-        <div class="block-field" data-name="image_input_name" data-multiple="true">
-            <label for="image">Background</label>
-            <button type="button" class="button select-media">Choisir une image</button>
+        <div class="block-field" data-name="gallery" data-multiple="true">
+            <label for="image">Galerie</label>
+            <button type="button" class="button select-media">Choisir des images</button>
 
             <div class="preview-container"></div>
         </div>

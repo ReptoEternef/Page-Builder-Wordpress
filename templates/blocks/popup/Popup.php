@@ -12,7 +12,7 @@ use Timber\Timber;
 
 require_once get_template_directory() . '/templates/blocks/Block.php';
 
-class EmptyTemplate extends Block {
+class Popup extends Block {
 
     public function __construct()
     {   
@@ -30,6 +30,7 @@ class EmptyTemplate extends Block {
 
     public function renderFrontend($values = [])
     {
+
         $data = Timber::context();
 
         $data['values'] = $values['values'] ?? $values;

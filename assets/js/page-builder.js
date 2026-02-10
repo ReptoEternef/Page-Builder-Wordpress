@@ -397,7 +397,7 @@ let selectedLang = langSelector.selectedOptions[0].value;
 const debugBtn = document.getElementById('debug_btn');
 
 // Fields we dont want translation to affect
-let staticFields = ['custom_css', 'color_context', 'blocks','layout', 'height', 'width', 'full-width', "display_desc",
+let staticFields = ['custom_css', 'color_context', 'blocks','layout', 'height', 'width', 'full-width', "display_desc", "display",
     'object_position', 'object_fit', 'alignment', 'link', 'dimension_unit', 'custom_post_type'];
 let obwpOptions;
 let userRole;

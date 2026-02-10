@@ -293,6 +293,13 @@
     display: block;
 }
 
+#_page_blocks label {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    width: fit-content;
+}
 
 /* ========================================
    CHAMPS MÉDIAS

@@ -1,0 +1,16 @@
+{
+    "block_type" : "popup",
+    "display_name" : "Popup",
+    "fields" : [
+        "custom_css",
+        "layout",
+        "full-width",
+        "display",
+        "title",
+        "content",
+        "btn_link"
+    ],
+    "layouts" : [
+        "default"
+    ]
+}

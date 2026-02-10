@@ -11,13 +11,13 @@
             <?php 
             obwp_dropdown($this, 'layout');
             obwp_dropdown($this, 'color_context');
-            add_field_btn('input', 'video_link', 'Lien vidéo', 'Ajouter vidéo', 'notrad')
             ?>
         </div>
         <?php endif; ?>
         
         <!-- Champs de contenu principal -->
         <div class="obwp-content-fields">
+            <?php add_field_btn('input', 'video_link', 'Lien vidéo', 'Ajouter vidéo', 'notrad') ?>
             <div class="added-fields">
             </div>
         </div>

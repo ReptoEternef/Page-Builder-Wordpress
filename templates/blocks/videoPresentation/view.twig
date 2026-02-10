@@ -1,91 +1,63 @@
 {% set lang = options.available_langs[0] ?? 'fr' %}
 
+{# Collecter tous les liens vidéo dynamiques #}
 {% set video_links = [] %}
 
-{% for link in video_links %}
-  <p>{{link[lang]}}</p>
-{% endfor %}
-
 {% for key, value in values %}
-  {% if key starts with 'video_link' %}
-    {% set video_links = video_links|merge([value]) %}
+  {% if key starts with 'video_link_' %}
+    {# Gérer le cas trad vs notrad #}
+    {% if value is iterable and value[lang] is defined %}
+      {% set video_links = video_links|merge([value[lang]]) %}
+    {% else %}
+      {% set video_links = video_links|merge([value]) %}
+    {% endif %}
   {% endif %}
 {% endfor %}
-  
+
+{# Extraire les IDs YouTube #}
 {% set video_ids = [] %}
 
-{% for rawLink in video_links %}
-  {% set link = rawLink[lang] %}
-  {% set video_id = '' %}
-  
-  {# Cas 1: lien avec watch?v= #}
-  {% if 'watch?v=' in link %}
-    {% set video_id = link|split('v=')|last|split('&')|first %}
-  {% elseif 'youtu.be/' in link %}
-    {# Cas 2: lien court #}
-    {% set video_id = link|split('/')|last|split('?')|first %}
+{% for link in video_links %}
+  {% if link is not empty %}
+    {% set video_id = '' %}
+    
+    {# Cas 1: lien avec watch?v= #}
+    {% if 'watch?v=' in link %}
+      {% set video_id = link|split('v=')|last|split('&')|first %}
+    {% elseif 'youtu.be/' in link %}
+      {# Cas 2: lien court #}
+      {% set video_id = link|split('/')|last|split('?')|first %}
+    {% endif %}
+    
+    {% if video_id is not empty %}
+      {% set video_ids = video_ids|merge([video_id]) %}
+    {% endif %}
   {% endif %}
-
-  {% set video_ids = video_ids|merge([video_id]) %}
-
 {% endfor %}
 
+{# Reste du template inchangé #}
 <div class="video-pres-block">
-  <div class="container">
-    <div class="vp-video-container">
-      {# display main video #}
-      <iframe width="800px" height="450px"
-        src="https://www.youtube.com/embed/{{ video_ids[0] }}"
-        title="YouTube video"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen>
-      </iframe>
-    </div>
+  <div class="container center">
+    {% if video_ids|length > 0 %}
+      <div class="vp-video-container">
+        <iframe width="800px" height="450px"
+          src="https://www.youtube.com/embed/{{ video_ids[0] }}"
+          title="YouTube video"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>
+      </div>
 
-    {# display thumbnails #}
-    <div class="vp-thumbnails-container">
-      {% for id in video_ids %}
-        {% if id is not empty %}          
+      <div class="vp-thumbnails-container">
+        {% for id in video_ids %}
           <div class="vp-thumbnail" data-src="https://www.youtube.com/embed/{{ id }}">
-            {# <span class="iconify" data-icon="line-md:play-filled"></span> #}
             <img src="https://img.youtube.com/vi/{{ id }}/hqdefault.jpg" alt="">
           </div>
-        {% endif %}
-      {% endfor %}
-    </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>Aucune vidéo ajoutée</p>
+    {% endif %}
   </div>
 </div>
-
-
-
-{# SNIPPETS & TIPS
-
-penser à écrire container ou full-width dans la div principale
-
-{{ values.field_de_la_classe }} 
-{% if values.layout == 'default' %}
-{% elseif values.layout == 'default' %}
-{% endif %}
-
-<p>Bonjour {{ "Salut " ~ name ~ " !" }}</p>
-
-#}
-
-{# values #}
-{# {% if values is defined %}
-  <div class="debug-block" style="background:#111;color:#0f0;padding:1rem;margin:1rem 0;font-family:monospace;font-size:14px;overflow:auto;">
-    <strong style="color:#ff0;">DEBUG values :</strong><br>
-    <pre>{{ values|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
-  </div>
-{% else %}
-  <div class="debug-block" style="background:#111;color:#f55;padding:1rem;margin:1rem 0;font-family:monospace;font-size:14px;">
-    ⚠️ <strong>Pas de variable `values` trouvée ici !</strong>
-    <pre>{{ dump(_context) }}</pre>
-  </div>
-{% endif %} #}
-
-{# variable twig #}
-{# <div class="debug-block" style="background:#111;color:#0f0;padding:1rem;margin:1rem 0;font-family:monospace;font-size:14px;overflow:auto;">
-  <pre>{{ dump(video_ids) }}</pre>
-</div> #}

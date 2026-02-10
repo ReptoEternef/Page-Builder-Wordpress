@@ -365,23 +365,21 @@ function obwp_enqueue_blocks_assets(array $blocks) {
         $block_type = $block['type'] ?? null;
         if (!$block_type) continue;
 
-        // Déterminer si le bloc existe dans l'enfant ou le parent
         $child_path = '';
-        $child_uri = '';
-        $parent_path = '';
-        $parent_uri = '';
-        
+        $child_uri  = '';
+        $parent_path = get_template_directory() . "/templates/blocks/$block_type";
+        $parent_uri  = get_template_directory_uri() . "/templates/blocks/$block_type";
+
         if (is_child_theme()) {
             $child_path = get_stylesheet_directory() . "/templates/blocks/$block_type";
-            $child_uri = get_stylesheet_directory_uri() . "/templates/blocks/$block_type";
+            $child_uri  = get_stylesheet_directory_uri() . "/templates/blocks/$block_type";
         }
-        
-        $parent_path = get_template_directory() . "/templates/blocks/$block_type";
-        $parent_uri = get_template_directory_uri() . "/templates/blocks/$block_type";
 
-        // Charger CSS du parent d'abord (s'il existe)
+        // CSS parent
         $parent_css = $parent_path . "/assets/css/style.css";
-        if (file_exists($parent_css)) {
+        $parent_css_exists = file_exists($parent_css);
+
+        if ($parent_css_exists) {
             wp_enqueue_style(
                 "block-$block_type-parent",
                 $parent_uri . "/assets/css/style.css",
@@ -390,22 +388,21 @@ function obwp_enqueue_blocks_assets(array $blocks) {
             );
         }
 
-        // Charger CSS de l'enfant ensuite (s'il existe) - il override le parent
-        if (is_child_theme()) {
-            $child_css = $child_path . "/assets/css/style.css";
-            if (file_exists($child_css)) {
-                wp_enqueue_style(
-                    "block-$block_type-child",
-                    $child_uri . "/assets/css/style.css",
-                    ["block-$block_type-parent"], // Dépend du parent pour override
-                    filemtime($child_css)
-                );
-            }
+        // CSS enfant
+        if ($child_path && file_exists($child_path . "/assets/css/style.css")) {
+            wp_enqueue_style(
+                "block-$block_type-child",
+                $child_uri . "/assets/css/style.css",
+                $parent_css_exists ? ["block-$block_type-parent"] : [],
+                filemtime($child_path . "/assets/css/style.css")
+            );
         }
 
-        // Charger JS du parent d'abord (s'il existe)
+        // JS parent
         $parent_js = $parent_path . "/assets/js/script.js";
-        if (file_exists($parent_js)) {
+        $parent_js_exists = file_exists($parent_js);
+
+        if ($parent_js_exists) {
             wp_enqueue_script(
                 "block-$block_type-parent",
                 $parent_uri . "/assets/js/script.js",
@@ -415,18 +412,15 @@ function obwp_enqueue_blocks_assets(array $blocks) {
             );
         }
 
-        // Charger JS de l'enfant ensuite (s'il existe)
-        if (is_child_theme()) {
-            $child_js = $child_path . "/assets/js/script.js";
-            if (file_exists($child_js)) {
-                wp_enqueue_script(
-                    "block-$block_type-child",
-                    $child_uri . "/assets/js/script.js",
-                    ["block-$block_type-parent"], // Dépend du parent
-                    filemtime($child_js),
-                    true
-                );
-            }
+        // JS enfant
+        if ($child_path && file_exists($child_path . "/assets/js/script.js")) {
+            wp_enqueue_script(
+                "block-$block_type-child",
+                $child_uri . "/assets/js/script.js",
+                $parent_js_exists ? ["block-$block_type-parent"] : [],
+                filemtime($child_path . "/assets/js/script.js"),
+                true
+            );
         }
 
         // Récursivité : traiter les enfants

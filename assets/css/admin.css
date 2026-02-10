@@ -409,6 +409,17 @@
     background: #f9fafb;  /* Légèrement grisé */
 }
 
+/* ========================================
+   DYNAMIC FIELDS
+   ======================================== */
+
+.dynamic-field-wrapper {
+    margin-bottom: 0.5rem;
+}
+
+.dynamic-field-wrapper input {
+    flex: 1;
+}
 
 /* ========================================
    RESPONSIVE

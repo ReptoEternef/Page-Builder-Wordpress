@@ -14,5 +14,8 @@
     "layouts" : [
         "default",
         "second"
-    ]
+    ],
+    "options": {
+        "no-wrapper": false
+    }
 }

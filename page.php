@@ -37,6 +37,7 @@ function render_block_context($block, $availableBlocks) {
             'html' => "<div style='color:red;'>⚠️ Bloc inconnu : $type</div>",
             'values' => $block,
             'children' => $renderedChildren,
+            'options'  => [],
         ];
     }
 
@@ -52,6 +53,7 @@ function render_block_context($block, $availableBlocks) {
         'values' => $block['values'],
         'id' => $block['id'] ?? null,
         'children' => $renderedChildren,
+        'options'  => $instance->options ?? [],
     ];
 }
 

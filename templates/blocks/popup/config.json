@@ -12,5 +12,8 @@
     ],
     "layouts" : [
         "default"
-    ]
+    ],
+    "options": {
+        "no-wrapper": true
+    }
 }

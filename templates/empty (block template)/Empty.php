@@ -21,10 +21,14 @@ class EmptyTemplate extends Block {
         $json_config = json_decode(file_get_contents($json_directory), true);
 
         parent::__construct(
-            $json_config['block_type'], 
-            $json_config['display_name'], 
-            $json_config['fields'], 
-            $json_config['layouts']
+            $json_config['block_type'],
+            $json_config['display_name'],
+            $json_config['fields'],
+            $json_config['layouts'],
+            [],   // values
+            0,    // display_order
+            '',   // id
+            $json_config['options'] ?? []
         );
     }
 

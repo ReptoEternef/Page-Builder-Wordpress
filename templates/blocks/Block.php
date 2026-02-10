@@ -10,6 +10,7 @@ abstract class Block {
     public string $id;
     public string $html;
     protected string $block_path;
+    public array $options;
 
     public function __construct(
         $type,
@@ -18,7 +19,8 @@ abstract class Block {
         $layouts = [],
         $values = [],
         $display_order = 0,
-        $id = ''
+        $id = '',
+        $options = []
         ) {
         $this->type = $type;
         $this->display_name = $display_name;
@@ -27,6 +29,7 @@ abstract class Block {
         $this->values = is_array($values) ? $values : (array) $values;
         $this->display_order = $display_order;
         $this->id = $id;
+        $this->options = $options;
         
         // Déterminer le bon chemin (enfant prioritaire)
         $this->block_path = $this->resolveBlockPath();

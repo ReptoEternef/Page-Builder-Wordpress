@@ -31,7 +31,8 @@
       {% include "partials/block.twig" with { block: child } %}
     {% endfor %}
   </div>
-
+{% elseif block.options['no-wrapper'] %}
+  {{ block.html|raw }}
 {% else %}
   <div id="{{ block.id }}" class="block block-{{ block.type }} {{ block.values.color_context }} {{ container_full_width }}">
     {{ block.html|raw }}

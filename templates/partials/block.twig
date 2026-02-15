@@ -1,20 +1,22 @@
 {% set layout = block.values.layout|default('vertical') %}
 
+
+
 {# full width #}
-{% if not block.values['full-width'] %}
+{% if not block.values['full-width'] and not is_child %}
   {% set container_full_width = 'contained' %}
 {% endif %}
 {# full width #}
 
+
 {% if block.type == 'container' %}
 
-  {# set a style for the congainer #}
+  {# set a style for the container #}
   {% set style_for_container = '' %}
-
   {% if block.values.custom_css %}
-      {% set style_for_container = style_for_container ~ ' ' ~ block.values.custom_css %}
+    {% set style_for_container = style_for_container ~ ' ' ~ block.values.custom_css %}
   {% endif %}
-  {# set a style for the congainer #}
+  {# set a style for the container #}
 
   {# set correct layout #}
   {% set container_layout = '' %}
@@ -25,14 +27,15 @@
   {% endif %}
   {# set correct layout #}
 
-  <div
-    class="container container--{{ container_layout }} {{ container_full_width }}" style="{{ style_for_container }}">
+  <div class="container container--{{ container_layout }} {{ container_full_width }}" style="{{ style_for_container }}">
     {% for child in block.children %}
-      {% include "partials/block.twig" with { block: child } %}
+      {% include "partials/block.twig" with { block: child, is_child: true, options: options, lang: lang } only %}
     {% endfor %}
   </div>
+
 {% elseif block.options['no-wrapper'] %}
   {{ block.html|raw }}
+
 {% else %}
   <div id="{{ block.id }}" class="block block-{{ block.type }} {{ block.values.color_context }} {{ container_full_width }}">
     {{ block.html|raw }}

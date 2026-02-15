@@ -286,14 +286,6 @@ add_action('wp_enqueue_scripts', function() {
     );
 
     wp_enqueue_script(
-        'TinyMCE',
-        'https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js',
-        [],
-        null,
-        true
-    );
-
-    wp_enqueue_script(
         'main-js',
         get_template_directory_uri() . '/assets/js/main.js',
         ['TinyMCE'],
@@ -322,6 +314,9 @@ add_action('admin_enqueue_scripts', function($hook) {
     );
 
     if ($hook === 'post.php' && $post && $post->post_type === 'page') {
+        // ACTIVER TINYMCE POUR LE PAGE BUILDER
+        wp_enqueue_editor();
+
         wp_enqueue_script(
             'page-builder-js',
             get_template_directory_uri() . '/assets/js/page-builder.js',
@@ -481,13 +476,14 @@ add_action('save_post', function($post_id) {
 });
 
 
-add_action('wp_print_scripts', function() {
-    wp_deregister_script('tinymce');
-});
-add_action('wp_print_scripts', function() {
-    wp_dequeue_script('editor');      // WP editor core
-    wp_dequeue_script('wp-editor');   // TinyMCE wrapper
-});
+// Désactiver TinyMCE UNIQUEMENT côté front (pas dans l'admin)
+/* add_action('wp_print_scripts', function() {
+    if (!is_admin()) {
+        wp_deregister_script('tinymce');
+        wp_dequeue_script('editor');
+        wp_dequeue_script('wp-editor');
+    }
+}); */
 
 
 

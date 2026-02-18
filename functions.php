@@ -17,18 +17,18 @@
 function obwp_get_library() {
     $blocks_library = [];
     
-    // 1. Charger les blocs du thème parent
-    $parent_blocks_dir = get_template_directory() . '/templates/blocks';
-    if (is_dir($parent_blocks_dir)) {
-        $blocks_library = obwp_scan_blocks_directory($parent_blocks_dir, $blocks_library, 'parent');
-    }
-    
-    // 2. Charger/écraser avec les blocs du thème enfant (si thème enfant actif)
+    // 1. Charger les blocs du thème ENFANT EN PREMIER
     if (is_child_theme()) {
         $child_blocks_dir = get_stylesheet_directory() . '/templates/blocks';
         if (is_dir($child_blocks_dir)) {
             $blocks_library = obwp_scan_blocks_directory($child_blocks_dir, $blocks_library, 'child');
         }
+    }
+    
+    // 2. Charger les blocs du parent (les blocs déjà chargés par l'enfant seront skipés)
+    $parent_blocks_dir = get_template_directory() . '/templates/blocks';
+    if (is_dir($parent_blocks_dir)) {
+        $blocks_library = obwp_scan_blocks_directory($parent_blocks_dir, $blocks_library, 'parent');
     }
         
     return $blocks_library;
@@ -37,28 +37,22 @@ function obwp_get_library() {
 // Helper function to scan a blocks directory and populate the library
 function obwp_scan_blocks_directory($blocks_dir, $blocks_library = [], $source = 'parent') {
     foreach (glob($blocks_dir . '/*', GLOB_ONLYDIR) as $block_folder) {
-        $block_name = basename($block_folder);  // ex: "text", "hero"
-        $class_name = ucfirst($block_name);     // ex: "Text", "Hero"
-        
-        // Si c'est l'enfant et que la classe existe déjà (vient du parent), on skip le require
-        if ($source === 'child' && class_exists($class_name)) {
-            // La classe existe déjà (du parent), on vérifie juste si le fichier enfant existe
-            $class_path = $block_folder . '/' . $class_name . '.php';
-            if (file_exists($class_path)) {
-                // On ne peut pas redéclarer la classe, donc on utilise celle du parent
-                // mais on note qu'il y a une version enfant (pour logs si besoin)
-                if (!isset($blocks_library[$block_name])) {
-                    $blocks_library[$block_name] = new $class_name();
-                }
+        $block_name = basename($block_folder);
+        $class_name = ucfirst($block_name);
+
+        // Classe déjà chargée (vient de l'enfant si on est côté parent, ou d'un require précédent)
+        // On instancie si pas encore fait, puis on skip le require
+        if (class_exists($class_name)) {
+            if (!isset($blocks_library[$block_name])) {
+                $blocks_library[$block_name] = new $class_name();
             }
             continue;
         }
-        
-        $class_path = $block_folder . '/' . $class_name . '.php';
 
+        // Classe pas encore chargée, on require et on instancie
+        $class_path = $block_folder . '/' . $class_name . '.php';
         if (file_exists($class_path)) {
             require_once $class_path;
-            
             if (class_exists($class_name)) {
                 $blocks_library[$block_name] = new $class_name();
             }
@@ -224,6 +218,7 @@ add_filter('timber/context', function($context) {
     $context['logo_url'] = wp_get_attachment_image_url($custom_logo_id, 'full');
     $context['options'] = get_option('obwp_options', []);
     $context['lang'] = obwp_get_current_lang();
+    $context['menu'] = \Timber\Timber::get_menu('primary');
     return $context;
 });
 

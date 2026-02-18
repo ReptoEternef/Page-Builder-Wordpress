@@ -2,9 +2,9 @@
    BLOC IMAGE - Base
    ======================================== */
 
-.block-image {
+/* .block-image {
     margin: 2rem 0;
-}
+} */
 
 .block-image .image-wrapper {
     display: flex;

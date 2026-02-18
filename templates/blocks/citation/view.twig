@@ -1,0 +1,10 @@
+<div class="container">
+  {% if values.layout == 'default' %}
+    <div class="citation-container center">
+      <h3 class="citation"> {{ values.citation[lang] }} </h3>
+      <p class="source"> {{ values.source[lang] }} <a href="{{ values.link }}" target="_blank">{{ values.link_text[lang] }}</a></p>
+    </div>
+  {% else %}
+      <span>Erreur : layout</span>
+  {% endif %}
+</div>

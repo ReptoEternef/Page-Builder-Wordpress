@@ -1,0 +1,15 @@
+{
+    "block_type" : "space",
+    "display_name" : "Space",
+    "fields" : [
+        "custom_css",
+        "layout",
+        "height"
+    ],
+    "layouts" : [
+        "default"
+    ],
+    "options": {
+        "no-wrapper": true
+    }
+}

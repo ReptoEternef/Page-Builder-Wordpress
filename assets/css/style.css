@@ -2,15 +2,7 @@
 body {
   margin: 0;
 }
-p, ul {
-  color: var(--context-text, var(--text));
-}
-h1, h2, h3 {
-  color: var(--context-heading, var(--accented));
-}
-span {
-  color: var(--context-span, var(--color2));
-}
+
 
 html, body {
   height: 100%;
@@ -83,7 +75,7 @@ html, body {
     display: flex;
     box-sizing: border-box;
     align-items: stretch;
-    gap: 1rem;
+    gap: 2.3rem;
 }
 
 .container--vertical {

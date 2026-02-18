@@ -1,10 +1,18 @@
 <?php
 
+/* 
+SNIPPETS & TIPS
+
+à remplir :
+    > nom du dossier (ex: 'hero', 'text', etc.)
+    > nom du fichier (doit correspondre au nom de la classe)
+*/
+
 use Timber\Timber;
 
 require_once get_template_directory() . '/templates/blocks/Block.php';
 
-class Title extends Block {
+class Button extends Block {
 
     public function __construct()
     {   

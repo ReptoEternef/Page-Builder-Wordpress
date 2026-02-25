@@ -8,19 +8,17 @@
         <!-- Options système (layouts, contexte couleur, etc.) -->
         <?php if (!empty($this->layouts) || in_array('color_context', $this->fields)): ?>
         <div class="obwp-system-options">
-            <?php
+            <?php 
             obwp_dropdown($this, 'layout');
             obwp_dropdown($this, 'color_context');
             ?>
         </div>
         <?php endif; ?>
         
-        <!-- Champs médias (images, vidéos) -->
-        <div class="block-field" data-name="gallery" data-multiple="true">
-            <label for="image">Galerie</label>
-            <button type="button" class="button select-media">Choisir des images</button>
-
-            <div class="preview-container"></div>
+        <!-- Champs de contenu principal -->
+        <div class="obwp-content-fields">
+            <input type="text" name="text" value="<?= $data['text'] ?? '' ?>" placeholder="Titre">
+            <input type="text" name="link" value="<?= $data['link'] ?? '' ?>" placeholder="Lien">
         </div>
         
         <!-- Custom CSS (toujours en dernier) -->
@@ -37,18 +35,7 @@
                 <input type="checkbox" name="full-width">
                 <span class="prevent-select change-cursor">Pleine largeur</span>
             </label>
-            <label for="obwp-checkbox-label">
-                <input type="checkbox" name="display_desc">
-                <span class="prevent-select change-cursor">Afficher la description</span>
-            </label>
-            <label for="obwp-checkbox-label">
-                <input type="checkbox" name="display_capt">
-                <span class="prevent-select change-cursor">Afficher la caption</span>
-            </label>
         </div>
         <?php endif; ?>
     </div>
 </div>
-
-<!-- Pour les WYSIWYG :
-class="wysiwyg" ou wysiwyg-h2/h3 etc... -->

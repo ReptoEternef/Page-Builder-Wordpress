@@ -1,3 +1,9 @@
 .block-text {
     word-break: keep-all;
 }
+
+@media (max-width: 1050px) {
+    .block-text {
+        margin: 0 !important;
+    }
+}

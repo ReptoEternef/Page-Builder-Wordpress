@@ -1,11 +1,11 @@
 {
-    "block_type" : "title",
-    "display_name" : "Titre",
+    "block_type" : "shortcode",
+    "display_name" : "Shortcode",
     "fields" : [
         "custom_css",
         "layout",
-        "title",
-        "subtitle"
+        "full-width",
+        "shortcode"
     ],
     "layouts" : [
         "default"

@@ -1,16 +1,6 @@
-<div class="">
-  {% if values.layout == 'default' %}
-    <div class="title-block">
-      {{ values.title[lang] }}
+{# SHORTCODE #}
 
-      {% if values.subtitle %}
-        {{ values.subtitle[lang] }}
-      {% endif %}
-    </div>
-  {% else %}
-      <span>Erreur : layout</span>
-  {% endif %}
-</div>
+{{ shortcode_html|raw }}
 
 
 {# SNIPPETS & TIPS
@@ -41,5 +31,5 @@ penser à écrire container ou full-width dans la div principale
 
 {# variable twig #}
 {# <div class="debug-block" style="background:#111;color:#0f0;padding:1rem;margin:1rem 0;font-family:monospace;font-size:14px;overflow:auto;">
-  <pre>{{ variable }}</pre>
+  <pre>{{ shortcode_html|raw }}</pre>
 </div> #}

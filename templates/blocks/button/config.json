@@ -1,11 +1,11 @@
 {
-    "block_type" : "title",
-    "display_name" : "Titre",
+    "block_type" : "button",
+    "display_name" : "Bouton",
     "fields" : [
         "custom_css",
         "layout",
-        "title",
-        "subtitle"
+        "text",
+        "link"
     ],
     "layouts" : [
         "default"

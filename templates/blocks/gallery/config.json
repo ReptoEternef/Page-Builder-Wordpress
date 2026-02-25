@@ -10,6 +10,7 @@
         "layout",
         "full-width",
         "title",
+        "display_capt",
         "display_desc",
         "gallery"
     ]

@@ -1,0 +1,16 @@
+{
+    "block_type" : "citation",
+    "display_name" : "Citation",
+    "fields" : [
+        "custom_css",
+        "layout",
+        "full-width",
+        "citation",
+        "source",
+        "link",
+        "link_text"
+    ],
+    "layouts" : [
+        "default"
+    ]
+}

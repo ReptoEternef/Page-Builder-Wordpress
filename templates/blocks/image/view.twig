@@ -1,8 +1,8 @@
 {# IMAGE BLOCK #}
 
-{% set image_url = values.image %}
+{% set image_url = values.image.url %}
 {% set alt = values.alt[lang]|default('') %}
-{% set caption = values.caption[lang]|default('') %}
+{% set caption = values.caption[lang]?? values.image.caption | default('') %}
 {% set link = values.link|default('') %}
 {% set alignment = values.alignment|default('center') %}
 {% set object_fit = values.object_fit|default('cover') %}
@@ -43,7 +43,7 @@
       {% endif %}
       
       {% if caption %}
-        <p class="image-caption">{{ caption }}</p>
+        <p class="image-caption">© {{ caption }}</p>
       {% endif %}
       
     </div>

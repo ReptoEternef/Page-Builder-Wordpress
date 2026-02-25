@@ -27,6 +27,28 @@ class Image extends Block {
         $context['block'] = $this->type;
         $context['layouts'] = $this->layouts;
 
+        if (!empty($context['values']['image'])) {
+            $image_url = $context['values']['image'];
+
+            $attachment_id = attachment_url_to_postid($image_url);
+
+            if ($attachment_id) {
+                $attachment = get_post($attachment_id);
+
+                $image = [
+                    'url'         => $image_url,
+                    'alt'         => get_post_meta($attachment_id, '_wp_attachment_image_alt', true),
+                    'title'       => $attachment->post_title,
+                    'caption'     => $attachment->post_excerpt,
+                    'description' => $attachment->post_content,
+                ];
+            } else {
+                $image = ['url' => $image_url];
+            }
+
+            $context['values']['image'] = $image;
+        }
+
         $template_path = 'blocks/' . $this->type . '/view.twig';
         Timber::render($template_path, $context);
     }

@@ -1,0 +1,67 @@
+{% if values.display == "true" %}
+  {% if values.layout == 'default' %}
+    <div class="popup-container text-entrance">
+      <div class="obwp-popup-default">
+        <div class="close-popup prevent-select">x</div>
+        <div class="pop-up-text">
+          <h3>{{ values.title[lang] }}</h3>
+          <p>{{ values.content[lang] }}</p>
+        </div>
+        <div class="popup-button">
+          <a href="{{ values.btn_link }}" class="">
+            <img src="https://maticadeflor.fr/wp-content/uploads/2025/10/Logo-HelloAsso.svg-1-1.webp" alt="" class="helloasso-btn">
+          </a>
+        </div>
+      </div>
+    </div>
+  {% elseif values.layout == 'revert colors' %}
+    <div class="popup-container-revert text-entrance">
+      <div class="obwp-popup-revert">
+        <div class="close-popup prevent-select">x</div>
+        <div class="pop-up-text">
+          <h3>{{ values.title[lang] }}</h3>
+          <p>{{ values.content[lang] }}</p>
+        </div>
+        <div class="popup-button">
+          <a href="{{ values.btn_link }}" class="">
+            <img src="https://maticadeflor.fr/wp-content/uploads/2025/10/Logo-HelloAsso.svg-1-1.webp" alt="" class="helloasso-btn">
+          </a>
+        </div>
+      </div>
+    </div>
+  {% else %}
+      <span>Erreur : layout</span>
+  {% endif %}
+{% endif %}
+
+
+{# SNIPPETS & TIPS
+
+penser à écrire container ou full-width dans la div principale
+
+{{ values.field_de_la_classe }} 
+{% if values.layout == 'default' %}
+{% elseif values.layout == 'default' %}
+{% endif %}
+
+<p>Bonjour {{ "Salut " ~ name ~ " !" }}</p>
+
+#}
+
+{# values #}
+{# {% if values is defined %}
+  <div class="debug-block" style="background:#111;color:#0f0;padding:1rem;margin:1rem 0;font-family:monospace;font-size:14px;overflow:auto;">
+    <strong style="color:#ff0;">DEBUG values :</strong><br>
+    <pre>{{ values|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+  </div>
+{% else %}
+  <div class="debug-block" style="background:#111;color:#f55;padding:1rem;margin:1rem 0;font-family:monospace;font-size:14px;">
+    ⚠️ <strong>Pas de variable `values` trouvée ici !</strong>
+    <pre>{{ dump(_context) }}</pre>
+  </div>
+{% endif %} #}
+
+{# variable twig #}
+{# <div class="debug-block" style="background:#111;color:#0f0;padding:1rem;margin:1rem 0;font-family:monospace;font-size:14px;overflow:auto;">
+  <pre>{{ variable }}</pre>
+</div> #}

@@ -1,13 +1,21 @@
 <?php
 
+/* 
+SNIPPETS & TIPS
+
+à remplir :
+    > nom du dossier (ex: 'hero', 'text', etc.)
+    > nom du fichier (doit correspondre au nom de la classe)
+*/
+
 use Timber\Timber;
 
 require_once get_template_directory() . '/templates/blocks/Block.php';
 
-class Title extends Block {
+class Popup extends Block {
 
     public function __construct()
-    {   
+    {
         // Charger le config depuis le bon endroit
         $json_directory = __DIR__ . DIRECTORY_SEPARATOR . 'config.json';
         $json_config = json_decode(file_get_contents($json_directory), true);

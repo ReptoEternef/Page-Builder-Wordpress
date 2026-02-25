@@ -1,10 +1,18 @@
 <?php
 
+/* 
+SNIPPETS & TIPS
+
+à remplir :
+    > nom du dossier (ex: 'hero', 'text', etc.)
+    > nom du fichier (doit correspondre au nom de la classe)
+*/
+
 use Timber\Timber;
 
 require_once get_template_directory() . '/templates/blocks/Block.php';
 
-class Title extends Block {
+class Shortcode extends Block {
 
     public function __construct()
     {   
@@ -27,11 +35,13 @@ class Title extends Block {
     public function renderFrontend($values = [])
     {
         $data = Timber::context();
-
         $data['values'] = $values['values'] ?? $values;
         $data['block'] = $this->type;
         $data['layouts'] = $this->layouts;
-
+        
+        $shortcode = $data['values']['shortcode'] ?? '';
+        $data['shortcode_html'] = do_shortcode($shortcode);
+        
         $template_path = 'blocks/' . $this->type . '/view.twig';
         Timber::render($template_path, $data);
     }

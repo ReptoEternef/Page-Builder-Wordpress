@@ -72,6 +72,9 @@
     opacity: 1;
 }
 
+.vp-playing path {
+    color: #fff;
+}
 
 
 @media (max-width: 900px) {

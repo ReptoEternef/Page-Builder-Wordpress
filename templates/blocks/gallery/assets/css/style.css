@@ -5,6 +5,7 @@
 }
 
 .gal-container .gal-image {
+    position: relative;
     break-inside: avoid;      /* évite que les images se coupent */
     margin-bottom: 20px;
     border-radius: 12px;
@@ -20,6 +21,17 @@
     display: block;
     object-fit: cover;
     transition: transform 0.3s ease;
+}
+
+.gal-container .gal-image .caption {
+    font-size: 0.7rem;
+    color: #ffffffc5;
+    font-style: italic;
+    margin: 0;
+
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
 }
 
 /* Effet hover */

@@ -1,0 +1,16 @@
+{
+    "block_type" : "anchor",
+    "display_name" : "Ancre",
+    "fields" : [
+        "no-wrapper",
+        "custom_css",
+        "layout",
+        "anchor_id"
+    ],
+    "layouts" : [
+        "default"
+    ],
+    "options" : {
+        "no-wrapper" : true
+    }
+}

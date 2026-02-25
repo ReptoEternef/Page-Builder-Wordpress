@@ -1,16 +1,14 @@
-<div class="">
-  {% if values.layout == 'default' %}
-    <div class="title-block">
-      {{ values.title[lang] }}
+{% if values.layout == 'default' %}
+<div class="default-title">
+	{{ values.title[lang] }}
 
-      {% if values.subtitle %}
-        {{ values.subtitle[lang] }}
-      {% endif %}
-    </div>
-  {% else %}
-      <span>Erreur : layout</span>
-  {% endif %}
+	{% if values.subtitle %}
+	{{ values.subtitle[lang] }}
+	{% endif %}
 </div>
+{% else %}
+	<span>Erreur : layout</span>
+{% endif %}
 
 
 {# SNIPPETS & TIPS

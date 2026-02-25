@@ -656,7 +656,7 @@ function initTinyFor(container) {
             const editor = editors[0];
             if (editor && !editor._listenersAdded) {
                 editor._listenersAdded = true;
-                editor.on('change', () => setupTinyMCE(editor));
+                editor.on('change NodeChange', () => setupTinyMCE(editor));
             }
         });
     });

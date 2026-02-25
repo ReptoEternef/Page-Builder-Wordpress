@@ -35,11 +35,13 @@ class Shortcode extends Block {
     public function renderFrontend($values = [])
     {
         $data = Timber::context();
-
         $data['values'] = $values['values'] ?? $values;
         $data['block'] = $this->type;
         $data['layouts'] = $this->layouts;
-
+        
+        $shortcode = $data['values']['shortcode'] ?? '';
+        $data['shortcode_html'] = do_shortcode($shortcode);
+        
         $template_path = 'blocks/' . $this->type . '/view.twig';
         Timber::render($template_path, $data);
     }

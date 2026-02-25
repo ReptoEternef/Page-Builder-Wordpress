@@ -28,7 +28,9 @@ html, body {
   font-size: 0.8rem;
 }
 
-
+html {
+    scroll-behavior: smooth;
+}
 
 .text-entrance {
     opacity: 0;
@@ -114,6 +116,12 @@ html, body {
     margin: auto;
 }
 
+@media (max-width: 1050px) {
+    .container--horizontal {
+        flex-direction: column;
+    }
+}
+
 
 /* ------- READY TO USE CLASSES ------- */
 
@@ -141,4 +149,11 @@ html, body {
   -ms-user-select: none;     /* IE10+/Edge */
   user-select: none;         /* Standard */
   cursor: default;           /* Curseur par défaut au lieu du curseur texte */
+}
+
+.hide-scroll-bar {
+	scrollbar-width: none; /* Firefox */
+}
+.hide-scroll-bar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
 }

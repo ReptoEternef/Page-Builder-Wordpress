@@ -218,7 +218,8 @@ add_filter('timber/context', function($context) {
     $context['logo_url'] = wp_get_attachment_image_url($custom_logo_id, 'full');
     $context['options'] = get_option('obwp_options', []);
     $context['lang'] = obwp_get_current_lang();
-    $context['menu'] = \Timber\Timber::get_menu('primary');
+    $lang = obwp_get_current_lang();
+    $context['menu'] = \Timber\Timber::get_menu('primary_' . $lang);
     return $context;
 });
 
@@ -263,6 +264,10 @@ add_filter('timber/twig', function ($twig) {
     return $twig;
 });
 
+register_nav_menus([
+    'primary_fr' => 'Menu Principal FR',
+    'primary_en' => 'Menu Principal EN',
+]);
 
 
 
@@ -283,7 +288,7 @@ add_action('wp_enqueue_scripts', function() {
     wp_enqueue_script(
         'main-js',
         get_template_directory_uri() . '/assets/js/main.js',
-        ['TinyMCE'],
+        [],
         filemtime(get_template_directory() . '/assets/js/main.js'),
         true
     );

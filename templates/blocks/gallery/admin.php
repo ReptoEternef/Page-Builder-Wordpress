@@ -41,6 +41,10 @@
                 <input type="checkbox" name="display_desc">
                 <span class="prevent-select change-cursor">Afficher la description</span>
             </label>
+            <label for="obwp-checkbox-label">
+                <input type="checkbox" name="display_capt">
+                <span class="prevent-select change-cursor">Afficher la caption</span>
+            </label>
         </div>
         <?php endif; ?>
     </div>

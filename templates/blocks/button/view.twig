@@ -1,20 +1,18 @@
-<div class="block-button">
-  {% if values.layout == 'default' %}
-    <div class="btnblock-default">
-      <a href="{{ values.link }}" class="main-button">{{ values.text[lang] }}</a>
-    </div>
-  {% elseif values.layout == 'left' %}
-    <div class="btnblock-left">
-      <a href="{{ values.link }}" class="main-button">{{ values.text[lang] }}</a>
-    </div>
-  {% elseif values.layout == 'right' %}
-    <div class="btnblock-right">
-      <a href="{{ values.link }}" class="main-button">{{ values.text[lang] }}</a>
-    </div>
-  {% else %}
-      <span>Erreur : layout</span>
-  {% endif %}
-</div>
+{% if values.layout == 'default' %}
+  <div class="btnblock-default">
+    <a href="{{ values.link }}" class="button">{{ values.text[lang] }}</a>
+  </div>
+{% elseif values.layout == 'left' %}
+  <div class="btnblock-left">
+    <a href="{{ values.link }}" class="button">{{ values.text[lang] }}</a>
+  </div>
+{% elseif values.layout == 'right' %}
+  <div class="btnblock-right">
+    <a href="{{ values.link }}" class="button">{{ values.text[lang] }}</a>
+  </div>
+{% else %}
+    <span>Erreur : layout</span>
+{% endif %}
 
 
 {# SNIPPETS & TIPS

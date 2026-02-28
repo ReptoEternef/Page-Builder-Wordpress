@@ -1,3 +1,8 @@
+<div class="options" hidden>
+	<div class="display_overlay" data-gal-overlay="{{ values.display_overlay }}"></div>
+	<div class="isDownloadable" data-gal-download="{{ values.isDownloadable }}"></div>
+</div>
+
 {% if values.layout == 'default' %}    
     <div class="gal-block container" style="{{ values.custom_css }}">
         
@@ -11,6 +16,26 @@
                 </div>
             {% endfor %}
         </div>
+
+		<div class="gallery-popup-overlay" style="display:none;">
+			<div class="gallery-UI">
+				<div class="popup-btn previous">{% include 'images/icons/weui--arrow-outlined.svg' %}</div>
+				<div class="popup-btn next">{% include 'images/icons/weui--arrow-outlined.svg' %}</div>
+			</div>
+			{% for img in values.gallery %}
+				<div class="gal-img-container">
+					<img src="{{ img['url'] }}" alt="">
+					{% if img['caption'] %}
+						<p>Photo de {{ img['caption'] }}</p>
+					{% endif %}
+					{% if values.isDownloadable %}
+						<div class="download-btn-cont" title="Télécharger l'image">
+							<span class="popup-btn download iconify" data-icon="material-symbols:download-rounded" data-link="{{ img['url'] }}"></span>
+						</div>
+					{% endif %}
+				</div>
+			{% endfor %}
+		</div>
 
     </div>
 {% elseif values.layout == 'grid' %}

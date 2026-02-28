@@ -181,6 +181,16 @@ function obwp_get_current_lang() {
     return in_array($lang, $available, true) ? $lang : $default;
 }
 
+// Résoudre les IDs d'attachments depuis leurs URLs
+add_action('wp_ajax_obwp_get_attachment_ids', function() {
+    $urls = $_POST['urls'] ?? [];
+    $ids = [];
+    foreach ($urls as $url) {
+        $id = attachment_url_to_postid($url);
+        if ($id) $ids[] = $id;
+    }
+    wp_send_json_success($ids);
+});
 
 //=============================================================================================================================================================
 //                                                          1. Timber & Setup theme
@@ -285,13 +295,7 @@ add_action('wp_enqueue_scripts', function() {
         filemtime(get_template_directory() . '/assets/css/style.css')
     );
 
-    wp_enqueue_script(
-        'main-js',
-        get_template_directory_uri() . '/assets/js/main.js',
-        [],
-        filemtime(get_template_directory() . '/assets/js/main.js'),
-        true
-    );
+    load_child_then_parent('main.js', 'main-js');
 
     wp_enqueue_script(
         'iconify',
@@ -301,6 +305,39 @@ add_action('wp_enqueue_scripts', function() {
         true
     );
 });
+
+function load_child_then_parent(string $file, string $file_name) {
+    $child_path = '';
+    $child_uri  = '';
+
+    if (str_ends_with( $file, '.js' )) {
+        if (is_child_theme()) {
+            $child_path = get_stylesheet_directory() . "/assets/js/$file";
+            $child_uri  = get_stylesheet_directory_uri() . "/assets/js/$file";
+        }
+
+        if (file_exists($child_path)) {
+            wp_enqueue_script(
+                "$file_name-child",
+                $child_uri,
+                [],
+                filemtime($child_path),
+                true
+            );
+        } else {
+            wp_enqueue_script(
+                "$file_name-parent",
+                get_template_directory_uri() . "/assets/js/$file",
+                [],
+                filemtime(get_template_directory() . "/assets/js/$file"),
+                true
+            );
+        }
+    }
+    elseif (str_ends_with($file, '.css')) {
+        #css file loading
+    }
+}
 
 add_action('admin_enqueue_scripts', function($hook) {
     global $post;

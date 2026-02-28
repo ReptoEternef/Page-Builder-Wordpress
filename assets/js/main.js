@@ -1,3 +1,5 @@
+console.log('PARENT JS');
+
 // allows anchors to work from other pages than home page
 document.addEventListener('DOMContentLoaded', function() {
 	const menuLinks = document.querySelectorAll('a[href^="#"], a[href^="/#"], a[href^="https://www.maticadeflor.fr/#"]');

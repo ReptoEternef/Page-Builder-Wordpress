@@ -3,41 +3,51 @@
 
 
 {# full width #}
-{% if not block.values['full-width'] and not is_child %}
-  {% set container_full_width = 'contained' %}
+{% if block.type == 'container' %}
+    {% if not block.values['full-width'] and (not is_child or parent_is_full_width) %}
+        {% set container_full_width = 'contained' %}
+    {% endif %}
+{% elseif not block.values['full-width'] and not is_child %}
+    {% set container_full_width = 'contained' %}
 {% endif %}
 {# full width #}
 
 
 {% if block.type == 'container' %}
 
-  {# set a style for the container #}
-  {% set style_for_container = '' %}
-  {% if block.values.custom_css %}
-    {% set style_for_container = style_for_container ~ ' ' ~ block.values.custom_css %}
-  {% endif %}
-  {# set a style for the container #}
+{# set a style for the container #}
+{% set style_for_container = '' %}
+{% if block.values.custom_css %}
+	{% set style_for_container = style_for_container ~ ' ' ~ block.values.custom_css %}
+{% endif %}
+{# set a style for the container #}
 
-  {# set correct layout #}
-  {% set container_layout = '' %}
-  {% if block.values.layout == 'default' or block.values.layout == 'vertical' %}
-    {% set container_layout = 'vertical' %}
-  {% elseif block.values.layout == 'horizontal' %}
-    {% set container_layout = 'horizontal' %}
-  {% endif %}
-  {# set correct layout #}
+{# set correct layout #}
+{% set container_layout = '' %}
+{% if block.values.layout == 'default' or block.values.layout == 'vertical' %}
+	{% set container_layout = 'vertical' %}
+{% elseif block.values.layout == 'horizontal' %}
+	{% set container_layout = 'horizontal' %}
+{% endif %}
+{# set correct layout #}
 
-  <div class="container container--{{ container_layout }} {{ container_full_width }}" style="{{ style_for_container }}">
-    {% for child in block.children %}
-      {% include "partials/block.twig" with { block: child, is_child: true, options: options, lang: lang } only %}
-    {% endfor %}
-  </div>
+<div class="container container--{{ container_layout }} {{ container_full_width }}" style="{{ style_for_container }}">
+	{% for child in block.children %}
+		{% include "partials/block.twig" with { 
+				block: child,
+				is_child: true,
+				parent_is_full_width: block.values['full-width'] ? true : false,
+				options: options,
+				lang: lang
+			} only %}
+	{% endfor %}
+</div>
 
 {% elseif block.options['no-wrapper'] %}
-  {{ block.html|raw }}
+{{ block.html|raw }}
 
 {% else %}
-  <div id="{{ block.id }}" class="block block-{{ block.type }} {{ block.values.color_context }} {{ container_full_width }}">
-    {{ block.html|raw }}
-  </div>
+<div id="{{ block.id }}" class="block block-{{ block.type }} {{ block.values.color_context }} {{ container_full_width }}">
+	{{ block.html|raw }}
+</div>
 {% endif %}

@@ -398,7 +398,8 @@ const debugBtn = document.getElementById('debug_btn');
 
 // Fields we dont want translation to affect
 let staticFields = ['custom_css', 'color_context', 'blocks','layout', 'height', 'width', 'full-width', "display_desc", "display",
-    'object_position', 'object_fit', 'alignment', 'link', 'dimension_unit', 'custom_post_type', 'anchor_id', 'shortcode', 'display_capt'];
+    'object_position', 'object_fit', 'alignment', 'link', 'dimension_unit', 'custom_post_type', 'anchor_id', 'shortcode', 'display_capt',
+    'width_unit', 'height_unit', 'display_overlay', 'isDownloadable'];
 let obwpOptions;
 let userRole;
 
@@ -712,26 +713,49 @@ jQuery(document).ready(function($){
         const imgPreviewContainer = wpMediaImport.find('.preview-container');
         const isGallery = wpMediaImport.data('multiple') || false;
 
+        // Récupérer les URLs déjà sélectionnées
+        const blockItem = wpMediaImport.closest('.block-item');
+        const blockId = blockItem.attr('id');
+        const block = findObjectByID(blockId);
+        const field = wpMediaImport.data('name');
+        const existingValue = block?.values[field];
+        const existingUrls = existingValue
+            ? (Array.isArray(existingValue) ? existingValue : [existingValue])
+            : [];
+
         const mediaFrame = wp.media({
             title: 'Choisir une image' + (isGallery ? 's' : ''),
             button: { text: 'Utiliser cette image' + (isGallery ? 's' : '') },
             multiple: isGallery
         });
 
+        // Pré-sélectionner les images existantes à l'ouverture
+        mediaFrame.on('open', function() {
+            if (!existingUrls.length) return;
+
+            $.ajax({
+                url: php.ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'obwp_get_attachment_ids',
+                    urls: existingUrls
+                },
+                success: function(response) {
+                    if (!response.success) return;
+                    const selection = mediaFrame.state().get('selection');
+                    response.data.forEach(function(id) {
+                        const attachment = wp.media.attachment(id);
+                        attachment.fetch();
+                        selection.add(attachment);
+                    });
+                }
+            });
+        });
+
         mediaFrame.on('select', function(){
             const selection = mediaFrame.state().get('selection').toArray();
             const urls = selection.map(att => att.toJSON().url);
             
-            // Update preview
-            if(imgPreviewContainer.length){
-                imgPreviewContainer.empty();
-                urls.forEach(url => {
-                    $('<img>').attr('src', url).css({ width: '80px', margin: '5px' }).appendTo(imgPreviewContainer);
-                });
-                imgPreviewContainer.show();
-            }
-            
-            // Find the block using .closest() instead of manual parent navigation
             const blockItem = wpMediaImport.closest('.block-item');
             if (!blockItem.length) {
                 console.error('No .block-item found for media import');
@@ -754,58 +778,87 @@ jQuery(document).ready(function($){
             if (block.fields.includes(field)) {
                 const value = (urls.length < 2) ? urls[0] : urls;
                 block.values[field] = value;
+                
+                if (imgPreviewContainer.length) {
+                    renderPreview(imgPreviewContainer, urls, blockId, field);
+                }
             }
 
-            const JSON = exportPageJSON();
-            refreshSideJSON(JSON);
+            const pageJSON = exportPageJSON();
+            refreshSideJSON(pageJSON);
         });
 
         mediaFrame.open();
     });
 });
+
 // Display preview images at INIT
 jQuery(document).ready(function($){
     $('.block-field').each(function(){
         const wpMediaImport = $(this);
         const imgPreviewContainer = wpMediaImport.find('.preview-container');
-
-        // Remonter jusqu'au .block-item qui contient l'ID
         const blockItem = wpMediaImport.closest('.block-item');
         if (!blockItem.length) {
             console.warn('No .block-item found for', wpMediaImport);
             return;
         }
-        
         const blockId = blockItem.attr('id');
         if (!blockId) {
             console.warn('No ID found on .block-item', blockItem);
             return;
         }
-        
         const block = findObjectByID(blockId);
         if (!block) {
             console.warn('Block not found for ID:', blockId);
             return;
         }
-        
         const fieldName = wpMediaImport.data('name');
-        
         if (block.fields.includes(fieldName)) {
             const value = block.values[fieldName];
             if (!value) return;
-
             const urls = Array.isArray(value) ? value : [value];
-
-            if(imgPreviewContainer.length){
-                imgPreviewContainer.empty();
-                urls.forEach(url => {
-                    $('<img>').attr('src', url).css({ width: '80px', margin: '5px' }).appendTo(imgPreviewContainer);
-                });
-                imgPreviewContainer.show();
+            if (imgPreviewContainer.length) {
+                renderPreview(imgPreviewContainer, urls, blockId, fieldName);
             }
         }
     });
 });
+
+function renderPreview(container, urls, blockId, fieldName) {
+    const $ = jQuery;
+    const cleanUrls = urls.filter(u => u && u.trim() !== "");
+    container.empty();
+    cleanUrls.forEach(url => {
+        const imgWrapper = $('<div>').css({ display: 'inline-block', position: 'relative', margin: '5px' });
+        $('<img>').attr('src', url).css({ width: '80px' }).appendTo(imgWrapper);
+        $('<span>').text('×')
+            .css({
+                position: 'absolute',
+                top: '0',
+                right: '0',
+                cursor: 'pointer',
+                color: 'red',
+                background: '#fff',
+                borderRadius: '50%',
+                padding: '0 5px',
+                fontWeight: 'bold'
+            })
+            .appendTo(imgWrapper)
+            .on('click', function() {
+                const block = findObjectByID(blockId);
+                let currentUrls = Array.isArray(block.values[fieldName])
+                    ? block.values[fieldName]
+                    : [block.values[fieldName]];
+                currentUrls = currentUrls.filter(u => u && u.trim() !== "" && u !== url);
+                block.values[fieldName] = currentUrls.length === 1 ? currentUrls[0] : currentUrls;
+                renderPreview(container, currentUrls, blockId, fieldName);
+                const pageJSON = exportPageJSON();
+                refreshSideJSON(pageJSON);
+            });
+        container.append(imgWrapper);
+    });
+    container.show();
+}
 
 
 //=============================================================================================================================================================

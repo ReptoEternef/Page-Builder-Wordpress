@@ -12,6 +12,8 @@
         "title",
         "display_capt",
         "display_desc",
-        "gallery"
+        "gallery",
+        "display_overlay",
+        "isDownloadable"
     ]
 }

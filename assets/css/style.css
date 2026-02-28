@@ -75,7 +75,6 @@ html {
 
 .container {
     display: flex;
-    box-sizing: border-box;
     align-items: stretch;
     gap: 2.3rem;
 }

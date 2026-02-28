@@ -45,6 +45,14 @@
                 <input type="checkbox" name="display_capt">
                 <span class="prevent-select change-cursor">Afficher la caption</span>
             </label>
+            <label for="obwp-checkbox-label">
+                <input type="checkbox" name="display_overlay">
+                <span class="prevent-select change-cursor">Afficher l'overlay</span>
+            </label>
+            <label for="obwp-checkbox-label">
+                <input type="checkbox" name="isDownloadable">
+                <span class="prevent-select change-cursor">Téléchargeables</span>
+            </label>
         </div>
         <?php endif; ?>
     </div>

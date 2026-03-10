@@ -41,7 +41,10 @@ function render_admin_UI($post) {
         $blocks_library[$type]->html = $blocks_library[$type]->getHTML();
     }
 
-    wp_localize_script('page-builder-js', 'php', [
+    // Get the right script name (depending on parent or child page-builder.js)
+    global $page_builder_script;
+
+    wp_localize_script($page_builder_script, 'php', [
         'ajaxurl' => admin_url('admin-ajax.php'),
         'pageBlocks' => $page_blocks,
         'blocksLibrary' => $blocks_library,

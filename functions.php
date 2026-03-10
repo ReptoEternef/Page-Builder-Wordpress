@@ -316,28 +316,36 @@ function load_child_then_parent(string $file, string $file_name) {
             $child_uri  = get_stylesheet_directory_uri() . "/assets/js/$file";
         }
 
+        $script_name = '';
+
         if (file_exists($child_path)) {
+            $script_name = "$file_name-child";
             wp_enqueue_script(
-                "$file_name-child",
+                $script_name,
                 $child_uri,
                 [],
                 filemtime($child_path),
                 true
             );
         } else {
+            $script_name = "$file_name-parent";
             wp_enqueue_script(
-                "$file_name-parent",
+                $script_name,
                 get_template_directory_uri() . "/assets/js/$file",
                 [],
                 filemtime(get_template_directory() . "/assets/js/$file"),
                 true
             );
         }
+
+        return $script_name;
     }
     elseif (str_ends_with($file, '.css')) {
         #css file loading
     }
 }
+
+$page_builder_script = '';
 
 add_action('admin_enqueue_scripts', function($hook) {
     global $post;
@@ -354,13 +362,16 @@ add_action('admin_enqueue_scripts', function($hook) {
         // ACTIVER TINYMCE POUR LE PAGE BUILDER
         wp_enqueue_editor();
 
-        wp_enqueue_script(
+        global $page_builder_script;
+        $page_builder_script = load_child_then_parent('page-builder.js', 'page-builder-js');
+
+/*         wp_enqueue_script(
             'page-builder-js',
             get_template_directory_uri() . '/assets/js/page-builder.js',
             [],
             filemtime(get_template_directory() . '/assets/js/page-builder.js'),
             true
-        );
+        ); */
     }
     if ($hook === 'appearance_page_obwp-theme-options') {
         wp_enqueue_script(

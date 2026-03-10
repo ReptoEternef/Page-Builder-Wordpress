@@ -277,6 +277,7 @@ add_filter('timber/twig', function ($twig) {
 register_nav_menus([
     'primary_fr' => 'Menu Principal FR',
     'primary_en' => 'Menu Principal EN',
+    'primary_esp' => 'Menu Principal ESP',
 ]);
 
 

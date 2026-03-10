@@ -175,7 +175,7 @@ function obwp_get_current_lang() {
         return $default;
     }
 
-    $lang = $_GET['lang'] ?? $default;
+    $lang = $_SESSION['lang'] ?? $default;
     $lang = sanitize_key($lang);
 
     return in_array($lang, $available, true) ? $lang : $default;
@@ -220,6 +220,13 @@ add_action('after_setup_theme', function() {
     register_nav_menus([
         'primary' => 'Menu Principal',
     ]);
+});
+
+add_action('init', function() {
+    if (!session_id()) session_start();
+    if (isset($_GET['lang'])) {
+        $_SESSION['lang'] = sanitize_text_field($_GET['lang']);
+    }
 });
 
 // Context Timber & options thème

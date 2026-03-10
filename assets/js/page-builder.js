@@ -401,7 +401,7 @@ const debugBtn = document.getElementById('debug_btn');
 // Fields we dont want translation to affect
 let staticFields = ['custom_css', 'color_context', 'blocks','layout', 'height', 'width', 'full-width', "display_desc", "display",
     'object_position', 'object_fit', 'alignment', 'link', 'dimension_unit', 'custom_post_type', 'anchor_id', 'shortcode', 'display_capt',
-    'width_unit', 'height_unit', 'display_overlay', 'isDownloadable'];
+    'width_unit', 'height_unit', 'display_overlay', 'isDownloadable', 'btn_link', 'btn_text', 'display_btn', 'image'];
 let obwpOptions;
 let userRole;
 

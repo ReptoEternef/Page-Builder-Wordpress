@@ -156,3 +156,11 @@ html {
 .hide-scroll-bar::-webkit-scrollbar {
     display: none; /* Chrome, Safari */
 }
+
+@media (max-width: 1250px) {
+    .contained {
+        max-width: 92vw;
+        padding-left: 0;
+        padding-right: 0;
+    }
+}

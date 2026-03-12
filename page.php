@@ -57,7 +57,19 @@ function render_block_context($block, $availableBlocks) {
     ];
 }
 
-
+add_action('wp_head', function() use ($blocks) {
+    $all_css = '';
+    foreach ($blocks as $block) {
+        if (!empty($block['values']['custom_css'])) {
+            $id = $block['id'];
+            $css = str_replace('##', '#' . $id, $block['values']['custom_css']);
+            $all_css .= $css . "\n";
+        }
+    }
+    if ($all_css) {
+        echo '<style>' . $all_css . '</style>';
+    }
+});
 
 
 $rendered_blocks = [];

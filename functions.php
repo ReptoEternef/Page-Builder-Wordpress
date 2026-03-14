@@ -304,6 +304,8 @@ add_action('wp_enqueue_scripts', function() {
     );
 
     load_child_then_parent('main.js', 'main-js');
+    load_child_then_parent('animations.js', 'animations-js');
+    load_child_then_parent('parallax.js', 'parallax-js');
 
     wp_enqueue_script(
         'iconify',

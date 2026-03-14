@@ -34,20 +34,25 @@ document.addEventListener('DOMContentLoaded', function() {
 const navLinks = document.querySelectorAll('.menu-principal a');
 const sections = document.querySelectorAll('.anchor[id]');
 
-function updateActive() {
-	const triggerPoint = window.innerHeight * 0.4; // 40% du viewport
-	
-	let current = sections[0];
-	sections.forEach(section => {
-		const rect = section.getBoundingClientRect();
-		if (rect.top <= triggerPoint) {
-		current = section;
-		}
-	});
+if (sections.length > 0) {
+    function updateActive() {
+        const triggerPoint = window.innerHeight * 0.4;
+        let current = sections[0];
 
-	navLinks.forEach(link => link.classList.remove('active'));
-	const active = document.querySelector(`.menu-principal a[href="#${current.id}"]`);
-	if (active) active.classList.add('active');
+        sections.forEach(section => {
+            const rect = section.getBoundingClientRect();
+            if (rect.top <= triggerPoint) {
+                current = section;
+            }
+        });
+
+        navLinks.forEach(link => link.classList.remove('active'));
+        const active = document.querySelector(`.menu-principal a[href="#${current.id}"]`);
+        if (active) active.classList.add('active');
+    }
+
+    window.addEventListener('scroll', updateActive);
+    updateActive(); // initialisation au chargement
 }
 
 window.addEventListener('scroll', updateActive);

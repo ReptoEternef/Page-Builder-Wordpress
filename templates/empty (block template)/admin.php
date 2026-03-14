@@ -35,7 +35,7 @@
         <!-- Custom CSS (toujours en dernier) -->
         <?php if (in_array('custom_css', $this->fields)): ?>
         <div class="obwp-advanced-options">
-            <input type="text" name="custom_css" placeholder="Custom CSS" class="obwp-input-full">
+            <textarea name="custom_css" id="" cols="30" rows="5" placeholder="Custom CSS"></textarea>
         </div>
         <?php endif; ?>
         

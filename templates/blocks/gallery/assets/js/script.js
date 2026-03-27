@@ -107,3 +107,18 @@ if (displayOverlay.dataset.galOverlay === "1") {
         }
     });
 }
+
+
+
+
+
+/* SEE MORE ON PHONE */
+
+const blockGallery = document.querySelector('.block-gallery:has(.gal-default)');
+const seeMoreBtn = document.querySelector('.block-gallery:has(.gal-default) .see-more-phone');
+
+seeMoreBtn.addEventListener('click', () => {
+    blockGallery.style.maxHeight = 'fit-content';
+    blockGallery.classList.add('no-fade');
+    seeMoreBtn.classList.remove('active');
+})

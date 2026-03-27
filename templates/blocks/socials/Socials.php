@@ -12,10 +12,10 @@ use Timber\Timber;
 
 require_once get_template_directory() . '/templates/blocks/Block.php';
 
-class Popup extends Block {
+class Socials extends Block {
 
     public function __construct()
-    {
+    {   
         // Charger le config depuis le bon endroit
         $json_directory = __DIR__ . DIRECTORY_SEPARATOR . 'config.json';
         $json_config = json_decode(file_get_contents($json_directory), true);

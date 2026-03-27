@@ -7,7 +7,7 @@
 
         <!-- Options système (layouts, contexte couleur, etc.) -->
         <?php if (!empty($this->layouts) || in_array('color_context', $this->fields)): ?>
-        <div class="obwp-system-options">
+        <div class="obwp-system-options for-admin">
             <?php 
             obwp_dropdown($this, 'layout');
             obwp_dropdown($this, 'color_context');
@@ -17,13 +17,14 @@
         
         <!-- Champs de contenu principal -->
         <div class="obwp-content-fields">
-            <input type="text" name="title" value="<?= $data['title'] ?? '' ?>" placeholder="Titre">
-            <textarea type="text" name="content" placeholder="Contenu"><?= $data['content'] ?? '' ?></textarea>
-            <input type="text" name="btn_link" value="<?= $data['btn_link'] ?? '' ?>" placeholder="Lien du bouton">
-            <label>
-                <input type="checkbox" name="display">
-                Afficher le popup
-            </label>
+            <label for="">Instagram</label>
+            <input type="text" name="instagram" id="" placeholder="https://www.instagram.com/..." data-field-trad="notrad">
+
+            <label for="">Facebook</label>
+            <input type="text" name="facebook" id="" placeholder="https://www.facebook.com/..." data-field-trad="notrad">
+
+            <label for="">Youtube</label>
+            <input type="text" name="youtube" id="" placeholder="https://www.youtube.com/@..." data-field-trad="notrad">
         </div>
         
         <!-- Champs médias (images, vidéos) -->
@@ -39,7 +40,7 @@
         <!-- Custom CSS (toujours en dernier) -->
         <?php if (in_array('custom_css', $this->fields)): ?>
         <div class="obwp-advanced-options">
-            <input type="text" name="custom_css" placeholder="Custom CSS" class="obwp-input-full">
+            <textarea name="custom_css" id="" cols="30" rows="5" placeholder="Custom CSS"></textarea>
         </div>
         <?php endif; ?>
         

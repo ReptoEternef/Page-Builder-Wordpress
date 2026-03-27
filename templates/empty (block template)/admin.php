@@ -55,6 +55,9 @@
 Pour les WYSIWYG :
 class="wysiwyg" ou wysiwyg-h2/h3 etc...
 
+Pour éviter la traduction :
+data-field-trad="notrad"
+
 Pour les champs dynamiques :
     <?php //add_field_btn('input', 'video_link', 'Lien vidéo', 'Ajouter vidéo', 'notrad') ?>
     <div class="added-fields">

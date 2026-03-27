@@ -245,6 +245,18 @@ class Block {
         }
     }
 
+    setFieldsElements() {
+        let fieldsWithDOM = {};
+        this.fields.forEach(field => {
+            const selector = '[name="' + field + '"]';
+            const fieldEl = this.DOM.querySelector(selector);
+
+            fieldsWithDOM[field] = fieldEl;
+        });
+        
+        this.fields = fieldsWithDOM;
+    }
+
     setListener() {
         this.DOM.addEventListener('input', (e) => {
             // IMPORTANT: stop event bubbling to avoid parent containers reacting to child inputs
@@ -271,8 +283,15 @@ class Block {
                 });
             }
 
+            // Check if field needs to be translated or not
+            const fieldEl = this.fields[field];
+            const fieldTrad = fieldEl.dataset.fieldTrad
+            ? fieldEl.dataset.fieldTrad
+            : undefined;
+            
+            const isStatic = fieldTrad === "notrad" || staticFields.includes(field);
             // on met à jour la valeur dans le bloc correspondant
-            if (!staticFields.includes(field)) {
+            if (!isStatic) {
                 const selectedLang = langSelector.value;
 
                 this.values[field] = this.values[field] || {};
@@ -289,11 +308,13 @@ class Block {
 
     setValues() {
         for (const fieldName in this.values) {
-            const selector = '[name="' + fieldName + '"]';
-            const fieldEl = this.DOM.querySelector(selector);
+            const fieldEl = this.fields[fieldName];
             if (!fieldEl) continue;
-            
-            const value = staticFields.includes(fieldName)
+
+            const fieldTrad = this.fields[fieldName]
+                ? fieldEl.dataset.fieldTrad
+                : '';
+            const value = staticFields.includes(fieldName) || fieldTrad === 'notrad'
             ? (this.values[fieldName] ?? '')
             : (this.values[fieldName][selectedLang] ?? '');
 
@@ -432,6 +453,8 @@ function initBlocks(block, parent) {
     const values = block.values;
     const initBlock = addBlock(parent, block.type);
 
+    initBlock.setFieldsElements();
+
     initBlock.values = (!values || Array.isArray(values))
         ? {}
         : structuredClone(values);
@@ -463,7 +486,10 @@ langSelector.addEventListener('change', () => {
             const fieldData = block.addFieldBtns[baseName];
             fieldData.fields.forEach(input => {
                 const fullName = input.name;
-                const isTrad = !staticFields.includes(fullName);
+                const isTrad = fieldTrad
+                    ? fieldTrad === 'notrad'
+                    : !staticFields.includes(fullName);
+                console.log(isTrad);
                 
                 if (isTrad && block.values[fullName]) {
                     input.value = block.values[fullName][selectedLang] ?? '';

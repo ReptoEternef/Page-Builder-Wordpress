@@ -4,11 +4,11 @@
 </div>
 
 {% if values.layout == 'default' %}    
-    <div class="gal-block container" style="{{ values.custom_css }}">
+    <div class="gal-block container gal-default" style="{{ values.custom_css }}">
         
         <div class="gal-container">
             {% for img in values.gallery %}
-                <div class="gal-image">
+                <div class="gal-image scale-in">
                     <img src="{{ img['url'] }}" alt="">
                     {% if img['caption'] is not empty and values.display_capt == 'true' %}
                         <p class="caption">© {{ img['caption'] }}</p>
@@ -26,7 +26,9 @@
 				<div class="gal-img-container">
 					<img src="{{ img['url'] }}" alt="">
 					{% if img['caption'] %}
-						<p>Photo de {{ img['caption'] }}</p>
+                        <div class="popup-caption">
+                            <p>© {{ img['caption'] }}</p>
+                        </div>
 					{% endif %}
 					{% if values.isDownloadable %}
 						<div class="download-btn-cont" title="Télécharger l'image">
@@ -37,9 +39,13 @@
 			{% endfor %}
 		</div>
 
+        <div class="see-more-phone active" style="display:none">
+            <p>Voir plus</p>
+        </div>
+
     </div>
 {% elseif values.layout == 'grid' %}
-    <div class="gal-block container" style="{{ values.custom_css }}">        
+    <div class="gal-block container gal-grid" style="{{ values.custom_css }}">        
         <div class="gal-container-grid">
             {% for img in values.gallery %}
                 <div class="gal-image-grid">

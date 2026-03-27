@@ -1,0 +1,20 @@
+{
+    "block_type" : "socials",
+    "display_name" : "Réseaux Sociaux",
+    "fields" : [
+        "custom_css",
+        "layout",
+        "full-width",
+        "color_context",
+        "instagram",
+        "facebook",
+        "youtube"
+    ],
+    "layouts" : [
+        "default",
+        ""
+    ],
+    "options": {
+        "no-wrapper": false
+    }
+}

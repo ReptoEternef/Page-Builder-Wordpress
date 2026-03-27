@@ -127,9 +127,8 @@ function createInput($data, $inputType, $name, $placeholder) {
 
 function obwp_dropdown($object, $option) {
     // $object is $this
-    // $option can be either 'layout' or 'color_context' for instance
+    // $option can be either 'layout' or 'color_context'
 
-    if (count($object->layouts) > 1) {
     ?>
     <div>
         <label for="<?php echo $option ?>"><?php echo $option ?></label>
@@ -148,7 +147,6 @@ function obwp_dropdown($object, $option) {
         </select>
     </div>
     <?php
-}
 }
 
 function obwp_get_available_langs() {
@@ -237,6 +235,10 @@ add_filter('timber/context', function($context) {
     $context['lang'] = obwp_get_current_lang();
     $lang = obwp_get_current_lang();
     $context['menu'] = \Timber\Timber::get_menu('primary_' . $lang);
+    $context['pages'] = \Timber\Timber::get_posts([
+        'post_type' => 'page',
+        'posts_per_page' => -1,
+    ]);
     return $context;
 });
 
@@ -413,7 +415,25 @@ add_action('admin_enqueue_scripts', function($hook) {
 
 
 // ENQUEUE BLOCKS' CSS & JS (FRONT)
-function obwp_enqueue_blocks_assets(array $blocks) {
+function obwp_enqueue_blocks_assets(array $blocks, array &$enqueued_vendors = []) {
+
+    // Map de tous les vendors disponibles
+    $vendors = [
+        'embla' => [
+            'handle' => 'embla-carousel',
+            'src'    => get_template_directory_uri() . '/assets/js/vendors/embla-carousel.umd.js',
+            'deps'   => [],
+            'ver'    => '8.5.1',
+        ],
+        'wheel-gestures' => [
+            'handle' => 'embla-wheel-gestures',
+            'src'    => get_template_directory_uri() . '/assets/js/vendors/embla-carousel-wheel-gestures.umd.js',
+            'deps'   => ['embla-carousel'],
+            'ver'    => '3.0.3',
+        ],
+        // ajouter un vendor ici et c'est tout
+    ];
+
     foreach ($blocks as $block) {
         $block_type = $block['type'] ?? null;
         if (!$block_type) continue;
@@ -428,57 +448,56 @@ function obwp_enqueue_blocks_assets(array $blocks) {
             $child_uri  = get_stylesheet_directory_uri() . "/templates/blocks/$block_type";
         }
 
+        // Lire le config.json
+        $requires = [];
+        $config_path = $parent_path . '/config.json';
+        if ($child_path && file_exists($child_path . '/config.json')) {
+            $config_path = $child_path . '/config.json';
+        }
+        if (file_exists($config_path)) {
+            $config = json_decode(file_get_contents($config_path), true);
+            $requires = $config['requires'] ?? [];
+        }
+
+        // Enqueue les vendors requis (une seule fois chacun)
+        $js_deps = [];
+        foreach ($requires as $vendor_key) {
+            if (!isset($vendors[$vendor_key])) continue;
+            if (!in_array($vendor_key, $enqueued_vendors)) {
+                $v = $vendors[$vendor_key];
+                wp_enqueue_script($v['handle'], $v['src'], $v['deps'], $v['ver'], true);
+                $enqueued_vendors[] = $vendor_key;
+            }
+            $js_deps[] = $vendors[$vendor_key]['handle'];
+        }
+
         // CSS parent
         $parent_css = $parent_path . "/assets/css/style.css";
         $parent_css_exists = file_exists($parent_css);
-
         if ($parent_css_exists) {
-            wp_enqueue_style(
-                "block-$block_type-parent",
-                $parent_uri . "/assets/css/style.css",
-                [],
-                filemtime($parent_css)
-            );
+            wp_enqueue_style("block-$block_type-parent", $parent_uri . "/assets/css/style.css", [], filemtime($parent_css));
         }
 
         // CSS enfant
         if ($child_path && file_exists($child_path . "/assets/css/style.css")) {
-            wp_enqueue_style(
-                "block-$block_type-child",
-                $child_uri . "/assets/css/style.css",
-                $parent_css_exists ? ["block-$block_type-parent"] : [],
-                filemtime($child_path . "/assets/css/style.css")
-            );
+            wp_enqueue_style("block-$block_type-child", $child_uri . "/assets/css/style.css", $parent_css_exists ? ["block-$block_type-parent"] : [], filemtime($child_path . "/assets/css/style.css"));
         }
 
         // JS parent
         $parent_js = $parent_path . "/assets/js/script.js";
         $parent_js_exists = file_exists($parent_js);
-
         if ($parent_js_exists) {
-            wp_enqueue_script(
-                "block-$block_type-parent",
-                $parent_uri . "/assets/js/script.js",
-                [],
-                filemtime($parent_js),
-                true
-            );
+            wp_enqueue_script("block-$block_type-parent", $parent_uri . "/assets/js/script.js", $js_deps, filemtime($parent_js), true);
         }
 
         // JS enfant
         if ($child_path && file_exists($child_path . "/assets/js/script.js")) {
-            wp_enqueue_script(
-                "block-$block_type-child",
-                $child_uri . "/assets/js/script.js",
-                $parent_js_exists ? ["block-$block_type-parent"] : [],
-                filemtime($child_path . "/assets/js/script.js"),
-                true
-            );
+            wp_enqueue_script("block-$block_type-child", $child_uri . "/assets/js/script.js", $parent_js_exists ? ["block-$block_type-parent"] : $js_deps, filemtime($child_path . "/assets/js/script.js"), true);
         }
 
-        // Récursivité : traiter les enfants
+        // Récursivité
         if (!empty($block['children']) && is_array($block['children'])) {
-            obwp_enqueue_blocks_assets($block['children']);
+            obwp_enqueue_blocks_assets($block['children'], $enqueued_vendors);
         }
     }
 }

@@ -415,6 +415,8 @@ const addBlockBtn = document.getElementById('add_block_btn');
 const rootContainer = document.querySelector('#_page_blocks .inside');
 const blockTypeSelector = document.getElementById('block-type-selector');
 const langSelector = document.getElementById('lang-selector');
+
+if (!langSelector.selectedOptions[0]) {alert("Langues missing ! Go in Appearance > Options du thème to start creating languages.")};
 let selectedLang = langSelector.selectedOptions[0].value;
 
 const debugBtn = document.getElementById('debug_btn');
@@ -803,7 +805,7 @@ jQuery(document).ready(function($){
             }
             
             const field = wpMediaImport.data('name');
-            if (block.fields.includes(field)) {
+            if (Object.keys(block.fields).includes(field)) {
                 const value = (urls.length < 2) ? urls[0] : urls;
                 block.values[field] = value;
                 
@@ -841,7 +843,7 @@ jQuery(document).ready(function($){
             return;
         }
         const fieldName = wpMediaImport.data('name');
-        if (block.fields.includes(fieldName)) {
+        if (Object.keys(block.fields).includes(fieldName)) {
             const value = block.values[fieldName];
             if (!value) return;
             const urls = Array.isArray(value) ? value : [value];

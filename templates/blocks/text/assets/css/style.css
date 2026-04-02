@@ -2,6 +2,10 @@
     word-break: keep-all;
 }
 
+.text-default h2 {
+    margin-bottom: 10px;
+}
+
 @media (max-width: 1050px) {
     .block-text {
         margin: 0 !important;

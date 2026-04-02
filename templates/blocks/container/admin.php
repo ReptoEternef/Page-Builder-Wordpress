@@ -28,6 +28,11 @@
                     <input type="checkbox" name="full-width">
                     <span class="prevent-select change-cursor">Pleine largeur</span>
                 </label>
+
+                <label class="obwp-checkbox-label">
+                    <input type="checkbox" name="textured" data-field-trad="notrad">
+                    <span class="prevent-select change-cursor">Texture</span>
+                </label>
             </div>
             <?php endif; ?>    
         </div>
@@ -37,6 +42,7 @@
         <?php if (in_array('custom_css', $this->fields)): ?>
         <div class="obwp-advanced-options">
             <input type="text" name="custom_css" placeholder="Custom CSS" class="obwp-input-full">
+            <input type="text" name="css_classes" placeholder="Add CSS classes (no dot)" class="obwp-input-full" data-field-trad="notrad">
         </div>
         <?php endif; ?>    
     </div>

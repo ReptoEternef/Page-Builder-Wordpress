@@ -1,19 +1,39 @@
 {# HERO #}
 
-<div class="container block-{{ block }}">
-  {% if values.layout == layouts[0] %}
-    <div class="{{ block }}-{{ layouts[0] }}">
-      <p>{{ values.title[lang] }}</p>
-      <p>{{ values.slogan[lang] }}</p>
-    </div>
-  {% elseif values.layout == layouts[1] %}
-    <div class="{{ block }}-{{ layouts[1] }}">
+{% if values.layout == layouts[0] %}
+<div class="{{block}} {{ block }}-{{ layouts[0] }}" style="background-image:url({{ values.background }})">
+	<div class="content">
+		<h1>{{ values.title[lang] }}</h1>
+		<p>{{ values.slogan[lang] }}</p>
+		<div class="content-btns">
+			<a href="{{ values.btn1_link[lang] }}" class="button empty-btn first-btn">{{ values.btn1[lang] }}</a>
+			<a href="{{ values.btn2_link[lang] }}" class="button empty-btn second-btn">{{ values.btn2[lang] }}</a>
+		</div>
+	</div>
 
-    </div>  
-  {% else %}
-      <span>Erreur : layout</span>
-  {% endif %}
+	<a href="#bio" id="btn-down-hero">
+		<dotlottie-player
+			src="/wp-content/themes/Page-Builder-Wordpress-master/assets/images/lotties/Swipe_up_Arrows.json"
+			background="transparent"
+			speed="1"
+			style="width: 15vh; height: 15vh;"
+			loop
+			autoplay>
+		</dotlottie-player>
+	</a>
 </div>
+{% elseif values.layout == layouts[1] %}
+<div class="{{ block }}-{{ layouts[1] }}" style="background-image:url({{ values.background }})">
+	<div class="content-wrapper contained">	
+		<div class="content">
+			<h1>{{ values.slogan[lang] }}</h1>
+			<p>{{ values.subtitle[lang] }}</p>
+		</div>
+	</div>
+</div>  
+{% else %}
+	<span>Erreur : layout</span>
+{% endif %}
 
 
 {# SNIPPETS & TIPS
@@ -31,18 +51,18 @@ penser à écrire container ou full-width dans la div principale
 
 {# values #}
 {# {% if values is defined %}
-  <div class="debug-block" style="background:#111;color:#0f0;padding:1rem;margin:1rem 0;font-family:monospace;font-size:14px;overflow:auto;">
-    <strong style="color:#ff0;">DEBUG values :</strong><br>
-    <pre>{{ values|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
-  </div>
+<div class="debug-block" style="background:#111;color:#0f0;padding:1rem;margin:1rem 0;font-family:monospace;font-size:14px;overflow:auto;">
+	<strong style="color:#ff0;">DEBUG values :</strong><br>
+	<pre>{{ values|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+</div>
 {% else %}
-  <div class="debug-block" style="background:#111;color:#f55;padding:1rem;margin:1rem 0;font-family:monospace;font-size:14px;">
-    ⚠️ <strong>Pas de variable `values` trouvée ici !</strong>
-    <pre>{{ dump(_context) }}</pre>
-  </div>
+<div class="debug-block" style="background:#111;color:#f55;padding:1rem;margin:1rem 0;font-family:monospace;font-size:14px;">
+	⚠️ <strong>Pas de variable `values` trouvée ici !</strong>
+	<pre>{{ dump(_context) }}</pre>
+</div>
 {% endif %} #}
 
 {# variable twig #}
 {# <div class="debug-block" style="background:#111;color:#0f0;padding:1rem;margin:1rem 0;font-family:monospace;font-size:14px;overflow:auto;">
-  <pre>{{ variable }}</pre>
+<pre>{{ variable }}</pre>
 </div> #}

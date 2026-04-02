@@ -3,9 +3,11 @@
     "display_name" : "Conteneur",
     "fields" : [
         "custom_css",
+        "css_classes",
         "layout",
         "children",
-        "full-width"
+        "full-width",
+        "textured"
     ],
     "layouts" : [
         "vertical",

@@ -12,6 +12,15 @@
 {% endif %}
 {# full width #}
 
+{# CSS Classes #}
+{% if block.type == 'container' %}
+	{% set added_classes = block.values.css_classes %}
+{% else %}
+	{% set added_classes = '' %}
+{% endif %}
+{# CSS Classes #}
+
+
 
 {% if block.type == 'container' %}
 
@@ -24,7 +33,7 @@
 	{% endif %}
 	{# set correct layout #}
 
-	<div id="{{ block.id }}" class="container container--{{ container_layout }} {{ container_full_width }}">
+	<div id="{{ block.id }}" class="container container--{{ container_layout }} {{ container_full_width }} {{ added_classes }}">
 		{% for child in block.children %}
 			{% include "partials/block.twig" with { 
 					block: child,
@@ -34,6 +43,12 @@
 					lang: lang
 				} only %}
 		{% endfor %}
+
+	{# Textured #}
+	{% if block.values.textured == true %}
+		<div class="textured dotted-texture" style="width:100%; height:100%;"></div>
+	{% endif %}
+	{# Textured #}
 	</div>
 
 {% elseif block.options['no-wrapper'] %}

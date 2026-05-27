@@ -6,6 +6,16 @@
 	{{ values.subtitle[lang] }}
 	{% endif %}
 </div>
+{% elseif values.layout == 'separator' %}
+<div class="sep-title">
+	{{ values.title[lang] }}
+
+	{% if values.subtitle %}
+	{{ values.subtitle[lang] }}
+	{% endif %}
+
+	<div class="sep"></div>
+</div>
 {% else %}
 	<span>Erreur : layout</span>
 {% endif %}

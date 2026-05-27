@@ -5,6 +5,7 @@
         "custom_css",
         "layout",
         "full-width",
+        "color_context",
         "text",
         "link"
     ],

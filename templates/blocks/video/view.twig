@@ -1,0 +1,59 @@
+{% set link = values.video_link ?? '' %}
+{% set autoplay = values.autoplay ? 1 : 0 %}
+{% set loop = values.loop ? 1 : 0 %}
+
+{# Largeur : custom ou 100% par défaut #}
+{% set width_style = values.video_width ? 'width:' ~ values.video_width ~ ';' : 'width:100%;' %}
+
+<div class="video-block full-width" style="{{ width_style }}">
+
+    {% if 'youtube.com' in link or 'youtu.be' in link %}
+
+        {% if 'youtu.be/' in link %}
+            {% set video_id = link|split('youtu.be/')|last|split('?')|first %}
+        {% else %}
+            {% set video_id = link|split('v=')|last|split('&')|first %}
+        {% endif %}
+
+        {% set src = 'https://www.youtube.com/embed/' ~ video_id
+            ~ '?autoplay=' ~ autoplay
+            ~ '&loop=' ~ loop
+            ~ (loop ? '&playlist=' ~ video_id : '')
+            ~ (autoplay ? '&mute=1' : '')
+            ~ '&hl=' ~ lang %}
+
+        <div class="video-ratio-wrapper">
+            <iframe src="{{ src }}"
+                    frameborder="0"
+                    allow="autoplay; fullscreen"
+                    allowfullscreen>
+            </iframe>
+        </div>
+
+    {% elseif 'vimeo.com' in link %}
+
+        {% set video_id = link|split('vimeo.com/')|last|split('?')|first %}
+        {% set src = 'https://player.vimeo.com/video/' ~ video_id
+            ~ '?autoplay=' ~ autoplay
+            ~ '&loop=' ~ loop
+            ~ (autoplay ? '&muted=1' : '') %}
+
+        <div class="video-ratio-wrapper">
+            <iframe src="{{ src }}"
+                    frameborder="0"
+                    allow="autoplay; fullscreen"
+                    allowfullscreen>
+            </iframe>
+        </div>
+
+    {% elseif link %}
+
+        <video class="video-ratio-wrapper" controls
+               {% if autoplay %}autoplay muted{% endif %}
+               {% if loop %}loop{% endif %}>
+            <source src="{{ link }}">
+        </video>
+
+    {% endif %}
+
+</div>

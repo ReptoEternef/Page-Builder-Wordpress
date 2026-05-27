@@ -24,9 +24,9 @@
 
                 <div class="obwp-field-col">
                     <input type="text" name="btn1" placeholder="Bouton 1">
-                    <input type="text" name="btn1-link" placeholder="Lien - Bouton 1">
+                    <input type="text" name="btn1_link" placeholder="Lien - Bouton 1">
                     <input type="text" name="btn2" placeholder="Bouton 2">
-                    <input type="text" name="btn2-link" placeholder="Lien - Bouton 2">
+                    <input type="text" name="btn2_link" placeholder="Lien - Bouton 2">
                 </div>
 
             </div>

@@ -4,7 +4,6 @@
     </div>
     
     <div class="obwp-block-body">
-
         <!-- Options système (layouts, contexte couleur, etc.) -->
         <?php if (!empty($this->layouts) || in_array('color_context', $this->fields)): ?>
         <div class="obwp-system-options">

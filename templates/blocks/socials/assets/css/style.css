@@ -1,0 +1,18 @@
+.socials-default {
+    width: fit-content;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.socials-default svg {
+    width: 30px;
+    height: auto;
+    transition: 0.3s ease;
+}
+
+.socials-default svg:hover {
+    transform: scale(1.08);
+}

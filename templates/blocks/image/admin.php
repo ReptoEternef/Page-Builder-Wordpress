@@ -17,7 +17,8 @@
             <div class="obwp-field-row">
                 <div class="obwp-field-col">
                     <input type="text" name="alt" placeholder="Texte alternatif (important pour l'accessibilité)">
-                    <input type="text" name="caption" placeholder="Légende de l'image">
+                    <input type="text" name="caption" placeholder="Auteur de l'image">
+                    <input type="text" name="legend" placeholder="Légende de l'image">
                     <input type="text" name="link" placeholder="Lien (optionnel)">
 
                     <!-- Champ média -->

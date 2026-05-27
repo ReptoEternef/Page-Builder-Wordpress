@@ -53,6 +53,10 @@
                 <input type="checkbox" name="isDownloadable">
                 <span class="prevent-select change-cursor">Téléchargeables</span>
             </label>
+            <label for="obwp-checkbox-label">
+                <input type="checkbox" name="see_more" data-field-trad="notrad">
+                <span class="prevent-select change-cursor">Voir plus (tel)</span>
+            </label>
         </div>
         <?php endif; ?>
     </div>

@@ -1,18 +1,16 @@
 {# BLOC NAME #}
 
-<div class="container block-{{ block }}">
-  {% if values.layout == layouts[0] %}
-    <div class="{{ block }}-{{ layouts[0] }}">
-
-    </div>
-  {% elseif values.layout == layouts[1] %}
-    <div class="{{ block }}-{{ layouts[1] }}">
-
-    </div>  
-  {% else %}
-      <span>Erreur : layout</span>
-  {% endif %}
+{% if values.layout == layouts[0] %}
+<div class="{{ block }}-{{ layouts[0] }}">
+	<div></div>
 </div>
+{% elseif values.layout == layouts[1] %}
+<div class="{{ block }}-{{ layouts[1] }}">
+
+</div>  
+{% else %}
+<span>Erreur : layout</span>
+{% endif %}
 
 
 {# SNIPPETS & TIPS
@@ -25,6 +23,9 @@ penser à écrire container ou full-width dans la div principale
 {% endif %}
 
 <p>Bonjour {{ "Salut " ~ name ~ " !" }}</p>
+
+TRAD FIX FIELDS :
+{{ lang == 'en' ? 'Videos' : lang == 'es' ? 'Videos' : 'Vidéos' }}
 
 #}
 

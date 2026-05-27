@@ -1,5 +1,53 @@
-<div class="header">
-    {% for lang in options.available_langs %}
-        <a href="?lang={{lang}}" style="color:white">{{lang}}</a><br>
-    {% endfor %}
+<header class="hidden">
+
+
+    <div class="header-title">
+        <a href="{{ site.link }}"><h1>ARIANE LE FOURNIS</h1></a>
+    </div>
+
+    {% if menu %}
+        <nav>
+            <ul class="menu-principal">
+            {% for item in menu.items %}
+                <li>
+                    <a href="{{ item.link }}">{{ item.title }}</a>
+                </li>
+            {% endfor %}
+            </ul>
+            
+            <ul class="menu-social">
+                <li><a href="https://www.instagram.com/arianelefournis/" target="_blank">{% include 'images/icons/skill-icons--instagram.svg' %}</a></li>
+                <li><a href="https://www.facebook.com/ariane.chant.37" target="_blank">{% include 'images/icons/logos--facebook.svg' %}</a></li>
+            </ul>
+            
+            <ul class="menu-lang">
+            {% for lang in options.available_langs %}
+            {% endfor %}
+            {% if lang == 'en' %}
+                <li><a href="?lang=fr">{% include 'images/icons/emojione--flag-for-france.svg' %}</a></li>
+                <div class="lang-dropdown">
+                    <p>Switch language</p>
+                </div>
+            {% else %}
+                <li><a href="?lang=en">{% include 'images/icons/circle-flags--gb.svg' %}</a></li>
+                <div class="lang-dropdown">
+                    <p>Switch language</p>
+                </div>
+            {% endif %}
+            </ul>
+        </nav>
+    {% else %}
+        <p>Pas de menu trouvé</p>
+    {% endif %}
+
+</header>
+
+<div id="burger-menu" class="phone-hamburger">
+    <div class="open burger-btn">
+        {% include 'images/icons/solar--hamburger-menu-broken.svg' %}
+    </div>
+    <div class="close burger-btn hidden-btn">
+        {% include 'images/icons/line-md--close.svg' %}
+    </div>
 </div>
+{# <div id="burger-menu" class="phone-hamburger">{% include 'images/icons/line-md--close.svg' %}</div> #}

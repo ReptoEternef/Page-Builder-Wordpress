@@ -1,0 +1,19 @@
+{
+    "block_type" : "maps",
+    "display_name" : "Maps",
+    "fields" : [
+        "custom_css",
+        "layout",
+        "full-width",
+        "address",
+        "width",
+        "height"
+    ],
+    "layouts" : [
+        "default",
+        ""
+    ],
+    "options": {
+        "no-wrapper": false
+    }
+}

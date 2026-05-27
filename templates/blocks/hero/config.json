@@ -6,14 +6,17 @@
         "layout",
         "full-width",
         "title",
+        "subtitle",
         "slogan",
         "btn1",
         "btn2",
+        "btn1_link",
+        "btn2_link",
         "background"
     ],
     "layouts" : [
         "default",
-        "second"
+        "slog-only"
     ],
     "options": {
         "no-wrapper": false

@@ -32,7 +32,6 @@ function render_admin_UI($post) {
     </div>
     <?php
 
-
     // BLOCKS LIBRARY FOR JS
     $library_array = (array) $blocks_library;
     foreach ($library_array as $block) {

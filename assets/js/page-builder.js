@@ -245,6 +245,18 @@ class Block {
         }
     }
 
+    setFieldsElements() {
+        let fieldsWithDOM = {};
+        this.fields.forEach(field => {
+            const selector = '[name="' + field + '"]';
+            const fieldEl = this.DOM.querySelector(selector);
+            
+            fieldsWithDOM[field] = fieldEl;
+        });
+        
+        this.fields = fieldsWithDOM;
+    }
+
     setListener() {
         this.DOM.addEventListener('input', (e) => {
             // IMPORTANT: stop event bubbling to avoid parent containers reacting to child inputs
@@ -271,8 +283,18 @@ class Block {
                 });
             }
 
+            // Check if field needs to be translated or not
+            // first checks if it runs in the old or new way (old way being a simple array)
+            const fieldEl = this.fields[field]
+                ? this.fields[field]
+                : undefined;
+            const fieldTrad = fieldEl && fieldEl.dataset.fieldTrad
+                ? fieldEl.dataset.fieldTrad
+                : undefined;
+            
+            const isStatic = fieldTrad === "notrad" || staticFields.includes(field);
             // on met à jour la valeur dans le bloc correspondant
-            if (!staticFields.includes(field)) {
+            if (!isStatic) {
                 const selectedLang = langSelector.value;
 
                 this.values[field] = this.values[field] || {};
@@ -289,11 +311,13 @@ class Block {
 
     setValues() {
         for (const fieldName in this.values) {
-            const selector = '[name="' + fieldName + '"]';
-            const fieldEl = this.DOM.querySelector(selector);
+            const fieldEl = this.fields[fieldName];
             if (!fieldEl) continue;
-            
-            const value = staticFields.includes(fieldName)
+
+            const fieldTrad = this.fields[fieldName]
+                ? fieldEl.dataset.fieldTrad
+                : '';
+            const value = staticFields.includes(fieldName) || fieldTrad === 'notrad'
             ? (this.values[fieldName] ?? '')
             : (this.values[fieldName][selectedLang] ?? '');
 
@@ -394,6 +418,8 @@ const addBlockBtn = document.getElementById('add_block_btn');
 const rootContainer = document.querySelector('#_page_blocks .inside');
 const blockTypeSelector = document.getElementById('block-type-selector');
 const langSelector = document.getElementById('lang-selector');
+
+if (!langSelector.selectedOptions[0]) {alert("Langues missing ! Go in Appearance > Options du thème to start creating languages.")};
 let selectedLang = langSelector.selectedOptions[0].value;
 
 const debugBtn = document.getElementById('debug_btn');
@@ -432,6 +458,8 @@ function initBlocks(block, parent) {
     const values = block.values;
     const initBlock = addBlock(parent, block.type);
 
+    /* initBlock.setFieldsElements(); */
+
     initBlock.values = (!values || Array.isArray(values))
         ? {}
         : structuredClone(values);
@@ -463,7 +491,10 @@ langSelector.addEventListener('change', () => {
             const fieldData = block.addFieldBtns[baseName];
             fieldData.fields.forEach(input => {
                 const fullName = input.name;
-                const isTrad = !staticFields.includes(fullName);
+                const isTrad = fieldTrad
+                    ? fieldTrad === 'notrad'
+                    : !staticFields.includes(fullName);
+                console.log(isTrad);
                 
                 if (isTrad && block.values[fullName]) {
                     input.value = block.values[fullName][selectedLang] ?? '';
@@ -494,8 +525,10 @@ function addBlock(parentBlockArray, blockType, index = null) {
     // 1. structure logique
     parentBlockArray.addChild(block, index);
 
+    
     // 2. structure visuelle
     renderBlock(block);    
+    block.setFieldsElements();
     initTinyFor(block.DOM);
     //addFieldBtn(block);
 
@@ -754,6 +787,7 @@ jQuery(document).ready(function($){
             });
         });
 
+        // Button Choose an image
         mediaFrame.on('select', function(){
             const selection = mediaFrame.state().get('selection').toArray();
             const urls = selection.map(att => att.toJSON().url);
@@ -777,12 +811,23 @@ jQuery(document).ready(function($){
             }
             
             const field = wpMediaImport.data('name');
-            if (block.fields.includes(field)) {
-                const value = (urls.length < 2) ? urls[0] : urls;
-                block.values[field] = value;
-                
-                if (imgPreviewContainer.length) {
-                    renderPreview(imgPreviewContainer, urls, blockId, field);
+            if (Array.isArray(block.fields)) {                
+                if (block.fields.includes(field)) {
+                    const value = (urls.length < 2) ? urls[0] : urls;
+                    block.values[field] = value;
+                    
+                    if (imgPreviewContainer.length) {
+                        renderPreview(imgPreviewContainer, urls, blockId, field);
+                    }
+                }
+            } else {
+                if (Object.keys(block.fields).includes(field)) {
+                    const value = (urls.length < 2) ? urls[0] : urls;
+                    block.values[field] = value;
+                    
+                    if (imgPreviewContainer.length) {
+                        renderPreview(imgPreviewContainer, urls, blockId, field);
+                    }
                 }
             }
 
@@ -815,7 +860,7 @@ jQuery(document).ready(function($){
             return;
         }
         const fieldName = wpMediaImport.data('name');
-        if (block.fields.includes(fieldName)) {
+        if (Object.keys(block.fields).includes(fieldName)) {
             const value = block.values[fieldName];
             if (!value) return;
             const urls = Array.isArray(value) ? value : [value];

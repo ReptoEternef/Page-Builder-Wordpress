@@ -8,6 +8,7 @@
         "image",
         "alt",
         "caption",
+        "legend",
         "link",
         "width",
         "width_unit",

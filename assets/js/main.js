@@ -34,20 +34,25 @@ document.addEventListener('DOMContentLoaded', function() {
 const navLinks = document.querySelectorAll('.menu-principal a');
 const sections = document.querySelectorAll('.anchor[id]');
 
-function updateActive() {
-	const triggerPoint = window.innerHeight * 0.4; // 40% du viewport
-	
-	let current = sections[0];
-	sections.forEach(section => {
-		const rect = section.getBoundingClientRect();
-		if (rect.top <= triggerPoint) {
-		current = section;
-		}
-	});
+if (sections.length > 0) {
+    function updateActive() {
+        const triggerPoint = window.innerHeight * 0.4;
+        let current = sections[0];
 
-	navLinks.forEach(link => link.classList.remove('active'));
-	const active = document.querySelector(`.menu-principal a[href="#${current.id}"]`);
-	if (active) active.classList.add('active');
+        sections.forEach(section => {
+            const rect = section.getBoundingClientRect();
+            if (rect.top <= triggerPoint) {
+                current = section;
+            }
+        });
+
+        navLinks.forEach(link => link.classList.remove('active'));
+        const active = document.querySelector(`.menu-principal a[href="#${current.id}"]`);
+        if (active) active.classList.add('active');
+    }
+
+    window.addEventListener('scroll', updateActive);
+    updateActive(); // initialisation au chargement
 }
 
 window.addEventListener('scroll', updateActive);
@@ -79,3 +84,55 @@ burgerMenu.addEventListener('click', () => {
 		burgerBtns[0].classList.add('hidden-btn');
 	}
 })
+
+
+
+
+
+
+// PAGE TRANSITIONS
+if (php.obwp_options?.page_transitions) {
+
+    // Création de l'overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'obwp-transition-overlay';
+    overlay.innerHTML = `
+        <img src="${php.obwp_options.logo_url}" alt="logo" id="obwp-transition-logo">
+    `;
+    document.body.appendChild(overlay);
+
+    // Fade in à l'arrivée
+    requestAnimationFrame(() => {
+        overlay.classList.add('fade-out');
+    });
+
+    // Intercepte les clics sur les liens internes
+    document.addEventListener('click', (e) => {
+        const link = e.target.closest('a');
+        if (!link) return;
+
+        const href = link.getAttribute('href');
+        if (!href) return;
+
+        const isExternal = link.hostname !== window.location.hostname;
+        const isAnchor = href.startsWith('#') || href.includes('#') && link.hostname === window.location.hostname && link.pathname === window.location.pathname;
+        const isAdmin = href.includes('/wp-admin');
+        const opensNewTab = link.target === '_blank';
+
+        if (isExternal || isAnchor || isAdmin || opensNewTab) {
+			overlay.classList.add('fade-out');
+			return;
+		}
+
+		e.preventDefault();
+		overlay.classList.remove('fade-out');
+
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				setTimeout(() => {
+					window.location.href = href;
+				}, 400);
+			});
+		});
+    });
+}

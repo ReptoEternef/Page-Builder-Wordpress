@@ -1,0 +1,46 @@
+<?php
+
+/* 
+SNIPPETS & TIPS
+
+à remplir :
+    > nom du dossier (ex: 'hero', 'text', etc.)
+    > nom du fichier (doit correspondre au nom de la classe)
+*/
+
+use Timber\Timber;
+
+require_once get_template_directory() . '/templates/blocks/Block.php';
+
+class Socials extends Block {
+
+    public function __construct()
+    {   
+        // Charger le config depuis le bon endroit
+        $json_directory = __DIR__ . DIRECTORY_SEPARATOR . 'config.json';
+        $json_config = json_decode(file_get_contents($json_directory), true);
+
+        parent::__construct(
+            $json_config['block_type'],
+            $json_config['display_name'],
+            $json_config['fields'],
+            $json_config['layouts'],
+            [],   // values
+            0,    // display_order
+            '',   // id
+            $json_config['options'] ?? []
+        );
+    }
+
+    public function renderFrontend($values = [])
+    {
+        $data = Timber::context();
+
+        $data['values'] = $values['values'] ?? $values;
+        $data['block'] = $this->type;
+        $data['layouts'] = $this->layouts;
+
+        $template_path = 'blocks/' . $this->type . '/view.twig';
+        Timber::render($template_path, $data);
+    }
+}

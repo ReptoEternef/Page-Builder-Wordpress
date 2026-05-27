@@ -14,6 +14,7 @@
         "display_desc",
         "gallery",
         "display_overlay",
-        "isDownloadable"
+        "isDownloadable",
+        "see_more"
     ]
 }

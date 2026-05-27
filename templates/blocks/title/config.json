@@ -9,6 +9,7 @@
         "subtitle"
     ],
     "layouts" : [
-        "default"
+        "default",
+        "separator"
     ]
 }

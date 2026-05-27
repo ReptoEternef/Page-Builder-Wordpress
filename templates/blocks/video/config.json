@@ -1,0 +1,16 @@
+{
+    "block_type": "video",
+    "display_name": "Vidéo",
+    "fields": [
+        "custom_css",
+        "layout",
+        "video_link",
+        "video_width",
+        "video_height",
+        "autoplay",
+        "loop"
+    ],
+    "layouts": [
+        "default"
+    ]
+}

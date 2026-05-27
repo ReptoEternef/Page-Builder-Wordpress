@@ -3,6 +3,7 @@
 {% set image_url = values.image.url %}
 {% set alt = values.alt[lang]|default('') %}
 {% set caption = values.caption[lang]?? values.image.caption | default('') %}
+{% set legend = values.legend[lang]?? values.image.legend | default('') %}
 {% set link = values.link|default('') %}
 {% set alignment = values.alignment|default('center') %}
 {% set object_fit = values.object_fit|default('cover') %}
@@ -44,6 +45,10 @@
       
       {% if caption %}
         <p class="image-caption">© {{ caption }}</p>
+      {% endif %}
+
+      {% if legend %}
+        <p class="image-legend">{{ legend }}</p>
       {% endif %}
       
     </div>

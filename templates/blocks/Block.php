@@ -63,7 +63,8 @@ abstract class Block {
     // Display block in admin
     public function renderAdmin($values = [])
     {
-        $data = array_merge($this->values, $this->normalizeData());
+        $this->setValues($values);
+        /* $data = array_merge($this->values, $this->normalizeData()); */
     }
 
     // Display block on site

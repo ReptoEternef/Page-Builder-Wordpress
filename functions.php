@@ -230,6 +230,7 @@ add_action('init', function() {
 // Context Timber & options thème
 add_filter('timber/context', function($context) {
     $custom_logo_id = get_theme_mod('custom_logo');
+    $context['site_url'] = get_site_url();
     $context['logo_url'] = wp_get_attachment_image_url($custom_logo_id, 'full');
     $context['options'] = get_option('obwp_options', []);
     $context['lang'] = obwp_get_current_lang();
@@ -297,7 +298,6 @@ register_nav_menus([
 
 // Enqueue CSS & JS
 add_action('wp_enqueue_scripts', function() {
-
     wp_enqueue_style(
         'main-style',
         get_template_directory_uri() . '/assets/css/style.css',
@@ -305,9 +305,15 @@ add_action('wp_enqueue_scripts', function() {
         filemtime(get_template_directory() . '/assets/css/style.css')
     );
 
-    load_child_then_parent('main.js', 'main-js');
+    $main_script = load_child_then_parent('main.js', 'main-js');
     load_child_then_parent('animations.js', 'animations-js');
     load_child_then_parent('parallax.js', 'parallax-js');
+
+    // Injection des options OBWP côté front
+    $obwp_options = get_option('obwp_options', []);
+    $custom_logo_id = get_theme_mod('custom_logo');
+    $obwp_options['logo_url'] = wp_get_attachment_image_url($custom_logo_id, 'full');
+    wp_localize_script($main_script, 'php', ['obwp_options' => $obwp_options]);
 
     wp_enqueue_script(
         'iconify',
@@ -474,14 +480,16 @@ function obwp_enqueue_blocks_assets(array $blocks, array &$enqueued_vendors = []
         // CSS parent
         $parent_css = $parent_path . "/assets/css/style.css";
         $parent_css_exists = file_exists($parent_css);
-        if ($parent_css_exists) {
+
+        // Load child css only if it exists
+        if ($child_path && file_exists($child_path . "/assets/css/style.css")) {
+            wp_enqueue_style("block-$block_type-child", $child_uri . "/assets/css/style.css", $parent_css_exists ? [] : [], filemtime($child_path . "/assets/css/style.css"));
+        }
+        elseif ($parent_css_exists) {
             wp_enqueue_style("block-$block_type-parent", $parent_uri . "/assets/css/style.css", [], filemtime($parent_css));
         }
 
-        // CSS enfant
-        if ($child_path && file_exists($child_path . "/assets/css/style.css")) {
-            wp_enqueue_style("block-$block_type-child", $child_uri . "/assets/css/style.css", $parent_css_exists ? ["block-$block_type-parent"] : [], filemtime($child_path . "/assets/css/style.css"));
-        }
+
 
         // JS parent
         $parent_js = $parent_path . "/assets/js/script.js";
